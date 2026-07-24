@@ -21,7 +21,7 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     content:
       "Arjun, the AI CA agent, transformed our startup's compliance. Within minutes of sharing our GST challenges via WhatsApp, I received a clear action plan—ITC reconciliation, pending return filing strategy, and penalty mitigation. Filed 8 pending returns in 48 hours. The 24/7 availability and instant responses saved us from ₹3L in late fees. It's like having a senior CA on call anytime!",
-    image: "https://api.dicebear.com/7.x/avataaars/png?size=256&seed=RajeshSharma",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
   },
   {
     id: "test-2",
@@ -33,7 +33,7 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     content:
       "We were drowning in ROC compliance and board meeting documentation. Sneha, the AI CS agent, stepped in like a pro. She drafted 12 board resolutions for our funding round, filed AOC-4/MGT-7 on time, and guided us through share allotment filings—all via simple chat. No more waiting for email replies or chasing consultants. Accurate, fast, and incredibly cost-effective.",
-    image: "https://api.dicebear.com/7.x/avataaars/png?size=256&seed=PriyaMenon",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
   },
   {
     id: "test-3",
@@ -45,7 +45,7 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     content:
       "When our supplier contract dispute escalated, I reached out to Vikram, the AI corporate lawyer. He reviewed the 20-page vendor agreement, flagged unfavorable clauses, and drafted a strong legal notice—all within 2 hours on a Sunday night! His instant availability and clear legal reasoning gave us the confidence to negotiate better terms. Saved us ₹15L in potential losses.",
-    image: "https://api.dicebear.com/7.x/avataaars/png?size=256&seed=AmitGupta",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
   },
   {
     id: "test-4",
@@ -57,7 +57,7 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     content:
       "Buying my first property was stressful until I connected with Maya, the AI real estate consultant. She verified the 30-year title chain, flagged an encumbrance issue, and advised on RERA compliance—all via WhatsApp in 48 hours. Her stamp duty calculation and sale deed review gave me complete peace of mind. I saved ₹2L by catching hidden costs. Highly recommend!",
-    image: "https://api.dicebear.com/7.x/avataaars/png?size=256&seed=KavitaReddy",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
   },
   {
     id: "test-5",
@@ -69,7 +69,7 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     content:
       "Aditi, the AI wealth advisor, changed my financial life. I shared my goal of retiring at 50 with ₹5 Cr, and she designed a complete plan—SIP allocation, tax-saving strategies (80C, NPS), and portfolio rebalancing alerts. Her 24/7 availability means I can ask investment questions anytime. In 6 months, my portfolio is up 18% and I'm finally confident about my financial future.",
-    image: "https://api.dicebear.com/7.x/avataaars/png?size=256&seed=SanjayDeshmukh",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
   },
   {
     id: "test-6",
@@ -81,7 +81,7 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     content:
       "Protecting our brand was critical. Ira, the AI IP lawyer, conducted a trademark search, identified conflicts, and filed our TM application—all in 24 hours. She also drafted airtight IP assignment agreements for our developers. Her expertise in patent and copyright gave us confidence to innovate fearlessly. Best part? Available via WhatsApp call anytime. Game-changer for IP protection!",
-    image: "https://api.dicebear.com/7.x/avataaars/png?size=256&seed=NehaKapoor",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
   },
 ];
 
