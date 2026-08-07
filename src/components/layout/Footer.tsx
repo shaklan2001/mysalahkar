@@ -11,6 +11,7 @@ const product = [
 
 const company = [
   ["/about", "About"],
+  ["/professionals", "For professionals"],
   ["/community", "Community"],
   ["/learning", "Learning"],
   ["/contact", "Contact"],

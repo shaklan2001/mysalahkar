@@ -25,6 +25,10 @@ const faqs = [
     q: "Can I get help with company incorporation or GST?",
     a: "Yes. Browse Services for GST, ITR, ROC filings, trademarks, FEMA, and 380+ other professional services — each linked to a specialised agent.",
   },
+  {
+    q: "Can I join as a professional and sell my own agent?",
+    a: "Yes. Practising CAs, CS, lawyers, and advisors can create a branded AI agent, list services, and earn a revenue share on consultations and conversions. See For Professionals to apply and open the partner dashboard.",
+  },
 ];
 
 export function FaqSection() {

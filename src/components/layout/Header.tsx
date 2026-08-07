@@ -13,9 +13,9 @@ const navItems = [
   { path: "/agents", label: "Agents" },
   { path: "/services", label: "Services" },
   { path: "/how-it-works", label: "How it works" },
+  { path: "/professionals", label: "For professionals" },
   { path: "/community", label: "Community" },
   { path: "/learning", label: "Learning" },
-  { path: "/loan-comparison", label: "Smart Loan" },
 ];
 
 export function Header() {
@@ -57,8 +57,8 @@ export function Header() {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
-            <Button variant="ghost" size="sm" className="text-muted-foreground">
-              Sign In
+            <Button asChild variant="ghost" size="sm" className="text-muted-foreground">
+              <Link href="/professionals/login">Sign In</Link>
             </Button>
             <Button size="sm" onClick={() => openConsult()}>
               Consult now
@@ -98,8 +98,10 @@ export function Header() {
               })}
             </nav>
             <div className="mt-4 flex flex-col gap-2">
-              <Button variant="outline" className="w-full">
-                Sign In
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/professionals/login" onClick={() => setMobileOpen(false)}>
+                  Sign In
+                </Link>
               </Button>
               <Button
                 className="w-full"

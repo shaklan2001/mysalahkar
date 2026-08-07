@@ -6,6 +6,7 @@ import { QuietTrust } from "@/components/home/QuietTrust";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { FaqSection } from "@/components/home/FaqSection";
 import { BottomCTA } from "@/components/home/BottomCTA";
+import { ProfessionalsPromo } from "@/components/home/ProfessionalsPromo";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <FeaturedAgents />
       <QuietTrust />
       <TestimonialsSection />
+      <ProfessionalsPromo />
       <FaqSection />
       <BottomCTA />
     </>

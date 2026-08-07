@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Sora } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { ConsultProvider } from "@/components/consult/ConsultProvider";
-import { ConsultDock } from "@/components/consult/ConsultDock";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { AppToaster } from "@/components/layout/AppToaster";
 import "./globals.css";
 
@@ -48,10 +46,7 @@ export default function RootLayout({
     >
       <body className="site-shell flex min-h-full flex-col font-sans text-foreground">
         <ConsultProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <ConsultDock />
+          <SiteChrome>{children}</SiteChrome>
           <AppToaster />
         </ConsultProvider>
       </body>
