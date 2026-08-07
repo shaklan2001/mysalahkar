@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useConsult } from "@/components/consult/ConsultProvider";
-import { ArrowUpDown, HeadphonesIcon, Sparkles } from "lucide-react";
+import { ArrowUpDown, HeadphonesIcon } from "lucide-react";
 import { toast } from "sonner";
 
 type SortOption = "emi" | "rate" | "processing";
@@ -133,24 +133,23 @@ export default function LoanComparisonPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 text-white">
-        <div className="container mx-auto px-4 py-12 md:py-16 max-w-7xl">
-          <div className="flex items-center gap-3 mb-3">
-            <Sparkles className="h-8 w-8" />
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Smart Loan Comparison
-            </h1>
-          </div>
-          <p className="text-emerald-50 text-lg max-w-2xl">
-            Compare loans from India's leading banks and NBFCs. Get AI-powered
-            recommendations tailored to your needs.
+    <div>
+      <section className="border-b border-border/70 bg-white/60 section-pad">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+            Smart Loan
+          </p>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Compare loans with clarity.
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Side-by-side rates from leading banks and NBFCs — plus Veer, your AI
+            loan advisor, for a tailored recommendation.
           </p>
         </div>
-      </div>
+      </section>
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Sidebar - Calculator */}
           <div className="lg:col-span-1">

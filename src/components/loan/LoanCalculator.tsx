@@ -60,7 +60,7 @@ export function LoanCalculator({
 
   return (
     <div className="sticky top-20 space-y-6">
-      <Card className="p-6 bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-emerald-200">
+      <Card className="border-border bg-white p-6">
         <div className="flex items-center gap-2 mb-6">
           <Sparkles className="h-5 w-5 text-emerald-600" />
           <h2 className="text-xl font-semibold text-gray-900">

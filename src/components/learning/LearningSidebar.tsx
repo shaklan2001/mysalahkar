@@ -53,7 +53,7 @@ export function LearningSidebar() {
           {popularInstructors.map((instructor, idx) => (
             <div key={idx} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">
                   {instructor.name
                     .split(" ")
                     .map((n) => n[0])
@@ -110,17 +110,17 @@ export function LearningSidebar() {
       </Card>
 
       {/* Certificates Promo */}
-      <Card className="bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-        <CardContent className="p-6 space-y-3">
+      <Card className="border-border bg-[#0a1628] text-white">
+        <CardContent className="space-y-3 p-6">
           <div className="flex justify-center">
-            <div className="p-3 bg-white/20 rounded-xl">
+            <div className="rounded-xl bg-white/10 p-3">
               <Award className="h-8 w-8" />
             </div>
           </div>
-          <h3 className="font-bold text-center">
+          <h3 className="text-center font-display font-semibold tracking-tight">
             Earn Professional Certificates
           </h3>
-          <p className="text-xs text-blue-100 text-center leading-relaxed">
+          <p className="text-center text-xs leading-relaxed text-slate-400">
             Complete courses and earn industry-recognized certificates to boost
             your career and showcase your expertise.
           </p>

@@ -31,17 +31,17 @@ export function AILoanAdvisor({
   }
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-purple-50 via-white to-indigo-50 border-purple-200">
-      <div className="flex items-start gap-4 mb-4">
-        <div className="p-3 bg-purple-100 rounded-lg">
-          <Bot className="h-6 w-6 text-purple-600" />
+    <Card className="border-border bg-white p-6">
+      <div className="mb-4 flex items-start gap-4">
+        <div className="rounded-lg bg-teal-50 p-3">
+          <Bot className="h-6 w-6 text-accent" />
         </div>
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="mb-1 flex items-center gap-2">
+            <h3 className="font-display text-lg font-semibold tracking-tight text-foreground">
               Ask Veer (AI Loan Advisor)
             </h3>
-            <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+            <Badge variant="secondary" className="bg-teal-50 text-teal-800">
               AI Powered
             </Badge>
           </div>

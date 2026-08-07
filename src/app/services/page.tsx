@@ -20,52 +20,39 @@ export default function ServicesPage() {
   ).size;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Hero Section */}
+    <div>
       <ServicesHero
         categoryCount={categoryCount}
         totalServices={totalServices}
         aiExperts={uniqueAgents}
       />
 
-      {/* Service Categories */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="space-y-12">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="space-y-10">
           {serviceCategories.map((category) => {
             const agent = getAgent(category.agentSlug);
             return (
-              <ServiceCategoryCard
-                key={category.id}
-                category={category}
-                agent={agent}
-              />
+              <div key={category.id} id={category.id} className="scroll-mt-24">
+                <ServiceCategoryCard category={category} agent={agent} />
+              </div>
             );
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <div className="inline-block rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white shadow-xl">
-            <h2 className="text-2xl font-bold mb-2">
-              Meet Our Expert AI Consultants
-            </h2>
-            <p className="text-blue-100 mb-6 max-w-xl">
-              Connect with specialized AI professionals for personalized guidance
-              across all service categories. Available 24/7 via WhatsApp, chat, or
-              call.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              variant="secondary"
-              className="bg-white text-blue-700 hover:bg-blue-50"
-            >
-              <Link href="/agents">
-                Browse All Consultants
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
+        <div className="mt-16 rounded-2xl border border-border bg-white p-8 text-center sm:p-10">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+            Meet the AI consultants behind each service
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Connect with specialised agents for personalised guidance — available
+            24/7 via WhatsApp, chat, or call.
+          </p>
+          <Button asChild size="lg" className="mt-6">
+            <Link href="/agents">
+              Browse all consultants
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

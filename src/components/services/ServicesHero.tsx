@@ -1,5 +1,3 @@
-import { Briefcase, TrendingUp, Users } from "lucide-react";
-
 interface ServicesHeroProps {
   categoryCount: number;
   totalServices: number;
@@ -12,53 +10,42 @@ export function ServicesHero({
   aiExperts,
 }: ServicesHeroProps) {
   return (
-    <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Professional Services
+    <section className="border-b border-border/70 bg-white/60 section-pad">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+            Services
+          </p>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-[2.75rem] md:leading-[1.15]">
+            Professional services across every domain that matters.
           </h1>
-          <p className="text-lg text-blue-100 max-w-2xl mx-auto">
-            Comprehensive professional services across taxation, corporate law,
-            legal, intellectual property, FEMA, real estate, wealth management,
-            insurance, and lending. Get expert guidance from specialized AI
-            consultants.
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Taxation, corporate, legal, IP, FEMA, real estate, wealth, insurance,
+            and lending — each category backed by a specialised AI consultant.
           </p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
-            <div className="flex justify-center mb-3">
-              <div className="p-3 bg-white/20 rounded-lg">
-                <Briefcase className="h-8 w-8" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold mb-1">{categoryCount}</div>
-            <div className="text-blue-100 text-sm">Service Categories</div>
+        <div className="mt-10 grid grid-cols-3 gap-6 border-t border-border/80 pt-8 sm:max-w-xl">
+          <div>
+            <p className="font-display text-2xl font-semibold tracking-tight text-foreground">
+              {categoryCount}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Categories</p>
           </div>
-
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
-            <div className="flex justify-center mb-3">
-              <div className="p-3 bg-white/20 rounded-lg">
-                <TrendingUp className="h-8 w-8" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold mb-1">{totalServices}+</div>
-            <div className="text-blue-100 text-sm">Professional Services</div>
+          <div>
+            <p className="font-display text-2xl font-semibold tracking-tight text-foreground">
+              {totalServices}+
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Services</p>
           </div>
-
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
-            <div className="flex justify-center mb-3">
-              <div className="p-3 bg-white/20 rounded-lg">
-                <Users className="h-8 w-8" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold mb-1">{aiExperts}</div>
-            <div className="text-blue-100 text-sm">AI Expert Consultants</div>
+          <div>
+            <p className="font-display text-2xl font-semibold tracking-tight text-foreground">
+              {aiExperts}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">AI experts</p>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

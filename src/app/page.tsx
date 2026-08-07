@@ -1,32 +1,22 @@
-import { AnnouncementBanner } from "@/components/home/AnnouncementBanner";
 import { HeroSection } from "@/components/home/HeroSection";
-import { ChannelStrip } from "@/components/home/ChannelStrip";
-import { StatsStrip } from "@/components/home/StatsStrip";
-import { PremiumPromo } from "@/components/home/PremiumPromo";
-import { DomainGrid } from "@/components/home/DomainGrid";
-import { WhyChooseSection } from "@/components/home/WhyChooseSection";
-import { FirstConsultOffer } from "@/components/home/FirstConsultOffer";
-import { HowItWorksSection } from "@/components/home/HowItWorksSection";
-import { CommunityPromo } from "@/components/home/CommunityPromo";
+import { ServiceCategories } from "@/components/home/ServiceCategories";
+import { PrinciplesSection } from "@/components/home/PrinciplesSection";
+import { FeaturedAgents } from "@/components/home/FeaturedAgents";
+import { QuietTrust } from "@/components/home/QuietTrust";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
-import { TrustLogosSection } from "@/components/home/TrustLogosSection";
+import { FaqSection } from "@/components/home/FaqSection";
 import { BottomCTA } from "@/components/home/BottomCTA";
 
 export default function Home() {
   return (
     <>
-      <AnnouncementBanner />
       <HeroSection />
-      <ChannelStrip />
-      <StatsStrip />
-      <PremiumPromo />
-      <DomainGrid />
-      <WhyChooseSection />
-      <FirstConsultOffer />
-      <HowItWorksSection />
-      <CommunityPromo />
+      <ServiceCategories />
+      <PrinciplesSection />
+      <FeaturedAgents />
+      <QuietTrust />
       <TestimonialsSection />
-      <TrustLogosSection />
+      <FaqSection />
       <BottomCTA />
     </>
   );

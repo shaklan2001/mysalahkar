@@ -11,18 +11,18 @@ export default function SecurityPage() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-slate-50 py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-              <Shield className="h-10 w-10" />
-            </div>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Security & Data Privacy
+      <section className="border-b border-border/70 bg-white/60 section-pad">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+              Security
+            </p>
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-[2.75rem] md:leading-[1.15]">
+              Security &amp; data privacy
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
-              Your trust is our foundation. Learn how we protect your data, ensure privacy,
-              and comply with Indian data protection regulations.
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Your trust is our foundation. Learn how we protect your data,
+              ensure privacy, and align with Indian data protection expectations.
             </p>
           </div>
         </div>

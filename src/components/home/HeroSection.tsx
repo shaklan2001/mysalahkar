@@ -1,68 +1,94 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight, MessageCircle, Phone, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useConsult } from "@/components/consult/ConsultProvider";
-import { ArrowRight, Bot, Sparkles } from "lucide-react";
-import Link from "next/link";
 
 export function HeroSection() {
   const { openConsult } = useConsult();
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-slate-50 py-20 md:py-32">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.08),transparent_50%)]" />
-      
-      <div className="container relative mx-auto max-w-7xl px-4">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
-            <Bot className="h-4 w-4" />
-            <span>India's First AI Professional Consultancy Platform</span>
-          </div>
-          
-          <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-6xl md:leading-tight">
-            Your Expert <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Salahkar</span>, Powered by AI
-          </h1>
-          
-          <p className="mb-10 text-lg leading-relaxed text-slate-600 md:text-xl">
-            Instant access to AI agents trained on years of CA, CS, Legal, FEMA, Wealth Management & more. 
-            Consult via WhatsApp, chat, or call—24/7. Human escalation when complexity demands it.
+    <section className="relative overflow-hidden border-b border-border/70">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:py-28">
+        <div>
+          <p className="font-display text-sm font-semibold tracking-[0.04em] text-accent">
+            My Salahkar
           </p>
-          
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button
-              size="lg"
-              onClick={() => openConsult()}
-              className="group h-12 gap-2 bg-gradient-to-r from-blue-600 to-blue-700 px-8 text-base font-semibold shadow-lg hover:from-blue-700 hover:to-blue-800"
-            >
-              <Sparkles className="h-5 w-5" />
-              Consult Now
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+          <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.35rem]">
+            Expert professional advice — on WhatsApp, chat, or call.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            AI Salahkars for CA, CS, Legal, FEMA, Wealth and more. Available
+            24/7, with human escalation when complexity demands it.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Button size="lg" onClick={() => openConsult()}>
+              Start a consultation
+              <ArrowRight className="h-4 w-4" />
             </Button>
-            
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="h-12 gap-2 border-2 border-slate-300 px-8 text-base font-semibold hover:border-blue-600 hover:bg-blue-50 hover:text-blue-700"
-            >
-              <Link href="/services">
-                Explore Services
-                <ArrowRight className="h-5 w-5" />
-              </Link>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/services">Browse services</Link>
             </Button>
-            
-            <Button
-              asChild
-              size="lg"
-              variant="ghost"
-              className="h-12 gap-2 px-8 text-base font-semibold text-slate-700 hover:bg-slate-100 hover:text-blue-700"
-            >
-              <Link href="/agents">
-                Find AI Agents
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </Button>
+          </div>
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-2">
+              <Smartphone className="h-4 w-4 text-accent" />
+              WhatsApp
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 text-accent" />
+              Chat
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Phone className="h-4 w-4 text-accent" />
+              Voice call
+            </span>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div
+            className="absolute -inset-6 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_30%_20%,rgba(14,116,144,0.12),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(15,118,110,0.1),transparent_50%)]"
+            aria-hidden
+          />
+          <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-[0_24px_60px_-28px_rgba(10,22,40,0.35)]">
+            <div className="flex items-center justify-between border-b border-border/80 bg-[#0a1628] px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-700 text-xs font-bold text-white">
+                  A
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">Arjun · CA</p>
+                  <p className="text-[11px] text-teal-300/90">Online · Tax &amp; GST</p>
+                </div>
+              </div>
+              <span className="rounded-md bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-white/70">
+                Live
+              </span>
+            </div>
+            <div className="space-y-3 bg-[#f8fafb] p-4 sm:p-5">
+              <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-primary px-3.5 py-2.5 text-sm text-white">
+                Do I need to file GSTR-1 this month if turnover is under 1.5 Cr?
+              </div>
+              <div className="max-w-[90%] rounded-2xl rounded-bl-md border border-border bg-white px-3.5 py-2.5 text-sm leading-relaxed text-ink-soft">
+                If you&apos;re on the QRMP scheme, GSTR-1 is quarterly — but
+                Invoice Furnishing Facility (IFF) still applies monthly for
+                B2B. I can check your scheme and due dates.
+              </div>
+              <div className="max-w-[90%] rounded-2xl rounded-bl-md border border-border bg-white px-3.5 py-2.5 text-sm leading-relaxed text-ink-soft">
+                Share your GSTIN (or last return type) and I&apos;ll map the
+                exact calendar for this quarter.
+              </div>
+            </div>
+            <div className="flex items-center gap-2 border-t border-border/80 bg-white px-4 py-3">
+              <div className="h-9 flex-1 rounded-md border border-border bg-muted/50 px-3 text-sm leading-9 text-muted-foreground">
+                Ask about GST, ITR, ROC…
+              </div>
+              <Button size="sm" onClick={() => openConsult()}>
+                Send
+              </Button>
+            </div>
           </div>
         </div>
       </div>

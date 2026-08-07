@@ -12,15 +12,18 @@ export default function HowItWorksPage() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-slate-50 py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              How My Salahkar Works
+      <section className="border-b border-border/70 bg-white/60 section-pad">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+              How it works
+            </p>
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-[2.75rem] md:leading-[1.15]">
+              How My Salahkar works
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
-              Expert AI consultancy at your fingertips. Consult via WhatsApp, chat, or call
-              — with human oversight when you need it most.
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Expert AI consultancy at your fingertips. Consult via WhatsApp,
+              chat, or call — with human oversight when you need it most.
             </p>
           </div>
         </div>
@@ -305,7 +308,7 @@ export default function HowItWorksPage() {
               </div>
             </div>
 
-            <div className="rounded-xl bg-gradient-to-br from-blue-50 to-slate-50 p-8 lg:p-12">
+            <div className="rounded-xl border border-border bg-white p-8 lg:p-12">
               <h3 className="mb-6 text-2xl font-bold text-slate-900">
                 When to Escalate to a Human Expert
               </h3>

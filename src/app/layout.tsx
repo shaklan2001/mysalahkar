@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ConsultProvider } from "@/components/consult/ConsultProvider";
@@ -10,7 +10,13 @@ import "./globals.css";
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -36,8 +42,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${plusJakarta.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col font-sans">
+    <html
+      lang="en"
+      className={`${plusJakarta.variable} ${sora.variable} h-full antialiased`}
+    >
+      <body className="site-shell flex min-h-full flex-col font-sans text-foreground">
         <ConsultProvider>
           <Header />
           <main className="flex-1">{children}</main>

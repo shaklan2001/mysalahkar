@@ -143,21 +143,21 @@ export function ConsultDock() {
         aria-label="Close consult"
       />
       <div className="relative z-10 flex h-[100dvh] w-full flex-col overflow-hidden bg-white shadow-2xl sm:h-[min(720px,90vh)] sm:w-[420px] sm:rounded-2xl">
-        <div className="flex items-center justify-between border-b bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white">
+        <div className="flex items-center justify-between border-b border-border bg-[#0a1628] px-4 py-3 text-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-sm font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-700 text-sm font-bold">
               {agent.name.charAt(0)}
             </div>
             <div>
               <p className="font-semibold leading-tight">{agent.name}</p>
-              <p className="text-xs text-blue-100">
+              <p className="text-xs text-teal-200/90">
                 AI {agent.typeLabel} · Live now
               </p>
             </div>
           </div>
           <button
             onClick={closeConsult}
-            className="rounded-lg p-2 hover:bg-white/10"
+            className="rounded-md p-2 hover:bg-white/10"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

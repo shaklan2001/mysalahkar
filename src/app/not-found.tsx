@@ -1,42 +1,27 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home, Users } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-slate-50 px-4 py-20">
-      <div className="text-center">
-        <h1 className="mb-4 text-8xl font-bold text-blue-600">404</h1>
-        <h2 className="mb-4 text-3xl font-bold text-slate-900">Page Not Found</h2>
-        <p className="mb-8 text-lg text-slate-600">
-          Sorry, we couldn't find the page you're looking for. It may have been moved,
-          deleted, or never existed.
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-20">
+      <div className="max-w-md text-center">
+        <p className="font-display text-6xl font-semibold tracking-tight text-accent">
+          404
         </p>
-
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button size="lg" asChild>
-            <Link href="/">
-              <Home className="h-5 w-5" />
-              Go Home
-            </Link>
+        <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight text-foreground">
+          Page not found
+        </h1>
+        <p className="mt-3 text-muted-foreground">
+          Sorry, we couldn&apos;t find that page. It may have moved or never
+          existed.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg">
+            <Link href="/">Go home</Link>
           </Button>
-          <Button size="lg" variant="outline" asChild>
-            <Link href="/agents">
-              <Users className="h-5 w-5" />
-              Browse AI Agents
-            </Link>
+          <Button asChild size="lg" variant="outline">
+            <Link href="/agents">Browse AI agents</Link>
           </Button>
-        </div>
-
-        <div className="mt-12 text-sm text-slate-500">
-          <p>Need help? Contact us at{" "}
-            <a
-              href="mailto:support@mysalahkar.com"
-              className="font-semibold text-blue-600 underline hover:text-blue-700"
-            >
-              support@mysalahkar.com
-            </a>
-          </p>
         </div>
       </div>
     </div>
