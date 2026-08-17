@@ -5,7 +5,6 @@ const product = [
   ["/", "Home"],
   ["/agents", "AI Agents"],
   ["/services", "Services"],
-  ["/loan-comparison", "Smart Loan"],
   ["/how-it-works", "How it works"],
 ];
 
@@ -110,7 +109,12 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} My Salahkar. All rights reserved.</p>
-          <p className="text-xs tracking-wide">Built for Indian professionals & businesses</p>
+          <Link
+            href="/loan-comparison"
+            className="text-xs tracking-wide text-slate-500 transition-colors hover:text-slate-300"
+          >
+            Loan comparison
+          </Link>
         </div>
       </div>
     </footer>

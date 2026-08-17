@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ServiceCategory } from "@/lib/data/services";
 import { Agent } from "@/lib/data/agents";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,6 +91,18 @@ export function ServiceCategoryCard({
             </div>
           ))}
         </div>
+        {category.id === "financial-services" ? (
+          <p className="mt-4 text-xs text-muted-foreground">
+            Compare lender rates in the{" "}
+            <Link
+              href="/loan-comparison"
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              loan comparison tool
+            </Link>
+            .
+          </p>
+        ) : null}
       </CardContent>
     </Card>
   );

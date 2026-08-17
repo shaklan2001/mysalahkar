@@ -1,15 +1,8 @@
 import Link from "next/link";
-import { ArrowUpRight, Landmark } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import * as Icons from "lucide-react";
 import { LucideIcon } from "lucide-react";
 import { serviceCategories } from "@/lib/data/services";
-
-const smartLoan = {
-  title: "Smart Loan",
-  description: "Compare home, personal, and business loans — AI advisor Veer helps you pick the best rate.",
-  href: "/loan-comparison",
-  icon: Landmark,
-};
 
 export function ServiceCategories() {
   const featured = serviceCategories.slice(0, 6);
@@ -63,24 +56,6 @@ export function ServiceCategories() {
               </Link>
             );
           })}
-          <Link
-            href={smartLoan.href}
-            className="group flex flex-col bg-white p-6 transition-colors hover:bg-[#f8fafb] sm:p-7 lg:col-span-3 lg:flex-row lg:items-center lg:gap-8 lg:p-8"
-          >
-            <div className="flex flex-1 flex-col">
-              <smartLoan.icon className="h-5 w-5 text-accent" strokeWidth={1.75} />
-              <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-foreground lg:mt-3">
-                {smartLoan.title}
-              </h3>
-              <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                {smartLoan.description}
-              </p>
-            </div>
-            <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-accent lg:mt-0 lg:shrink-0">
-              Compare loans
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </span>
-          </Link>
         </div>
       </div>
     </section>
