@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatINR } from "@/lib/utils";
+import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { useConsult } from "@/components/consult/ConsultProvider";
 import Link from "next/link";
 import Image from "next/image";
@@ -329,16 +330,23 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                               Key Services
                             </p>
                             <div className="flex flex-wrap gap-1">
-                              {agent.services.slice(0, 3).map((service, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs">
-                                  {service}
-                                </Badge>
-                              ))}
-                              {agent.services.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{agent.services.length - 3} more
-                                </Badge>
-                              )}
+                              {(() => {
+                                const services = getCatalogServicesForAgentType(agent.type);
+                                return (
+                                  <>
+                                    {services.slice(0, 3).map((service, idx) => (
+                                      <Badge key={idx} variant="outline" className="text-xs">
+                                        {service}
+                                      </Badge>
+                                    ))}
+                                    {services.length > 3 ? (
+                                      <Badge variant="outline" className="text-xs">
+                                        +{services.length - 3} more
+                                      </Badge>
+                                    ) : null}
+                                  </>
+                                );
+                              })()}
                             </div>
                           </div>
 

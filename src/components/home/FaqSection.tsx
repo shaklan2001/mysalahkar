@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: "Can I get help with company incorporation or GST?",
-    a: "Yes. Browse Services for GST, ITR, ROC filings, trademarks, FEMA, and 380+ other professional services — each linked to a specialised agent.",
+    a: "Yes. Browse Services for business setup, income tax, GST, trademark, FEMA, ROC secretarial, and 137 other services from our official catalogue — each mapped to a consultant.",
   },
   {
     q: "Can I join as a professional and sell my own agent?",

@@ -1,6 +1,6 @@
 const stats = [
   { value: "17+", label: "AI specialist agents" },
-  { value: "380+", label: "Professional services" },
+  { value: "137", label: "Professional services" },
   { value: "24/7", label: "Consultation access" },
   { value: "3", label: "Channels — WhatsApp, chat, call" },
 ];

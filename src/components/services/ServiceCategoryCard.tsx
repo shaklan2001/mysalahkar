@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useConsult } from "@/components/consult/ConsultProvider";
 import * as Icons from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, UserRound } from "lucide-react";
 
 interface ServiceCategoryCardProps {
   category: ServiceCategory;
@@ -19,75 +19,73 @@ export function ServiceCategoryCard({
   agent,
 }: ServiceCategoryCardProps) {
   const { openConsult } = useConsult();
-  
+
   const IconComponent = (Icons[category.iconName as keyof typeof Icons] ||
     Icons.FileText) as LucideIcon;
 
+  const consultants = Array.from(
+    new Set(category.services.map((s) => s.consultant))
+  );
+
   return (
-    <Card className="overflow-hidden border-2 hover:border-blue-200 transition-all">
-      <CardHeader
-        className="pb-4"
-        style={{ backgroundColor: `${category.color}15` }}
-      >
-        <div className="flex items-start justify-between gap-4">
+    <Card className="overflow-hidden border border-border bg-white shadow-none">
+      <CardHeader className="border-b border-border/80 bg-[#f8fafb] pb-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-4">
             <div
-              className="p-3 rounded-xl shrink-0"
-              style={{ backgroundColor: `${category.color}25` }}
+              className="rounded-lg p-3"
+              style={{ backgroundColor: `${category.color}18` }}
             >
               <IconComponent
-                className="h-8 w-8"
+                className="h-6 w-6"
                 style={{ color: category.color }}
+                strokeWidth={1.75}
               />
             </div>
             <div>
-              <CardTitle className="text-2xl mb-2">
+              <CardTitle className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
                 {category.category}
               </CardTitle>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge
-                  variant="secondary"
-                  style={{
-                    backgroundColor: `${category.color}20`,
-                    color: category.color,
-                  }}
-                >
-                  {category.type}
-                </Badge>
-                <Badge variant="outline">{category.services.length} Services</Badge>
-                {agent && (
-                  <Badge variant="live" className="font-normal">
-                    Consultant: {agent.name}
-                  </Badge>
-                )}
+              <p className="mt-1 text-sm text-muted-foreground">
+                {category.summary}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">{category.services.length} services</Badge>
+                {agent ? (
+                  <Badge variant="outline">AI agent: {agent.name}</Badge>
+                ) : null}
               </div>
+              <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                <UserRound className="h-3.5 w-3.5" />
+                {consultants.slice(0, 3).join(" · ")}
+                {consultants.length > 3 ? ` · +${consultants.length - 3} more` : ""}
+              </p>
             </div>
           </div>
-          {agent && (
+          {agent ? (
             <Button
               onClick={() => openConsult(category.agentSlug)}
-              size="lg"
-              style={{ backgroundColor: category.color }}
-              className="text-white hover:opacity-90 shrink-0"
+              variant="accent"
+              className="shrink-0"
             >
               Consult {agent.name}
             </Button>
-          )}
+          ) : null}
         </div>
       </CardHeader>
 
       <CardContent className="pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {category.services.map((service, idx) => (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {category.services.map((service) => (
             <div
-              key={idx}
-              className="p-4 rounded-lg border bg-white hover:shadow-md transition-shadow"
+              key={service.name}
+              className="rounded-lg border border-border bg-white p-4 transition-colors hover:bg-[#f8fafb]"
             >
-              <h4 className="font-semibold text-sm mb-1 text-gray-900">
+              <h4 className="text-sm font-semibold leading-snug text-foreground">
                 {service.name}
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {service.description}
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                Consultant: {service.consultant}
               </p>
             </div>
           ))}

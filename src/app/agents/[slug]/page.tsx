@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { agents, getAgent } from "@/lib/data/agents";
+import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -59,6 +60,8 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
   if (!agent) {
     notFound();
   }
+
+  const catalogServices = getCatalogServicesForAgentType(agent.type);
 
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919876543210";
@@ -200,13 +203,22 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {agent.services.map((service, idx) => (
+                  {catalogServices.map((service, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span className="text-sm">{service}</span>
                     </div>
                   ))}
                 </div>
+                {catalogServices.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    See the full service catalogue on the{" "}
+                    <Link href="/services" className="font-medium text-accent hover:underline">
+                      services page
+                    </Link>
+                    .
+                  </p>
+                ) : null}
               </CardContent>
             </Card>
 
