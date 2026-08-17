@@ -12,6 +12,7 @@ import { useConsult } from "@/components/consult/ConsultProvider";
 const navItems = [
   { path: "/agents", label: "Agents" },
   { path: "/services", label: "Services" },
+  { path: "/loan-comparison", label: "Smart Loan" },
   { path: "/how-it-works", label: "How it works" },
   { path: "/professionals", label: "For professionals" },
   { path: "/community", label: "Community" },
