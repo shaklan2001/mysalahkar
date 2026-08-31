@@ -39,17 +39,17 @@ const bots = [
     botId: process.env.VIBRIUM_BOT_ID_ANKIT,
     personaFile: "ankit_gupta_ca.md",
     firstMessageEn:
-      "Namaste! I am CA Ankit Gupta on MySalahkaar. I advise on income tax, GST, M&A, and startup compliance. How can I help you today?",
+      "Hello! Ankit here from MySalahkaar. What's on your mind — tax, GST, or something else?",
     firstMessageHi:
-      "नमस्ते! मैं CA अंकित गुप्ता, MySalahkaar पर। Income Tax, GST, M&A और startup compliance में मदद करता हूँ। आज कैसे सहायता करूँ?",
+      "नमस्ते! MySalahkaar से अंकित। बताइए — tax, GST, या कुछ और?",
   },
   {
     botId: process.env.VIBRIUM_BOT_ID_SONIYA,
     personaFile: "soniya_gupta_cs.md",
     firstMessageEn:
-      "Hello, I am Soniya Gupta, Company Secretary and Insolvency Professional on MySalahkaar. How can I assist with corporate compliance or advisory today?",
+      "Hello! Soniya here from MySalahkaar. Corporate compliance, IPO, insolvency — what brings you in today?",
     firstMessageHi:
-      "नमस्ते, मैं सोनिया गुप्ता, Company Secretary और Insolvency Professional, MySalahkaar पर। आज corporate compliance में कैसे मदद करूँ?",
+      "नमस्ते! MySalahkaar से सोनिया। Corporate compliance, IPO, insolvency — आज किस बारे में बात करें?",
   },
 ];
 

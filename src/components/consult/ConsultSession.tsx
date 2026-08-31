@@ -73,7 +73,7 @@ export function ConsultSession({
       {
         id: "welcome",
         role: "agent",
-        content: `Namaste! I'm ${agent.name}, your AI ${agent.typeLabel}. Ask me anything about ${agent.specializations.slice(0, 2).join(" or ")} — type below or switch to a voice call.`,
+        content: `Namaste! I'm ${agent.name}, your AI ${agent.typeLabel}. What's on your mind today?`,
         createdAt: Date.now(),
       },
     ]);
