@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { agents, getAgent } from "@/lib/data/agents";
+import { getAgent, getLiveDemoAgents, isLiveDemoAgent } from "@/lib/data/agents";
 import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -30,7 +30,7 @@ interface AgentProfilePageProps {
 }
 
 export async function generateStaticParams() {
-  return agents.map((agent) => ({
+  return getLiveDemoAgents().map((agent) => ({
     slug: agent.slug,
   }));
 }
@@ -57,7 +57,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
   const { slug } = await params;
   const agent = getAgent(slug);
 
-  if (!agent) {
+  if (!agent || !isLiveDemoAgent(slug)) {
     notFound();
   }
 

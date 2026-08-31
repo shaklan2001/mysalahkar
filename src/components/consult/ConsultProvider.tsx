@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { resolveLiveDemoSlug } from "@/lib/data/agents";
 
 type ConsultContextValue = {
   isOpen: boolean;
@@ -23,7 +24,7 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   const [agentSlug, setAgentSlug] = useState<string | null>(null);
 
   const openConsult = useCallback((slug?: string) => {
-    setAgentSlug(slug ?? null);
+    setAgentSlug(resolveLiveDemoSlug(slug));
     setIsOpen(true);
   }, []);
 
@@ -33,7 +34,7 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ isOpen, agentSlug, openConsult, closeConsult }),
-    [isOpen, agentSlug, openConsult, closeConsult]
+    [isOpen, agentSlug, openConsult, closeConsult],
   );
 
   return (

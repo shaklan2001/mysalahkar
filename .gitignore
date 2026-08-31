@@ -40,6 +40,9 @@ yarn-error.log*
 # local docs & client assets (not for repo)
 /docs
 
+# knowledge base
+/KB
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

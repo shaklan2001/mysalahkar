@@ -1,39 +1,44 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import {
-  MessageSquare,
-  Phone,
-  X,
-  Send,
-  Sparkles,
-  Calendar,
-  ExternalLink,
-} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MessageSquare, Phone, X, Send, Sparkles, Calendar } from "lucide-react";
 import { useConsult } from "./ConsultProvider";
+import { VoiceCallPanel } from "./VoiceCallPanel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { agents, getAgent } from "@/lib/data/agents";
-import { mockAgentProvider } from "@/lib/agent-runtime/mockProvider";
+import {
+  getLiveDemoAgents,
+  getAgent,
+  resolveLiveDemoSlug,
+  isLiveDemoAgent,
+} from "@/lib/data/agents";
+import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
 
-const WHATSAPP =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919876543210";
+function createContactId(agentSlug: string) {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return `salahkar-${agentSlug}-${crypto.randomUUID()}`;
+  }
+  return `salahkar-${agentSlug}-${Date.now()}`;
+}
 
 export function ConsultDock() {
   const { isOpen, closeConsult, agentSlug } = useConsult();
+  const resolvedSlug = resolveLiveDemoSlug(agentSlug ?? undefined);
   const agent = useMemo(
-    () => (agentSlug ? getAgent(agentSlug) : agents[0]),
-    [agentSlug]
+    () => getAgent(resolvedSlug) ?? getLiveDemoAgents()[0],
+    [resolvedSlug],
   );
+
   const [tab, setTab] = useState("chat");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
-  const [callPhase, setCallPhase] = useState<"idle" | "ringing" | "live">("idle");
+  const [callActive, setCallActive] = useState(false);
+  const [contactId, setContactId] = useState("");
   const [showEscalate, setShowEscalate] = useState(false);
   const [escalateForm, setEscalateForm] = useState({
     name: "",
@@ -42,25 +47,36 @@ export function ConsultDock() {
     preferredTime: "",
     note: "",
   });
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!isOpen || !agent) return;
+    setContactId(createContactId(agent.slug));
     setMessages([
       {
         id: "welcome",
         role: "agent",
-        content: `Namaste! I'm ${agent.name}, your AI ${agent.typeLabel}. Ask me anything about ${agent.specializations.slice(0, 2).join(" or ")} — or switch to WhatsApp / Call.`,
+        content: `Namaste! I'm ${agent.name}, your AI ${agent.typeLabel}. Ask me anything about ${agent.specializations.slice(0, 2).join(" or ")} — chat here or switch to a web call.`,
         createdAt: Date.now(),
       },
     ]);
-    setCallPhase("idle");
+    setCallActive(false);
     setTab("chat");
   }, [isOpen, agent]);
+
+  useEffect(() => {
+    if (tab === "call") {
+      setCallActive(true);
+    } else {
+      setCallActive(false);
+    }
+  }, [tab]);
 
   if (!isOpen || !agent) return null;
 
   async function sendMessage() {
     if (!input.trim() || streaming || !agent) return;
+
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
       role: "user",
@@ -70,41 +86,49 @@ export function ConsultDock() {
     setMessages((m) => [...m, userMsg]);
     setInput("");
     setStreaming(true);
+
     const agentId = `a-${Date.now()}`;
     setMessages((m) => [
       ...m,
       { id: agentId, role: "agent", content: "", createdAt: Date.now() },
     ]);
+
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     try {
-      await mockAgentProvider.streamReply(
+      const provider = getAgentProvider(agent.slug);
+      await provider.streamReply(
         agent.slug,
         userMsg.content,
         (chunk) => {
           setMessages((m) =>
             m.map((msg) =>
-              msg.id === agentId
-                ? { ...msg, content: msg.content + chunk }
-                : msg
-            )
+              msg.id === agentId ? { ...msg, content: msg.content + chunk } : msg,
+            ),
           );
-        }
+        },
+        abortRef.current.signal,
       );
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      const message =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === agentId
+            ? {
+                ...msg,
+                content:
+                  "I'm having trouble connecting right now. Please try again in a moment.",
+              }
+            : msg,
+        ),
+      );
+      toast.error(message);
     } finally {
       setStreaming(false);
     }
-  }
-
-  function startCall() {
-    setCallPhase("ringing");
-    setTimeout(() => setCallPhase("live"), 1800);
-  }
-
-  function whatsappHref() {
-    if (!agent) return "";
-    const text = encodeURIComponent(
-      `Hi ${agent.name}, I'd like to consult on ${agent.specializations[0]}.`
-    );
-    return `https://wa.me/${WHATSAPP}?text=${text}`;
   }
 
   async function submitEscalation(e: React.FormEvent) {
@@ -135,6 +159,8 @@ export function ConsultDock() {
     }
   }
 
+  const liveConfigured = isLiveDemoAgent(agent.slug);
+
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-end p-0 sm:items-end sm:justify-end sm:p-6">
       <button
@@ -151,7 +177,7 @@ export function ConsultDock() {
             <div>
               <p className="font-semibold leading-tight">{agent.name}</p>
               <p className="text-xs text-teal-200/90">
-                AI {agent.typeLabel} · Live now
+                AI {agent.typeLabel} · {liveConfigured ? "Live demo" : "Offline"}
               </p>
             </div>
           </div>
@@ -165,12 +191,11 @@ export function ConsultDock() {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
-          <TabsList className="mx-4 mt-3 grid w-auto grid-cols-3">
+          <TabsList className="mx-4 mt-3 grid w-auto grid-cols-2">
             <TabsTrigger value="chat">
               <MessageSquare className="mr-1 h-3.5 w-3.5" />
               Chat
             </TabsTrigger>
-            <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
             <TabsTrigger value="call">
               <Phone className="mr-1 h-3.5 w-3.5" />
               Call
@@ -221,70 +246,20 @@ export function ConsultDock() {
             </div>
           </TabsContent>
 
-          <TabsContent value="whatsapp" className="flex flex-1 flex-col px-4 pb-4">
-            <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                <MessageSquare className="h-8 w-8" />
+          <TabsContent value="call" className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+            {liveConfigured && contactId ? (
+              <VoiceCallPanel
+                agentSlug={agent.slug}
+                agentName={agent.name}
+                contactId={contactId}
+                active={callActive}
+                onEnded={() => setCallActive(false)}
+              />
+            ) : (
+              <div className="flex flex-1 items-center justify-center text-sm text-slate-600">
+                Voice demo is not available for this agent.
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  Continue on WhatsApp
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">
-                  {agent.name} will pick up your thread with full context — same
-                  expertise, on the channel you already use.
-                </p>
-              </div>
-              <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
-                <a href={whatsappHref()} target="_blank" rel="noreferrer">
-                  Open WhatsApp
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              </Button>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="call" className="flex flex-1 flex-col px-4 pb-4">
-            <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-primary">
-                <Phone className={`h-9 w-9 ${callPhase === "ringing" ? "animate-pulse" : ""}`} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  {callPhase === "idle" && `Call ${agent.name}`}
-                  {callPhase === "ringing" && "Connecting…"}
-                  {callPhase === "live" && "Connected"}
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">
-                  {callPhase === "live"
-                    ? `${agent.name} is on the line. Speak naturally — transcripts update live.`
-                    : "Voice consultation with your AI SME. Same knowledge as chat, spoken."}
-                </p>
-              </div>
-              {callPhase === "live" && (
-                <div className="w-full rounded-xl bg-slate-50 p-3 text-left text-sm text-slate-700">
-                  <p className="font-medium text-primary">{agent.name}</p>
-                  <p className="mt-1">
-                    {agent.sampleChat[0]?.text ||
-                      "I'm listening — how can I help with your query today?"}
-                  </p>
-                </div>
-              )}
-              {callPhase === "idle" ? (
-                <Button onClick={startCall}>
-                  <Phone className="h-4 w-4" />
-                  Start call
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={() => setCallPhase("idle")}
-                  className="border-red-200 text-red-600 hover:bg-red-50"
-                >
-                  End call
-                </Button>
-              )}
-            </div>
+            )}
           </TabsContent>
         </Tabs>
 

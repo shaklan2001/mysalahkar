@@ -1,4 +1,4 @@
-import { agents } from "@/lib/data/agents";
+import { getLiveDemoAgents } from "@/lib/data/agents";
 import { AgentsDirectory } from "@/components/agents/AgentsDirectory";
 import { PageHero } from "@/components/layout/PageHero";
 import { Metadata } from "next";
@@ -23,10 +23,10 @@ export default async function AgentsPage({ searchParams }: AgentsPageProps) {
       <PageHero
         eyebrow="AI Agents"
         title="Find the right professional consultant."
-        description="Connect with specialised AI agents for tax, legal, compliance, wealth, and more — available 24/7 on WhatsApp, chat, or call."
+        description="Try live AI consultants on MySalahkaar — web chat and voice call, available now."
       />
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <AgentsDirectory agents={agents} searchParams={params} />
+        <AgentsDirectory agents={getLiveDemoAgents()} searchParams={params} />
       </div>
     </div>
   );

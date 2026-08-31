@@ -9,7 +9,8 @@ export type AgentProvider = {
   streamReply: (
     agentSlug: string,
     userMessage: string,
-    onChunk: (chunk: string) => void
+    onChunk: (chunk: string) => void,
+    signal?: AbortSignal,
   ) => Promise<void>;
   requestHumanCall?: (payload: Record<string, unknown>) => Promise<void>;
 };
