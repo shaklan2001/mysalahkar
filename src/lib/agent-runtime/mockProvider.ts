@@ -104,12 +104,14 @@ const generateFallbackResponse = (agent: Agent, userMessage: string): string => 
  */
 const streamText = async (
   text: string,
-  onChunk: (chunk: string) => void
+  onChunk: (assembled: string) => void,
 ): Promise<void> => {
-  const words = text.split(/(\s+)/); // Split but keep whitespace
-  
+  const words = text.split(/(\s+)/);
+  let assembled = "";
+
   for (const word of words) {
-    onChunk(word);
+    assembled += word;
+    onChunk(assembled);
     await sleep(randomDelay(18, 35));
   }
 };

@@ -391,11 +391,19 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                           </Link>
                         </Button>
                         <Button
-                          onClick={() => openConsult(agent.slug)}
+                          onClick={() => openConsult(agent.slug, "chat")}
                           size="sm"
                         >
                           <MessageSquare className="h-4 w-4 mr-2" />
-                          Consult Now
+                          Chat
+                        </Button>
+                        <Button
+                          onClick={() => openConsult(agent.slug, "call")}
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          Call
                         </Button>
                       </div>
                     </div>

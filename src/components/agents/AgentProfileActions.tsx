@@ -11,10 +11,6 @@ interface AgentProfileActionsProps {
 
 export function AgentProfileActions({ agentSlug, agentName }: AgentProfileActionsProps) {
   const { openConsult } = useConsult();
-  
-  const whatsappNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919876543210";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi, I want to consult with ${agentName}`;
 
   const handleDownloadProfile = () => {
     alert("Profile PDF download coming soon!");
@@ -23,24 +19,22 @@ export function AgentProfileActions({ agentSlug, agentName }: AgentProfileAction
   return (
     <div className="space-y-3">
       <Button
-        onClick={() => openConsult(agentSlug)}
+        onClick={() => openConsult(agentSlug, "chat")}
         className="w-full"
         size="lg"
       >
-        <MessageSquare className="h-5 w-5 mr-2" />
-        Consult Now
+        <MessageSquare className="mr-2 h-5 w-5" />
+        Start Chat
       </Button>
 
       <Button
-        asChild
+        onClick={() => openConsult(agentSlug, "call")}
         variant="outline"
         className="w-full"
         size="lg"
       >
-        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-          <Phone className="h-5 w-5 mr-2" />
-          WhatsApp
-        </a>
+        <Phone className="mr-2 h-5 w-5" />
+        Start Call
       </Button>
 
       <Button
@@ -49,7 +43,7 @@ export function AgentProfileActions({ agentSlug, agentName }: AgentProfileAction
         className="w-full"
         size="lg"
       >
-        <Download className="h-5 w-5 mr-2" />
+        <Download className="mr-2 h-5 w-5" />
         Download Profile
       </Button>
     </div>

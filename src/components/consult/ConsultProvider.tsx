@@ -1,40 +1,46 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
   useContext,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
 import { resolveLiveDemoSlug } from "@/lib/data/agents";
 
+export type ConsultMode = "chat" | "call";
+
 type ConsultContextValue = {
-  isOpen: boolean;
-  agentSlug: string | null;
-  openConsult: (agentSlug?: string) => void;
+  openConsult: (agentSlug?: string, mode?: ConsultMode) => void;
   closeConsult: () => void;
 };
 
 const ConsultContext = createContext<ConsultContextValue | null>(null);
 
 export function ConsultProvider({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [agentSlug, setAgentSlug] = useState<string | null>(null);
+  const router = useRouter();
 
-  const openConsult = useCallback((slug?: string) => {
-    setAgentSlug(resolveLiveDemoSlug(slug));
-    setIsOpen(true);
-  }, []);
+  const openConsult = useCallback(
+    (slug?: string, mode: ConsultMode = "chat") => {
+      const resolved = resolveLiveDemoSlug(slug);
+      router.push(`/consult/${resolved}?mode=${mode}`);
+    },
+    [router],
+  );
 
   const closeConsult = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/agents");
+    }
+  }, [router]);
 
   const value = useMemo(
-    () => ({ isOpen, agentSlug, openConsult, closeConsult }),
-    [isOpen, agentSlug, openConsult, closeConsult],
+    () => ({ openConsult, closeConsult }),
+    [openConsult, closeConsult],
   );
 
   return (

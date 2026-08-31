@@ -35,6 +35,7 @@ type VoiceCallPanelProps = {
   contactId: string;
   active: boolean;
   onEnded: () => void;
+  fullScreen?: boolean;
 };
 
 export function VoiceCallPanel({
@@ -43,6 +44,7 @@ export function VoiceCallPanel({
   contactId,
   active,
   onEnded,
+  fullScreen = false,
 }: VoiceCallPanelProps) {
   const roomRef = useRef<Room | null>(null);
   const audioContainerRef = useRef<HTMLDivElement | null>(null);
@@ -226,19 +228,23 @@ export function VoiceCallPanel({
   const isActive = status === "connected" || status === "reconnecting";
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className={`flex flex-1 flex-col ${fullScreen ? "px-6 py-8" : ""}`}>
       <div ref={audioContainerRef} className="hidden" aria-hidden />
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+      <div
+        className={`flex flex-1 flex-col items-center justify-center gap-6 text-center ${
+          fullScreen ? "mx-auto max-w-2xl w-full" : ""
+        }`}
+      >
         <div
-          className={`flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-primary ${
-            status === "connecting" || status === "reconnecting" ? "animate-pulse" : ""
-          }`}
+          className={`flex items-center justify-center rounded-full bg-blue-50 text-primary ${
+            fullScreen ? "h-28 w-28" : "h-20 w-20"
+          } ${status === "connecting" || status === "reconnecting" ? "animate-pulse" : ""}`}
         >
           {status === "connecting" || status === "reconnecting" ? (
-            <Loader2 className="h-9 w-9 animate-spin" />
+            <Loader2 className={fullScreen ? "h-12 w-12 animate-spin" : "h-9 w-9 animate-spin"} />
           ) : (
-            <Mic className="h-9 w-9" />
+            <Mic className={fullScreen ? "h-12 w-12" : "h-9 w-9"} />
           )}
         </div>
 
@@ -263,7 +269,9 @@ export function VoiceCallPanel({
         {transcripts.length > 0 && (
           <div
             ref={scrollRef}
-            className="max-h-40 w-full overflow-y-auto rounded-xl bg-slate-50 p-3 text-left text-sm text-slate-700"
+            className={`w-full overflow-y-auto rounded-xl bg-slate-50 p-4 text-left text-sm text-slate-700 ${
+              fullScreen ? "max-h-64" : "max-h-40"
+            }`}
           >
             {transcripts.map((line) => (
               <div key={line.id} className="mb-2 last:mb-0">
