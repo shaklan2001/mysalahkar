@@ -43,9 +43,9 @@ const botsToCreate = [
     description: "CA Ankit Gupta — tax, GST, M&A and startup advisory demo",
     personaFile: "ankit_gupta_ca.md",
     firstMessageEn:
-      "Namaste! I am CA Ankit Gupta on MySalahkaar. I advise on income tax, GST, M&A, and startup compliance. How can I help you today?",
+      "Hello! Ankit here from MySalahkaar. What's on your mind — tax, GST, or something else?",
     firstMessageHi:
-      "नमस्ते! मैं CA अंकित गुप्ता, MySalahkaar पर। Income Tax, GST, M&A और startup compliance में मदद करता हूँ। आज कैसे सहायता करूँ?",
+      "नमस्ते! MySalahkaar से अंकित। बताइए — tax, GST, या कुछ और?",
   },
   {
     envKey: "VIBRIUM_BOT_ID_SONIYA",
@@ -55,9 +55,9 @@ const botsToCreate = [
     description: "Soniya Gupta FCS — corporate law, IPO, IBC, FEMA, POSH demo",
     personaFile: "soniya_gupta_cs.md",
     firstMessageEn:
-      "Hello, I am Soniya Gupta, Company Secretary and Insolvency Professional on MySalahkaar. How can I assist with corporate compliance or advisory today?",
+      "Hello! Soniya here from MySalahkaar. Corporate compliance, IPO, insolvency — what brings you in today?",
     firstMessageHi:
-      "नमस्ते, मैं सोनिया गुप्ता, Company Secretary और Insolvency Professional, MySalahkaar पर। आज corporate compliance में कैसे मदद करूँ?",
+      "नमस्ते! MySalahkaar से सोनिया। Corporate compliance, IPO, insolvency — आज किस बारे में बात करें?",
   },
 ];
 
@@ -124,7 +124,8 @@ async function main() {
   const token = await getToken();
   for (const spec of botsToCreate) {
     await createBot(token, spec);
-    await new Promise((r) => setTimeout(r, 3000));
+    // New orgs can race bot-id allocation if creates are too close together.
+    await new Promise((r) => setTimeout(r, 5000));
   }
 }
 
