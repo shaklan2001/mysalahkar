@@ -1,17 +1,18 @@
-import { getLiveDemoAgents } from "@/lib/data/agents";
+import { getMarketplaceListings } from "@/lib/data/marketplace";
 import { AgentsDirectory } from "@/components/agents/AgentsDirectory";
 import { PageHero } from "@/components/layout/PageHero";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Professional Consultants",
+  title: "Find Professionals",
   description:
-    "Browse expert AI consultants for tax, legal, compliance, wealth management, and more. Get professional advice 24/7.",
+    "Browse AI consultants and verified human professionals for tax, legal, compliance, and more on MySalahkaar.",
 };
 
 interface AgentsPageProps {
   searchParams: Promise<{
     type?: string;
+    kind?: string;
   }>;
 }
 
@@ -21,12 +22,12 @@ export default async function AgentsPage({ searchParams }: AgentsPageProps) {
   return (
     <div>
       <PageHero
-        eyebrow="AI Agents"
-        title="Find the right professional consultant."
-        description="Try live AI consultants on MySalahkaar — web chat and voice call, available now."
+        eyebrow="Find Professionals"
+        title="AI agents and verified human consultants."
+        description="Chat or call with live AI specialists anytime — or schedule a call with a verified human professional when you want personal attention."
       />
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <AgentsDirectory agents={getLiveDemoAgents()} searchParams={params} />
+        <AgentsDirectory agents={getMarketplaceListings()} searchParams={params} />
       </div>
     </div>
   );

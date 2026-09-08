@@ -20,7 +20,7 @@ export default function NotFound() {
             <Link href="/">Go home</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="/agents">Browse AI agents</Link>
+            <Link href="/agents">Find professionals</Link>
           </Button>
         </div>
       </div>

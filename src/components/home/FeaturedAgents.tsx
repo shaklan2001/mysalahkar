@@ -12,21 +12,21 @@ export function FeaturedAgents() {
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-              AI Agents
+              Find Professionals
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-[2rem]">
-              Specialists you can talk to today.
+              AI specialists and human consultants.
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Each agent is trained on a professional domain — available around
-              the clock.
+              Talk to live AI agents anytime — or schedule a call with a verified
+              human professional.
             </p>
           </div>
           <Link
             href="/agents"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground hover:text-accent"
           >
-            Browse all agents
+            Browse all professionals
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>

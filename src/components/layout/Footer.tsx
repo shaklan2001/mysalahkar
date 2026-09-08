@@ -3,7 +3,7 @@ import { MySalahkarLogo } from "@/components/brand/MySalahkarLogo";
 
 const product = [
   ["/", "Home"],
-  ["/agents", "AI Agents"],
+  ["/agents", "Find Professionals"],
   ["/services", "Services"],
   ["/how-it-works", "How it works"],
 ];
@@ -11,8 +11,7 @@ const product = [
 const company = [
   ["/about", "About"],
   ["/professionals", "For professionals"],
-  ["/community", "Community"],
-  ["/learning", "Learning"],
+  ["/daily-digest", "Daily Digest"],
   ["/contact", "Contact"],
   ["/security", "Security"],
 ];

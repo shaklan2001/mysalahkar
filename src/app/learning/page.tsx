@@ -1,31 +1,32 @@
 import { Metadata } from "next";
-import { LearningHero } from "@/components/learning/LearningHero";
-import { LearningContent } from "@/components/learning/LearningContent";
-import { LearningSidebar } from "@/components/learning/LearningSidebar";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Professional Learning | My Salahkar",
-  description:
-    "Master taxation, corporate law, compliance, and financial management with expert-led courses. Live workshops and recorded sessions from India's top professionals.",
+  title: "Learning (on hold) | My Salahkar",
+  description: "Professional learning is temporarily on hold.",
 };
 
-export default function LearningPage() {
+export default function LearningOnHoldPage() {
   return (
-    <div>
-      <LearningHero />
-
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <LearningContent />
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <LearningSidebar />
-          </div>
-        </div>
+    <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+        On hold
+      </p>
+      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight">
+        Learning is paused for now
+      </h1>
+      <p className="mt-4 text-muted-foreground">
+        We&apos;re focusing on Find Professionals, live AI consultations, and
+        verified human specialists. Check Daily Digest for updates in the meantime.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Button asChild>
+          <Link href="/agents">Find Professionals</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/daily-digest">Daily Digest</Link>
+        </Button>
       </div>
     </div>
   );

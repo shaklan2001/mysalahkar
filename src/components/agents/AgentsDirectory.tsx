@@ -1,7 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Agent, AgentType, SPECIALIZATIONS } from "@/lib/data/agents";
+import { useState, useMemo, useEffect } from "react";
+import { AgentType, SPECIALIZATIONS } from "@/lib/data/agents";
+import {
+  canChatOrCall,
+  canScheduleHuman,
+  listingToAgentShape,
+  type ListingKind,
+  type MarketplaceListing,
+} from "@/lib/data/marketplace";
+import { listApprovedApplications } from "@/lib/applications-store";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -17,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatINR } from "@/lib/utils";
 import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { useConsult } from "@/components/consult/ConsultProvider";
+import { ScheduleCallDialog } from "@/components/agents/ScheduleCallDialog";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -31,9 +40,10 @@ import {
 } from "lucide-react";
 
 interface AgentsDirectoryProps {
-  agents: Agent[];
+  agents: MarketplaceListing[];
   searchParams?: {
     type?: string;
+    kind?: string;
   };
 }
 
@@ -49,15 +59,36 @@ const AGENT_TYPES: { value: AgentType; label: string }[] = [
   { value: "Lending", label: "Lending Advisor" },
 ];
 
+function kindLabel(kind: ListingKind) {
+  if (kind === "human") return "Human professional";
+  if (kind === "both") return "AI + Human";
+  return "AI agent";
+}
+
 export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) {
   const { openConsult } = useConsult();
+  const [extraListings, setExtraListings] = useState<MarketplaceListing[]>([]);
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<AgentType | "all">(
-    (searchParams?.type as AgentType) || "all"
+    (searchParams?.type as AgentType) || "all",
   );
-  const [selectedSpecialization, setSelectedSpecialization] = useState<string>("all");
+  const [selectedKind, setSelectedKind] = useState<ListingKind | "all">(
+    (searchParams?.kind as ListingKind) || "all",
+  );
+  const [selectedSpecialization, setSelectedSpecialization] = useState("all");
   const [minRating, setMinRating] = useState([0]);
   const [minExperience, setMinExperience] = useState([0]);
+
+  useEffect(() => {
+    const approved = listApprovedApplications().map(listingToAgentShape);
+    const existing = new Set(agents.map((a) => a.slug));
+    setExtraListings(approved.filter((a) => !existing.has(a.slug)));
+  }, [agents]);
+
+  const allListings = useMemo(
+    () => [...agents, ...extraListings],
+    [agents, extraListings],
+  );
 
   const availableSpecializations = useMemo(() => {
     if (selectedType === "all") return [];
@@ -65,54 +96,63 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
   }, [selectedType]);
 
   const filteredAgents = useMemo(() => {
-    return agents.filter((agent) => {
-      if (search && !agent.name.toLowerCase().includes(search.toLowerCase()) &&
-          !agent.specializations.some(s => s.toLowerCase().includes(search.toLowerCase())) &&
-          !agent.typeLabel.toLowerCase().includes(search.toLowerCase())) {
+    return allListings.filter((agent) => {
+      if (
+        search &&
+        !agent.name.toLowerCase().includes(search.toLowerCase()) &&
+        !agent.specializations.some((s) =>
+          s.toLowerCase().includes(search.toLowerCase()),
+        ) &&
+        !agent.typeLabel.toLowerCase().includes(search.toLowerCase())
+      ) {
         return false;
       }
-
-      if (selectedType !== "all" && agent.type !== selectedType) {
+      if (selectedType !== "all" && agent.type !== selectedType) return false;
+      if (selectedKind !== "all" && agent.listingKind !== selectedKind) {
         return false;
       }
-
-      if (selectedSpecialization !== "all" && 
-          !agent.specializations.includes(selectedSpecialization)) {
+      if (
+        selectedSpecialization !== "all" &&
+        !agent.specializations.includes(selectedSpecialization)
+      ) {
         return false;
       }
-
-      if (agent.rating < minRating[0]) {
-        return false;
-      }
-
-      if (agent.experience < minExperience[0]) {
-        return false;
-      }
-
+      if (agent.rating < minRating[0]) return false;
+      if (agent.experience < minExperience[0]) return false;
       return true;
     });
-  }, [agents, search, selectedType, selectedSpecialization, minRating, minExperience]);
-
-  const clearFilters = () => {
-    setSearch("");
-    setSelectedType("all");
-    setSelectedSpecialization("all");
-    setMinRating([0]);
-    setMinExperience([0]);
-  };
+  }, [
+    allListings,
+    search,
+    selectedType,
+    selectedKind,
+    selectedSpecialization,
+    minRating,
+    minExperience,
+  ]);
 
   const hasActiveFilters =
     search !== "" ||
     selectedType !== "all" ||
+    selectedKind !== "all" ||
     selectedSpecialization !== "all" ||
     minRating[0] > 0 ||
     minExperience[0] > 0;
 
+  function clearFilters() {
+    setSearch("");
+    setSelectedType("all");
+    setSelectedKind("all");
+    setSelectedSpecialization("all");
+    setMinRating([0]);
+    setMinExperience([0]);
+  }
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
       <aside className="lg:col-span-1">
         <Card className="sticky top-24">
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="space-y-6 p-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold">Filters</h3>
               {hasActiveFilters && (
@@ -122,18 +162,16 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                   onClick={clearFilters}
                   className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
                 >
-                  <X className="h-3 w-3 mr-1" />
+                  <X className="mr-1 h-3 w-3" />
                   Clear
                 </Button>
               )}
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">
-                Search
-              </label>
+              <label className="text-sm font-semibold text-foreground">Search</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Name or expertise..."
                   value={search}
@@ -141,6 +179,28 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                   className="pl-9"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">
+                Listing type
+              </label>
+              <Select
+                value={selectedKind}
+                onValueChange={(value) =>
+                  setSelectedKind(value as ListingKind | "all")
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="ai">AI agents</SelectItem>
+                  <SelectItem value="human">Human professionals</SelectItem>
+                  <SelectItem value="both">AI + Human</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -197,17 +257,15 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                 <label className="text-sm font-semibold text-foreground">
                   Min Rating
                 </label>
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-sm text-muted-foreground">
                   {minRating[0].toFixed(1)}+
                 </span>
               </div>
               <Slider
                 value={minRating}
                 onValueChange={setMinRating}
-                min={0}
                 max={5}
                 step={0.5}
-                className="w-full"
               />
             </div>
 
@@ -216,39 +274,39 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                 <label className="text-sm font-semibold text-foreground">
                   Min Experience
                 </label>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {minExperience[0]}+ years
+                <span className="text-sm text-muted-foreground">
+                  {minExperience[0]}+ yrs
                 </span>
               </div>
               <Slider
                 value={minExperience}
                 onValueChange={setMinExperience}
-                min={0}
-                max={20}
+                max={25}
                 step={1}
-                className="w-full"
               />
             </div>
           </CardContent>
         </Card>
       </aside>
 
-      <div className="lg:col-span-3 space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="lg:col-span-3">
+        <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            {filteredAgents.length} {filteredAgents.length === 1 ? "consultant" : "consultants"} found
+            Showing{" "}
+            <span className="font-semibold text-foreground">
+              {filteredAgents.length}
+            </span>{" "}
+            professional{filteredAgents.length !== 1 ? "s" : ""}
           </p>
         </div>
 
         {filteredAgents.length === 0 ? (
-          <Card className="p-12">
-            <div className="text-center space-y-3">
-              <div className="mx-auto w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
-                <Search className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-bold">No consultants found</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                Try adjusting your filters or search criteria to find the right professional consultant.
+          <Card className="p-12 text-center">
+            <div className="space-y-3">
+              <p className="text-lg font-semibold">No professionals found</p>
+              <p className="mx-auto max-w-sm text-sm text-muted-foreground">
+                Try adjusting your filters to find the right AI agent or human
+                consultant.
               </p>
               {hasActiveFilters && (
                 <Button onClick={clearFilters} variant="outline" className="mt-4">
@@ -259,118 +317,129 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
           </Card>
         ) : (
           <div className="grid gap-6">
-            {filteredAgents.map((agent) => (
-              <Card key={agent.slug} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex flex-col sm:flex-row gap-6">
-                    <div className="flex-shrink-0">
-                      <div className="relative w-24 h-24 rounded-xl overflow-hidden">
-                        <Image
-                          src={agent.image}
-                          alt={agent.name}
-                          fill
-                          className="object-cover"
-                        />
+            {filteredAgents.map((agent) => {
+              const showAi = canChatOrCall(agent) && Boolean(agent.liveDemo);
+              const showSchedule = canScheduleHuman(agent);
+              return (
+                <Card
+                  key={agent.slug}
+                  className="overflow-hidden transition-shadow hover:shadow-lg"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex flex-col gap-6 sm:flex-row">
+                      <div className="flex-shrink-0">
+                        <div className="relative h-24 w-24 overflow-hidden rounded-xl">
+                          <Image
+                            src={agent.image}
+                            alt={agent.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex-1 min-w-0 space-y-4">
-                      <div>
-                        <div className="flex items-start justify-between gap-4 mb-2">
-                          <div>
-                            <Link
-                              href={`/agents/${agent.slug}`}
-                              className="text-xl font-bold hover:text-primary transition-colors"
-                            >
-                              {agent.name}
-                            </Link>
-                            <Badge variant="secondary" className="ml-2">
-                              {agent.typeLabel}
-                            </Badge>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <div className="text-2xl font-bold text-primary">
-                              {formatINR(agent.consultationFee)}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              per consultation
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold text-foreground">
-                              {agent.rating}
-                            </span>
-                            <span>({agent.reviewCount} reviews)</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-4 w-4" />
-                            <span>{agent.location}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Briefcase className="h-4 w-4" />
-                            <span>{agent.experience} years exp.</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            <span>{agent.availability}</span>
-                          </div>
-                        </div>
-
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                          {agent.bio}
-                        </p>
-
-                        <div className="space-y-2">
-                          <div>
-                            <p className="text-xs font-semibold text-foreground mb-1">
-                              Key Services
-                            </p>
-                            <div className="flex flex-wrap gap-1">
-                              {(() => {
-                                const services = getCatalogServicesForAgentType(agent.type);
-                                return (
-                                  <>
-                                    {services.slice(0, 3).map((service, idx) => (
-                                      <Badge key={idx} variant="outline" className="text-xs">
-                                        {service}
-                                      </Badge>
-                                    ))}
-                                    {services.length > 3 ? (
-                                      <Badge variant="outline" className="text-xs">
-                                        +{services.length - 3} more
-                                      </Badge>
-                                    ) : null}
-                                  </>
-                                );
-                              })()}
-                            </div>
-                          </div>
-
-                          <div>
-                            <p className="text-xs font-semibold text-foreground mb-1">
-                              Specializations
-                            </p>
-                            <div className="flex flex-wrap gap-1">
-                              {agent.specializations.map((spec, idx) => (
-                                <Badge key={idx} variant="success" className="text-xs">
-                                  {spec}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            {agent.channels.map((channel) => (
-                              <Badge key={channel} variant="live" className="text-xs">
-                                {channel === "whatsapp" && "WhatsApp"}
-                                {channel === "chat" && "Chat"}
-                                {channel === "call" && "Call"}
+                      <div className="min-w-0 flex-1 space-y-4">
+                        <div>
+                          <div className="mb-2 flex items-start justify-between gap-4">
+                            <div>
+                              <Link
+                                href={`/agents/${agent.slug}`}
+                                className="text-xl font-bold transition-colors hover:text-primary"
+                              >
+                                {agent.name}
+                              </Link>
+                              <Badge variant="secondary" className="ml-2">
+                                {agent.typeLabel}
                               </Badge>
-                            ))}
+                              <Badge variant="outline" className="ml-2">
+                                {kindLabel(agent.listingKind)}
+                              </Badge>
+                            </div>
+                            <div className="flex-shrink-0 text-right">
+                              <div className="text-2xl font-bold text-primary">
+                                {formatINR(agent.consultationFee)}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                per consultation
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mb-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="font-semibold text-foreground">
+                                {agent.rating}
+                              </span>
+                              <span>({agent.reviewCount} reviews)</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              <span>{agent.location}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Briefcase className="h-4 w-4" />
+                              <span>{agent.experience} years exp.</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-4 w-4" />
+                              <span>{agent.availability}</span>
+                            </div>
+                          </div>
+
+                          <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
+                            {agent.bio}
+                          </p>
+
+                          <div className="space-y-2">
+                            <div>
+                              <p className="mb-1 text-xs font-semibold text-foreground">
+                                Key Services
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {(() => {
+                                  const services = getCatalogServicesForAgentType(
+                                    agent.type,
+                                  );
+                                  return (
+                                    <>
+                                      {services.slice(0, 3).map((service, idx) => (
+                                        <Badge
+                                          key={idx}
+                                          variant="outline"
+                                          className="text-xs"
+                                        >
+                                          {service}
+                                        </Badge>
+                                      ))}
+                                      {services.length > 3 ? (
+                                        <Badge variant="outline" className="text-xs">
+                                          +{services.length - 3} more
+                                        </Badge>
+                                      ) : null}
+                                    </>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="mb-1 text-xs font-semibold text-foreground">
+                                Specializations
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {agent.specializations.map((spec, idx) => (
+                                  <Badge
+                                    key={idx}
+                                    variant="success"
+                                    className="text-xs"
+                                  >
+                                    {spec}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+
                             {agent.liveTag && (
                               <Badge variant="live" className="text-xs">
                                 {agent.liveTag}
@@ -378,39 +447,44 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                             )}
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex flex-wrap gap-3 pt-2">
-                        <Button
-                          asChild
-                          variant="outline"
-                          size="sm"
-                        >
-                          <Link href={`/agents/${agent.slug}`}>
-                            View Profile
-                          </Link>
-                        </Button>
-                        <Button
-                          onClick={() => openConsult(agent.slug, "chat")}
-                          size="sm"
-                        >
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          Chat
-                        </Button>
-                        <Button
-                          onClick={() => openConsult(agent.slug, "call")}
-                          variant="outline"
-                          size="sm"
-                        >
-                          <Phone className="h-4 w-4 mr-2" />
-                          Call
-                        </Button>
+                        <div className="flex flex-wrap gap-3 pt-2">
+                          <Button asChild variant="outline" size="sm">
+                            <Link href={`/agents/${agent.slug}`}>View Profile</Link>
+                          </Button>
+                          {showAi && (
+                            <>
+                              <Button
+                                onClick={() => openConsult(agent.slug, "chat")}
+                                size="sm"
+                              >
+                                <MessageSquare className="mr-2 h-4 w-4" />
+                                Chat
+                              </Button>
+                              <Button
+                                onClick={() => openConsult(agent.slug, "call")}
+                                variant="outline"
+                                size="sm"
+                              >
+                                <Phone className="mr-2 h-4 w-4" />
+                                Call
+                              </Button>
+                            </>
+                          )}
+                          {showSchedule && (
+                            <ScheduleCallDialog
+                              professionalName={agent.name}
+                              professionalSlug={agent.slug}
+                              triggerVariant={showAi ? "outline" : "default"}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

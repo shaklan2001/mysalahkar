@@ -30,7 +30,7 @@ export function HowItWorksCTA() {
               variant="outline"
               className="border-white/20 bg-transparent text-white hover:bg-white/10"
             >
-              <Link href="/agents">Browse AI agents</Link>
+              <Link href="/agents">Browse professionals</Link>
             </Button>
           </div>
         </div>

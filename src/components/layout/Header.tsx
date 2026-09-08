@@ -10,12 +10,11 @@ import { cn } from "@/lib/utils";
 import { useConsult } from "@/components/consult/ConsultProvider";
 
 const navItems = [
-  { path: "/agents", label: "Agents" },
+  { path: "/agents", label: "Find Professionals" },
   { path: "/services", label: "Services" },
   { path: "/how-it-works", label: "How it works" },
   { path: "/professionals", label: "For professionals" },
-  { path: "/community", label: "Community" },
-  { path: "/learning", label: "Learning" },
+  { path: "/daily-digest", label: "Daily Digest" },
 ];
 
 export function Header() {

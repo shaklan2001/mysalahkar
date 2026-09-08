@@ -3,16 +3,29 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, FileUp, Bot, User, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { professionalDomains } from "@/lib/data/professional";
+import {
+  slugifyName,
+  type ListingDocument,
+  type ListingKind,
+} from "@/lib/data/marketplace";
+import { saveApplication } from "@/lib/applications-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const steps = ["You", "Credentials", "Your agent", "Review"];
+const steps = [
+  "You",
+  "Credentials",
+  "Listing type",
+  "Documents",
+  "Profile",
+  "Review",
+];
 
 type FormState = {
   name: string;
@@ -23,11 +36,12 @@ type FormState = {
   credentials: string;
   city: string;
   membershipId: string;
-  agentName: string;
+  listingKind: ListingKind;
+  displayName: string;
   tagline: string;
   bio: string;
   fee: string;
-  channels: string[];
+  documents: ListingDocument[];
 };
 
 const initial: FormState = {
@@ -39,12 +53,39 @@ const initial: FormState = {
   credentials: "",
   city: "",
   membershipId: "",
-  agentName: "",
+  listingKind: "human",
+  displayName: "",
   tagline: "",
   bio: "",
   fee: "2500",
-  channels: ["whatsapp", "chat", "call"],
+  documents: [],
 };
+
+const listingOptions: {
+  id: ListingKind;
+  title: string;
+  desc: string;
+  icon: typeof User;
+}[] = [
+  {
+    id: "human",
+    title: "List myself (human)",
+    desc: "Clients schedule a call with you. No AI chat.",
+    icon: User,
+  },
+  {
+    id: "ai",
+    title: "AI agent only",
+    desc: "Your branded AI handles chat and voice. You escalate when needed.",
+    icon: Bot,
+  },
+  {
+    id: "both",
+    title: "AI agent + myself",
+    desc: "AI for instant help; clients can also schedule a human call with you.",
+    icon: Users,
+  },
+];
 
 export function SignupWizard() {
   const router = useRouter();
@@ -56,12 +97,17 @@ export function SignupWizard() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  function toggleChannel(ch: string) {
+  function addDocument(kind: ListingDocument["kind"], file: File | null) {
+    if (!file) return;
+    const doc: ListingDocument = {
+      id: `doc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      name: file.name,
+      kind,
+      fileName: file.name,
+    };
     setForm((f) => ({
       ...f,
-      channels: f.channels.includes(ch)
-        ? f.channels.filter((c) => c !== ch)
-        : [...f.channels, ch],
+      documents: [...f.documents.filter((d) => d.kind !== kind), doc],
     }));
   }
 
@@ -73,17 +119,47 @@ export function SignupWizard() {
       return form.domain && form.credentials && form.city && form.membershipId;
     }
     if (step === 2) {
-      return form.agentName && form.tagline && form.bio && form.fee && form.channels.length;
+      return Boolean(form.listingKind);
+    }
+    if (step === 3) {
+      return form.documents.some((d) => d.kind === "credential");
+    }
+    if (step === 4) {
+      return form.displayName && form.tagline && form.bio && form.fee;
     }
     return true;
   }
 
   async function submit() {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 900));
-    toast.success("Application submitted. Opening your dashboard…");
+    const slugBase = slugifyName(form.displayName || form.name);
+    const app = {
+      id: `app-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      status: "pending_review" as const,
+      listingKind: form.listingKind,
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      firm: form.firm,
+      domain: form.domain,
+      credentials: form.credentials,
+      membershipId: form.membershipId,
+      city: form.city,
+      displayName: form.displayName,
+      tagline: form.tagline,
+      bio: form.bio,
+      fee: Number(form.fee) || 2500,
+      documents: form.documents,
+      slug: `${slugBase}-${Date.now().toString(36).slice(-4)}`,
+    };
+    saveApplication(app);
+    await new Promise((r) => setTimeout(r, 600));
+    toast.success(
+      "Application submitted for review. You’ll appear in Find Professionals after approval.",
+    );
     setSubmitting(false);
-    router.push("/professionals/dashboard?welcome=1");
+    router.push("/professionals/dashboard?welcome=1&status=pending_review");
   }
 
   return (
@@ -97,10 +173,11 @@ export function SignupWizard() {
       </Link>
 
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-foreground">
-        Create your AI agent
+        Join as a professional
       </h1>
       <p className="mt-2 text-muted-foreground">
-        A few details so we can list your agent and set up your partner dashboard.
+        List yourself, launch an AI agent, or both. Submit credentials for
+        superadmin review before you go live.
       </p>
 
       <ol className="mt-8 flex gap-2">
@@ -109,13 +186,13 @@ export function SignupWizard() {
             <div
               className={cn(
                 "h-1 rounded-full",
-                i <= step ? "bg-accent" : "bg-border"
+                i <= step ? "bg-accent" : "bg-border",
               )}
             />
             <p
               className={cn(
-                "mt-2 text-xs font-medium",
-                i === step ? "text-foreground" : "text-muted-foreground"
+                "mt-2 hidden text-xs font-medium sm:block",
+                i === step ? "text-foreground" : "text-muted-foreground",
               )}
             >
               {label}
@@ -222,16 +299,103 @@ export function SignupWizard() {
         )}
 
         {step === 2 && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Choose how you want to appear on Find Professionals. Both options
+              need document review and approval.
+            </p>
+            {listingOptions.map((opt) => {
+              const Icon = opt.icon;
+              const active = form.listingKind === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => update("listingKind", opt.id)}
+                  className={cn(
+                    "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-colors",
+                    active
+                      ? "border-accent bg-teal-50/60"
+                      : "border-border hover:bg-muted/40",
+                  )}
+                >
+                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                  <span>
+                    <span className="block font-semibold text-foreground">
+                      {opt.title}
+                    </span>
+                    <span className="mt-1 block text-sm text-muted-foreground">
+                      {opt.desc}
+                    </span>
+                  </span>
+                  {active && <Check className="ml-auto h-4 w-4 text-accent" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-5">
+            <p className="text-sm text-muted-foreground">
+              Upload proof for verification. Files stay in this browser demo
+              (name only) until a real document store is connected.
+            </p>
+            {(
+              [
+                ["credential", "Professional certificate / membership card"],
+                ["id_proof", "Government ID (PAN / Aadhaar — demo only)"],
+                ["practice_proof", "Firm letterhead or practice proof (optional)"],
+              ] as const
+            ).map(([kind, label]) => {
+              const existing = form.documents.find((d) => d.kind === kind);
+              return (
+                <div key={kind}>
+                  <Label>{label}</Label>
+                  <div className="mt-1.5 flex items-center gap-3">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-sm hover:bg-muted/50">
+                      <FileUp className="h-4 w-4" />
+                      Choose file
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) =>
+                          addDocument(kind, e.target.files?.[0] ?? null)
+                        }
+                      />
+                    </label>
+                    {existing ? (
+                      <span className="text-sm text-foreground">
+                        {existing.fileName}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        {kind === "practice_proof" ? "Optional" : "Required"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {step === 4 && (
           <div className="space-y-5">
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <Label htmlFor="agentName">Agent display name</Label>
+                <Label htmlFor="displayName">
+                  {form.listingKind === "human"
+                    ? "Display name"
+                    : "Agent / listing name"}
+                </Label>
                 <Input
-                  id="agentName"
+                  id="displayName"
                   className="mt-1.5"
-                  value={form.agentName}
-                  onChange={(e) => update("agentName", e.target.value)}
-                  placeholder="Usually your first name"
+                  value={form.displayName}
+                  onChange={(e) => update("displayName", e.target.value)}
+                  placeholder={form.name.split(" ")[0] || "Your name"}
                 />
               </div>
               <div>
@@ -256,7 +420,7 @@ export function SignupWizard() {
               />
             </div>
             <div>
-              <Label htmlFor="bio">Bio for your agent</Label>
+              <Label htmlFor="bio">Bio</Label>
               <Textarea
                 id="bio"
                 className="mt-1.5 min-h-[110px]"
@@ -265,45 +429,32 @@ export function SignupWizard() {
                 placeholder="Practice focus, years of experience, who you help…"
               />
             </div>
-            <div>
-              <Label>Channels</Label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {[
-                  ["whatsapp", "WhatsApp"],
-                  ["chat", "Chat"],
-                  ["call", "Call"],
-                ].map(([id, label]) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => toggleChannel(id)}
-                    className={cn(
-                      "rounded-md border px-3 py-1.5 text-sm font-medium transition-colors",
-                      form.channels.includes(id)
-                        ? "border-accent bg-teal-50 text-teal-900"
-                        : "border-border text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    {form.channels.includes(id) ? (
-                      <span className="inline-flex items-center gap-1.5">
-                        <Check className="h-3.5 w-3.5" />
-                        {label}
-                      </span>
-                    ) : (
-                      label
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {form.listingKind === "human" && (
+              <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                Clients will see <strong>Schedule a call</strong> — not instant
+                AI chat.
+              </p>
+            )}
+            {form.listingKind === "ai" && (
+              <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                After approval, your AI agent can be provisioned for chat and
+                voice (ops step).
+              </p>
+            )}
+            {form.listingKind === "both" && (
+              <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                Clients can use AI instantly and also schedule a human call with
+                you.
+              </p>
+            )}
           </div>
         )}
 
-        {step === 3 && (
+        {step === 5 && (
           <div className="space-y-4 text-sm">
             <p className="text-muted-foreground">
-              Review your application. After submit, we verify credentials and
-              provision your dashboard (demo unlocks immediately).
+              Submit for superadmin review. You won’t appear on Find Professionals
+              until approved.
             </p>
             <dl className="divide-y divide-border rounded-lg border border-border">
               {[
@@ -312,24 +463,27 @@ export function SignupWizard() {
                 ["Firm", form.firm],
                 ["Domain", form.domain],
                 ["Credentials", form.credentials],
-                ["Agent", form.agentName],
+                [
+                  "Listing",
+                  form.listingKind === "human"
+                    ? "Human only"
+                    : form.listingKind === "ai"
+                      ? "AI agent"
+                      : "AI + Human",
+                ],
+                ["Display name", form.displayName],
                 ["Fee", `₹${form.fee}`],
-                ["Channels", form.channels.join(", ")],
+                [
+                  "Documents",
+                  form.documents.map((d) => d.fileName).join(", ") || "—",
+                ],
               ].map(([k, v]) => (
-                <div
-                  key={k}
-                  className="flex justify-between gap-4 px-4 py-3"
-                >
+                <div key={k} className="flex justify-between gap-4 px-4 py-3">
                   <dt className="text-muted-foreground">{k}</dt>
                   <dd className="text-right font-medium text-foreground">{v}</dd>
                 </div>
               ))}
             </dl>
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              By submitting, you agree to partner terms: verified professionals
-              only, revenue share on engagements, and human escalation
-              availability for your domain.
-            </p>
           </div>
         )}
 
@@ -353,7 +507,7 @@ export function SignupWizard() {
             </Button>
           ) : (
             <Button type="button" disabled={submitting} onClick={submit}>
-              {submitting ? "Submitting…" : "Submit & open dashboard"}
+              {submitting ? "Submitting…" : "Submit for review"}
             </Button>
           )}
         </div>

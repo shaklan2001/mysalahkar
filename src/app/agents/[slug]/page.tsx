@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
-import { getAgent, getLiveDemoAgents, isLiveDemoAgent } from "@/lib/data/agents";
+import {
+  getMarketplaceListing,
+  getMarketplaceListings,
+} from "@/lib/data/marketplace";
 import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -30,7 +33,7 @@ interface AgentProfilePageProps {
 }
 
 export async function generateStaticParams() {
-  return getLiveDemoAgents().map((agent) => ({
+  return getMarketplaceListings().map((agent) => ({
     slug: agent.slug,
   }));
 }
@@ -39,11 +42,11 @@ export async function generateMetadata({
   params,
 }: AgentProfilePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const agent = getAgent(slug);
+  const agent = getMarketplaceListing(slug);
 
   if (!agent) {
     return {
-      title: "Agent Not Found",
+      title: "Professional Not Found",
     };
   }
 
@@ -55,9 +58,9 @@ export async function generateMetadata({
 
 export default async function AgentProfilePage({ params }: AgentProfilePageProps) {
   const { slug } = await params;
-  const agent = getAgent(slug);
+  const agent = getMarketplaceListing(slug);
 
-  if (!agent || !isLiveDemoAgent(slug)) {
+  if (!agent) {
     notFound();
   }
 
@@ -93,7 +96,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Consultants
+          Back to Find Professionals
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -118,6 +121,13 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                       <div className="flex flex-wrap items-center gap-3 mb-3">
                         <Badge variant="secondary" className="text-sm">
                           {agent.typeLabel}
+                        </Badge>
+                        <Badge variant="outline" className="text-sm">
+                          {agent.listingKind === "human"
+                            ? "Human professional"
+                            : agent.listingKind === "both"
+                              ? "AI + Human"
+                              : "AI agent"}
                         </Badge>
                         {agent.liveTag && (
                           <Badge variant="live" className="text-sm">
@@ -390,7 +400,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                   </div>
                 </div>
 
-                <AgentProfileActions agentSlug={agent.slug} agentName={agent.name} />
+                <AgentProfileActions listing={agent} />
 
                 <Separator />
 
@@ -403,7 +413,13 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
-                      <span>Available 24/7 via WhatsApp, Chat & Call</span>
+                      <span>
+                        {agent.listingKind === "human"
+                          ? "Verified human — schedule a personal call"
+                          : agent.listingKind === "both"
+                            ? "AI chat/call plus optional human appointment"
+                            : "Available 24/7 via Chat & Call"}
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />

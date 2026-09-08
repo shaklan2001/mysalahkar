@@ -15,24 +15,24 @@ import { shareTiers } from "@/lib/data/professional";
 export const metadata: Metadata = {
   title: "For Professionals",
   description:
-    "Create your AI agent on My Salahkar, sell consultations and services, and earn a share of every engagement you bring in.",
+    "List yourself as a human consultant, launch an AI agent, or both on My Salahkar — after credential review and approval.",
 };
 
 const steps = [
   {
     num: "01",
-    title: "Create your agent",
-    body: "Set your domain, credentials, fees, and voice. We help shape an AI agent that reflects how you advise clients.",
+    title: "Choose how you list",
+    body: "Offer yourself for scheduled human calls, an AI agent for chat and voice, or both under your brand.",
   },
   {
     num: "02",
-    title: "Go live on the marketplace",
-    body: "Your agent appears in discovery — WhatsApp, chat, and call — with your brand, rates, and specialisations.",
+    title: "Submit credentials",
+    body: "Upload membership proof and ID. Superadmin reviews documents before you go live on Find Professionals.",
   },
   {
     num: "03",
-    title: "Earn on every engagement",
-    body: "Track consultations, services, and escalations. You keep a clear share of the business your agent generates.",
+    title: "Get discovered & earn",
+    body: "Approved listings appear in the marketplace. Track consultations, escalations, and your revenue share.",
   },
 ];
 
@@ -69,12 +69,12 @@ export default function ProfessionalsLandingPage() {
               For professionals
             </p>
             <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-              Build your AI agent. Sell on My Salahkar. Earn your share.
+              List yourself, launch an AI agent — or both.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Practising CAs, CS, lawyers, and advisors can create a branded AI
-              Salahkar, list services, and get a performance dashboard — with a
-              revenue share on every consultation and conversion you bring in.
+              Practising CAs, CS, lawyers, and advisors can join as verified
+              human consultants, AI-backed agents, or a combined listing. Every
+              application is reviewed before it appears on Find Professionals.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
