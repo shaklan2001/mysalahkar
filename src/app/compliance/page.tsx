@@ -21,7 +21,7 @@ export default function CompliancePage() {
               Compliance &amp; regulatory oversight
             </h1>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Our AI agents are designed with compliance at the core, backed by
+              Our AI consultants are designed with compliance at the core, backed by
               human expertise and clear escalation paths for regulated activities.
             </p>
           </div>
@@ -227,7 +227,7 @@ export default function CompliancePage() {
 
               <p>
                 <strong>No Attorney-Client or CA-Client Privilege:</strong> Conversations
-                with our AI agents do not establish a formal attorney-client or CA-client
+                with our AI consultants do not establish a formal attorney-client or CA-client
                 relationship unless you explicitly engage a licensed professional through our
                 escalation path. AI advice is guidance, not legal or professional opinion
                 binding in court or before regulatory authorities.

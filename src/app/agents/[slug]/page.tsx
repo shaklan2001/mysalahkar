@@ -127,7 +127,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                             ? "Human professional"
                             : agent.listingKind === "both"
                               ? "AI + Human"
-                              : "AI agent"}
+                              : "AI consultant"}
                         </Badge>
                         {agent.liveTag && (
                           <Badge variant="live" className="text-sm">

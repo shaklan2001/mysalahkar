@@ -31,7 +31,7 @@ export function Footer() {
           <div className="lg:col-span-4">
             <MySalahkarLogo height={36} variant="white" />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-400">
-              Professional consultancy for India — AI agents for tax, corporate,
+              Professional consultancy for India — AI consultants for tax, corporate,
               legal, FEMA, and wealth. WhatsApp, chat, or call. Human escalation
               when you need it.
             </p>

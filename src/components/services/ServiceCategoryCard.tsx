@@ -53,7 +53,7 @@ export function ServiceCategoryCard({
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Badge variant="secondary">{category.services.length} services</Badge>
                 {agent ? (
-                  <Badge variant="outline">AI agent: {agent.name}</Badge>
+                  <Badge variant="outline">AI consultant: {agent.name}</Badge>
                 ) : null}
               </div>
               <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">

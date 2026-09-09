@@ -5,7 +5,7 @@ import { HowItWorksCTA } from "./HowItWorksCTA";
 export const metadata: Metadata = {
   title: "How It Works",
   description:
-    "Learn how My Salahkar's AI agents work — consult via WhatsApp, chat, or call. Instant answers with human escalation when you need it.",
+    "Learn how My Salahkar's AI consultants work — consult via WhatsApp, chat, or call. Instant answers with human escalation when you need it.",
 };
 
 export default function HowItWorksPage() {
@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
               </div>
               <h3 className="mb-2 text-xl font-bold text-slate-900">WhatsApp</h3>
               <p className="mb-4 text-slate-600">
-                Message our AI agents directly on WhatsApp. Get instant responses in your
+                Message our AI consultants directly on WhatsApp. Get instant responses in your
                 preferred language, 24/7.
               </p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -73,7 +73,7 @@ export default function HowItWorksPage() {
               </div>
               <h3 className="mb-2 text-xl font-bold text-slate-900">Web Chat</h3>
               <p className="mb-4 text-slate-600">
-                Real-time chat with specialized AI agents through our web platform. Rich
+                Real-time chat with specialized AI consultants through our web platform. Rich
                 formatting and file uploads.
               </p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -128,7 +128,7 @@ export default function HowItWorksPage() {
               AI That Understands Your Needs
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-slate-600">
-              Our AI agents are trained on decades of professional knowledge across tax, legal,
+              Our AI consultants are trained on decades of professional knowledge across tax, legal,
               compliance, and financial domains.
             </p>
           </div>
@@ -159,7 +159,7 @@ export default function HowItWorksPage() {
                     Instant Analysis
                   </h3>
                   <p className="text-slate-600">
-                    The AI agent analyzes your query against regulatory frameworks, case
+                    The AI consultant analyzes your query against regulatory frameworks, case
                     law, and best practices — in milliseconds.
                   </p>
                 </div>

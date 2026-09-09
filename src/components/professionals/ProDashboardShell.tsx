@@ -21,7 +21,7 @@ const nav = [
   { href: "/professionals/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/professionals/dashboard/leads", label: "Leads", icon: MessageSquare },
   { href: "/professionals/dashboard/earnings", label: "Earnings", icon: Wallet },
-  { href: "/professionals/dashboard/agent", label: "My agent", icon: Bot },
+  { href: "/professionals/dashboard/agent", label: "My AI consultant", icon: Bot },
   { href: "/professionals/dashboard/settings", label: "Settings", icon: Settings },
 ];
 

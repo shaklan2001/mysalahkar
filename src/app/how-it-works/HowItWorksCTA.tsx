@@ -16,7 +16,7 @@ export function HowItWorksCTA() {
             Ready for expert advice?
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-400 sm:text-base">
-            Start a conversation with an AI agent now — clear answers, no signup
+            Start a conversation with an AI consultant now — clear answers, no signup
             required to explore.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

@@ -32,7 +32,7 @@ export function DomainGrid() {
             Professional Expertise Across Domains
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-slate-600">
-            Browse our AI agents by specialty. From tax and legal to wealth and real estate—find the right expert for your needs.
+            Browse our AI consultants by specialty. From tax and legal to wealth and real estate—find the right expert for your needs.
           </p>
         </div>
         

@@ -9,7 +9,7 @@ export default function ProLeadsPage() {
           Leads & consultations
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Conversations your AI agent handled — escalate or follow up when needed.
+          Conversations your AI consultant handled — escalate or follow up when needed.
         </p>
       </div>
 

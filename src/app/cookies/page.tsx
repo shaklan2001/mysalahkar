@@ -91,7 +91,7 @@ export default function CookiesPage() {
                     <strong>UI Settings:</strong> Dark mode, font size, sidebar state
                   </li>
                   <li>
-                    <strong>Consultation Context:</strong> Remember which AI agent you last
+                    <strong>Consultation Context:</strong> Remember which AI consultant you last
                     consulted
                   </li>
                 </ul>

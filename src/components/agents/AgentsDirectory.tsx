@@ -62,7 +62,7 @@ const AGENT_TYPES: { value: AgentType; label: string }[] = [
 function kindLabel(kind: ListingKind) {
   if (kind === "human") return "Human professional";
   if (kind === "both") return "AI + Human";
-  return "AI agent";
+  return "AI consultant";
 }
 
 export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) {
@@ -196,7 +196,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="ai">AI agents</SelectItem>
+                  <SelectItem value="ai">AI consultants</SelectItem>
                   <SelectItem value="human">Human professionals</SelectItem>
                   <SelectItem value="both">AI + Human</SelectItem>
                 </SelectContent>
@@ -305,7 +305,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
             <div className="space-y-3">
               <p className="text-lg font-semibold">No professionals found</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-                Try adjusting your filters to find the right AI agent or human
+                Try adjusting your filters to find the right AI consultant or human
                 consultant.
               </p>
               {hasActiveFilters && (

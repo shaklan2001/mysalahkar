@@ -9,7 +9,7 @@ const benefits = [
   "No credit card required",
   "15-minute AI consultation",
   "Get actionable expert advice",
-  "Access to full AI agent capabilities",
+  "Access to full AI consultant capabilities",
   "Human escalation available if needed",
 ];
 
@@ -39,7 +39,7 @@ export function FirstConsultOffer() {
                   Experience AI-Powered Consultancy
                 </h3>
                 <p className="mb-6 leading-relaxed text-slate-600">
-                  Try our platform risk-free. Get your first consultation with any AI agent completely free. 
+                  Try our platform risk-free. Get your first consultation with any AI consultant completely free. 
                   No strings attached—just expert guidance when you need it.
                 </p>
                 

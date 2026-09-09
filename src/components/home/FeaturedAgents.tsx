@@ -18,7 +18,7 @@ export function FeaturedAgents() {
               AI specialists and human consultants.
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Talk to live AI agents anytime — or schedule a call with a verified
+              Talk to live AI consultants anytime — or schedule a call with a verified
               human professional.
             </p>
           </div>

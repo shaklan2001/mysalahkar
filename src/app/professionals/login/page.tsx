@@ -34,7 +34,7 @@ export default function ProfessionalLoginPage() {
         Professional sign in
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Access your agent dashboard, earnings, and leads. Demo accepts any
+        Access your AI consultant dashboard, earnings, and leads. Demo accepts any
         credentials.
       </p>
 
@@ -73,7 +73,7 @@ export default function ProfessionalLoginPage() {
           href="/professionals/signup"
           className="font-semibold text-foreground underline-offset-4 hover:underline"
         >
-          Create your agent
+          Create your AI consultant
         </Link>
       </p>
     </div>

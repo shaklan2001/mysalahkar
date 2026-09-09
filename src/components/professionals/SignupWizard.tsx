@@ -75,13 +75,13 @@ const listingOptions: {
   },
   {
     id: "ai",
-    title: "AI agent only",
+    title: "AI consultant only",
     desc: "Your branded AI handles chat and voice. You escalate when needed.",
     icon: Bot,
   },
   {
     id: "both",
-    title: "AI agent + myself",
+    title: "AI consultant + myself",
     desc: "AI for instant help; clients can also schedule a human call with you.",
     icon: Users,
   },
@@ -176,7 +176,7 @@ export function SignupWizard() {
         Join as a professional
       </h1>
       <p className="mt-2 text-muted-foreground">
-        List yourself, launch an AI agent, or both. Submit credentials for
+        List yourself, launch an AI consultant, or both. Submit credentials for
         superadmin review before you go live.
       </p>
 
@@ -437,7 +437,7 @@ export function SignupWizard() {
             )}
             {form.listingKind === "ai" && (
               <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
-                After approval, your AI agent can be provisioned for chat and
+                After approval, your AI consultant can be provisioned for chat and
                 voice (ops step).
               </p>
             )}
@@ -468,7 +468,7 @@ export function SignupWizard() {
                   form.listingKind === "human"
                     ? "Human only"
                     : form.listingKind === "ai"
-                      ? "AI agent"
+                      ? "AI consultant"
                       : "AI + Human",
                 ],
                 ["Display name", form.displayName],

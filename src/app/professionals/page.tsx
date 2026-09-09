@@ -15,14 +15,14 @@ import { shareTiers } from "@/lib/data/professional";
 export const metadata: Metadata = {
   title: "For Professionals",
   description:
-    "List yourself as a human consultant, launch an AI agent, or both on My Salahkar — after credential review and approval.",
+    "List yourself as a human consultant, launch an AI consultant, or both on My Salahkar — after credential review and approval.",
 };
 
 const steps = [
   {
     num: "01",
     title: "Choose how you list",
-    body: "Offer yourself for scheduled human calls, an AI agent for chat and voice, or both under your brand.",
+    body: "Offer yourself for scheduled human calls, an AI consultant for chat and voice, or both under your brand.",
   },
   {
     num: "02",
@@ -50,7 +50,7 @@ const benefits = [
   {
     icon: LineChart,
     title: "Performance dashboard",
-    body: "See leads, conversion, ratings, and earnings in one place. Optimise how your agent shows up.",
+    body: "See leads, conversion, ratings, and earnings in one place. Optimise how your AI consultant shows up.",
   },
   {
     icon: ShieldCheck,
@@ -69,7 +69,7 @@ export default function ProfessionalsLandingPage() {
               For professionals
             </p>
             <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-              List yourself, launch an AI agent — or both.
+              List yourself, launch an AI consultant — or both.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               Practising CAs, CS, lawyers, and advisors can join as verified
@@ -79,7 +79,7 @@ export default function ProfessionalsLandingPage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <Link href="/professionals/signup">
-                  Create your agent
+                  Create your AI consultant
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -130,7 +130,7 @@ export default function ProfessionalsLandingPage() {
             </dl>
             <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
               Illustrative dashboard metrics for a live CA partner. Your numbers
-              appear after your agent goes live.
+              appear after your AI consultant goes live.
             </p>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function ProfessionalsLandingPage() {
               Ready to put your practice on the platform?
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-400 sm:text-base">
-              Create your agent in minutes. Verification usually completes within
+              Create your AI consultant in minutes. Verification usually completes within
               2–3 business days.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

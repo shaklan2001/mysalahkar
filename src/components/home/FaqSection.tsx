@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "Can I join as a professional and sell my own agent?",
-    a: "Yes. Practising CAs, CS, lawyers, and advisors can create a branded AI agent, list services, and earn a revenue share on consultations and conversions. See For Professionals to apply and open the partner dashboard.",
+    a: "Yes. Practising CAs, CS, lawyers, and advisors can create a branded AI consultant, list services, and earn a revenue share on consultations and conversions. See For Professionals to apply and open the partner dashboard.",
   },
 ];
 

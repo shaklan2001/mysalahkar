@@ -197,7 +197,7 @@ export function listingToAgentShape(app: ListingApplication): MarketplaceListing
         ? "Verified professional"
         : app.listingKind === "both"
           ? "AI + human"
-          : "AI agent",
+          : "AI consultant",
     listingKind: app.listingKind,
     isHumanProfessional: app.listingKind !== "ai",
     liveDemo: app.listingKind === "ai" || app.listingKind === "both",
