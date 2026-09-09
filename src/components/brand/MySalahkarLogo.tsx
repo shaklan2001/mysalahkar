@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface MySalahkarLogoProps {
   height?: number;
@@ -6,9 +7,27 @@ interface MySalahkarLogoProps {
   className?: string;
   /** Icon mark only (square). */
   markOnly?: boolean;
-  /** Include CONNECT · CONSULT · GROW tagline. Default uses compact wordmark for nav. */
+  /** Include CONNECT · CONSULT · GROW tagline (stacked full logo). */
   withTagline?: boolean;
 }
+
+const ASSETS = {
+  nav: {
+    default: "/brand/mysalahkar-logo-nav.png",
+    white: "/brand/mysalahkar-logo-nav-on-dark.png",
+    aspect: 586 / 160,
+  },
+  tagline: {
+    default: "/brand/mysalahkar-logo.png",
+    white: "/brand/mysalahkar-logo-on-dark.png",
+    aspect: 964 / 768,
+  },
+  mark: {
+    default: "/brand/mysalahkar-mark.png",
+    white: "/brand/mysalahkar-mark-on-dark.png",
+    aspect: 1,
+  },
+} as const;
 
 export function MySalahkarLogo({
   height = 40,
@@ -18,31 +37,24 @@ export function MySalahkarLogo({
   withTagline = false,
 }: MySalahkarLogoProps) {
   const onDark = variant === "white";
-
-  let src: string;
-  if (markOnly) {
-    src = onDark
-      ? "/brand/mysalahkar-mark-on-dark.png"
-      : "/brand/mysalahkar-mark.png";
-  } else if (withTagline) {
-    src = onDark
-      ? "/brand/mysalahkar-logo-on-dark.png"
-      : "/brand/mysalahkar-logo.png";
-  } else {
-    src = onDark
-      ? "/brand/mysalahkar-logo-compact-on-dark.png"
-      : "/brand/mysalahkar-logo-compact.png";
-  }
+  const kind = markOnly ? "mark" : withTagline ? "tagline" : "nav";
+  const asset = ASSETS[kind];
+  const src = onDark ? asset.white : asset.default;
+  const width = Math.round(height * asset.aspect);
 
   return (
-    <Image
-      src={src}
-      alt="mysalahkar — Connect · Consult · Grow"
-      height={height}
-      width={Math.round(height * 1.6)}
-      className={className}
-      style={{ display: "block", height, width: "auto" }}
-      priority
-    />
+    <span
+      className={cn("inline-flex items-center overflow-visible", className)}
+      style={{ height, width }}
+    >
+      <Image
+        src={src}
+        alt="mysalahkar — Connect · Consult · Grow"
+        width={width}
+        height={height}
+        className="h-full w-full object-contain object-left"
+        priority
+      />
+    </span>
   );
 }

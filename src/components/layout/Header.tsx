@@ -25,13 +25,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-white/90 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Link
             href="/"
-            className="flex shrink-0 items-center"
+            className="flex h-12 shrink-0 items-center overflow-visible"
             onClick={() => setMobileOpen(false)}
           >
-            <MySalahkarLogo height={44} />
+            <MySalahkarLogo height={48} />
           </Link>
 
           <nav className="hidden items-center gap-0.5 lg:flex">
