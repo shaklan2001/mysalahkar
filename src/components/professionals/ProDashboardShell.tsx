@@ -61,7 +61,7 @@ export function ProDashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-[#f4f6f8]">
-      <aside className="hidden w-60 shrink-0 flex-col bg-[#0a1628] text-white lg:flex">
+      <aside className="hidden w-60 shrink-0 flex-col bg-[#001450] text-white lg:flex">
         <div className="border-b border-white/10 px-5 py-5">
           <Link href="/">
             <MySalahkarLogo height={32} variant="white" />
@@ -125,7 +125,7 @@ export function ProDashboardShell({ children }: { children: React.ReactNode }) {
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
-          <div className="relative flex h-full w-64 flex-col bg-[#0a1628] text-white">
+          <div className="relative flex h-full w-64 flex-col bg-[#001450] text-white">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
               <MySalahkarLogo height={28} variant="white" />
               <button

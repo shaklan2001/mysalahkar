@@ -110,7 +110,7 @@ export function LearningSidebar() {
       </Card>
 
       {/* Certificates Promo */}
-      <Card className="border-border bg-[#0a1628] text-white">
+      <Card className="border-border bg-[#001450] text-white">
         <CardContent className="space-y-3 p-6">
           <div className="flex justify-center">
             <div className="rounded-xl bg-white/10 p-3">

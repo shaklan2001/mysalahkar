@@ -25,12 +25,21 @@ export const metadata: Metadata = {
   description:
     "India's AI Salahkars — expert CA, CS, Legal, FEMA, Wealth & more. Consult on WhatsApp, chat or call. 24/7. Human escalation when you need it.",
   metadataBase: new URL("https://mysalahkar.com"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "My Salahkar — AI Professional Consultancy",
     description:
-      "Consult AI SME agents for tax, legal, FEMA, insolvency, wealth and more — WhatsApp, chat or call.",
+      "Consult AI consultants for tax, legal, FEMA, insolvency, wealth and more — WhatsApp, chat or call.",
     type: "website",
     locale: "en_IN",
+    images: [{ url: "/brand/mysalahkar-logo-on-white.png" }],
   },
 };
 

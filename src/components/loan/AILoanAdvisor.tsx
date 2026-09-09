@@ -33,7 +33,7 @@ export function AILoanAdvisor({
   return (
     <Card className="border-border bg-white p-6">
       <div className="mb-4 flex items-start gap-4">
-        <div className="rounded-lg bg-teal-50 p-3">
+        <div className="rounded-lg bg-blue-50 p-3">
           <Bot className="h-6 w-6 text-accent" />
         </div>
         <div className="flex-1">
@@ -41,7 +41,7 @@ export function AILoanAdvisor({
             <h3 className="font-display text-lg font-semibold tracking-tight text-foreground">
               Ask Veer (AI Loan Advisor)
             </h3>
-            <Badge variant="secondary" className="bg-teal-50 text-teal-800">
+            <Badge variant="secondary" className="bg-blue-50 text-blue-800">
               AI Powered
             </Badge>
           </div>

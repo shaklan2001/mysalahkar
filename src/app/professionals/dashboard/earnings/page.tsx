@@ -113,7 +113,7 @@ export default function ProEarningsPage() {
                     <span
                       className={cn(
                         "rounded-md px-2 py-0.5 text-[11px] font-semibold",
-                        row.status === "Paid" && "bg-teal-50 text-teal-800",
+                        row.status === "Paid" && "bg-blue-50 text-blue-800",
                         row.status === "Pending" && "bg-amber-50 text-amber-800",
                         row.status === "Processing" && "bg-sky-50 text-sky-800"
                       )}

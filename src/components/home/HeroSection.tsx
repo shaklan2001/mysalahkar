@@ -53,14 +53,14 @@ export function HeroSection() {
             aria-hidden
           />
           <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-[0_24px_60px_-28px_rgba(10,22,40,0.35)]">
-            <div className="flex items-center justify-between border-b border-border/80 bg-[#0a1628] px-4 py-3">
+            <div className="flex items-center justify-between border-b border-border/80 bg-[#001450] px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-700 text-xs font-bold text-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#003cf8] text-xs font-bold text-white">
                   A
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">Arjun · CA</p>
-                  <p className="text-[11px] text-teal-300/90">Online · Tax &amp; GST</p>
+                  <p className="text-[11px] text-blue-300/90">Online · Tax &amp; GST</p>
                 </div>
               </div>
               <span className="rounded-md bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-white/70">

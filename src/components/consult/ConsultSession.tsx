@@ -188,7 +188,7 @@ export function ConsultSession({
   return (
     <div className="flex h-[100dvh] flex-col bg-[#f8fafc]">
       {/* Header */}
-      <header className="shrink-0 border-b border-slate-200 bg-[#0a1628] text-white">
+      <header className="shrink-0 border-b border-slate-200 bg-[#001450] text-white">
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6">
           <button
             onClick={closeConsult}
@@ -200,7 +200,7 @@ export function ConsultSession({
           </button>
 
           <div className="flex min-w-0 flex-1 items-center gap-3">
-            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-teal-700">
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-[#003cf8]">
               <Image
                 src={agent.image}
                 alt={agent.name}
@@ -211,7 +211,7 @@ export function ConsultSession({
             </div>
             <div className="min-w-0">
               <p className="truncate font-semibold leading-tight">{agent.name}</p>
-              <p className="truncate text-xs text-teal-200/90">
+              <p className="truncate text-xs text-blue-200/90">
                 {agent.typeLabel} · {liveConfigured ? "Live" : "Offline"}
               </p>
             </div>

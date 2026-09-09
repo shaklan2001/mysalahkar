@@ -315,7 +315,7 @@ export function SignupWizard() {
                   className={cn(
                     "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-colors",
                     active
-                      ? "border-accent bg-teal-50/60"
+                      ? "border-accent bg-blue-50/60"
                       : "border-border hover:bg-muted/40",
                   )}
                 >

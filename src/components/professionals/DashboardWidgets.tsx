@@ -12,7 +12,7 @@ function Delta({ value }: { value: number }) {
     <span
       className={cn(
         "text-xs font-semibold",
-        positive ? "text-teal-700" : "text-red-600"
+        positive ? "text-blue-700" : "text-red-600"
       )}
     >
       {positive ? "+" : ""}
@@ -141,7 +141,7 @@ export function RecentLeadsPreview() {
               className={cn(
                 "shrink-0 rounded-md px-2 py-0.5 text-[11px] font-semibold",
                 lead.status === "Open" && "bg-amber-50 text-amber-800",
-                lead.status === "Converted" && "bg-teal-50 text-teal-800",
+                lead.status === "Converted" && "bg-blue-50 text-blue-800",
                 lead.status === "Escalated" && "bg-sky-50 text-sky-800",
                 lead.status === "Closed" && "bg-muted text-muted-foreground"
               )}

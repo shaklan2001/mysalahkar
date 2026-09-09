@@ -8,7 +8,7 @@ export function PremiumPromo() {
   const { openConsult } = useConsult();
 
   return (
-    <section className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 py-16 md:py-20">
+    <section className="bg-gradient-to-r from-[#001450] via-[#002080] to-[#003cf8] py-16 md:py-20">
       <div className="container mx-auto max-w-7xl px-4">
         <div className="mx-auto max-w-4xl text-center text-white">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm font-semibold backdrop-blur-sm">
@@ -28,7 +28,7 @@ export function PremiumPromo() {
           <Button
             size="lg"
             onClick={() => openConsult()}
-            className="group h-12 gap-2 bg-white px-8 text-base font-semibold text-emerald-700 shadow-xl hover:bg-slate-50"
+            className="group h-12 gap-2 bg-white px-8 text-base font-semibold text-[#001450] shadow-xl hover:bg-slate-50"
           >
             Start Consulting
             <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

@@ -31,7 +31,7 @@ export function Header() {
             className="flex shrink-0 items-center"
             onClick={() => setMobileOpen(false)}
           >
-            <MySalahkarLogo height={36} />
+            <MySalahkarLogo height={44} />
           </Link>
 
           <nav className="hidden items-center gap-0.5 lg:flex">

@@ -109,7 +109,7 @@ export default function ProfessionalsLandingPage() {
                 </p>
                 <p className="text-sm text-muted-foreground">Your share · this month</p>
               </div>
-              <span className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-800">
+              <span className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-800">
                 +8.6%
               </span>
             </div>
@@ -232,8 +232,8 @@ export default function ProfessionalsLandingPage() {
 
       <section className="section-pad pt-0">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl bg-[#0a1628] px-8 py-12 text-center sm:px-12 sm:py-16">
-            <Sparkles className="mx-auto h-6 w-6 text-teal-300" />
+          <div className="rounded-2xl bg-[#001450] px-8 py-12 text-center sm:px-12 sm:py-16">
+            <Sparkles className="mx-auto h-6 w-6 text-blue-300" />
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
               Ready to put your practice on the platform?
             </h2>

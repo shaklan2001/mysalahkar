@@ -1,31 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7f9;
-  --foreground: #0a1628;
+  /* Brand from official mysalahkar logo */
+  --brand-navy: #001450;
+  --brand-blue: #003cf8;
+  --brand-blue-hover: #002ee0;
+  --brand-blue-soft: #e8eeff;
+
+  --background: #f5f7fb;
+  --foreground: #001450;
   --card: #ffffff;
-  --card-foreground: #0a1628;
+  --card-foreground: #001450;
   --popover: #ffffff;
-  --popover-foreground: #0a1628;
-  --primary: #0a1628;
+  --popover-foreground: #001450;
+  --primary: #001450;
   --primary-foreground: #ffffff;
-  --secondary: #e8eef4;
-  --secondary-foreground: #0a1628;
-  --muted: #eef1f5;
-  --muted-foreground: #5b6b7c;
-  --accent: #0f766e;
+  --secondary: #e8eef8;
+  --secondary-foreground: #001450;
+  --muted: #eef1f7;
+  --muted-foreground: #5a6a85;
+  --accent: #003cf8;
   --accent-foreground: #ffffff;
   --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --border: #d8e0ea;
-  --input: #d8e0ea;
-  --ring: #0f766e;
+  --border: #d5dceb;
+  --input: #d5dceb;
+  --ring: #003cf8;
   --radius: 0.5rem;
 
-  --brand-sky: #0e7490;
-  --brand-indigo: #134e4a;
-  --brand-navy: #0a1628;
-  --success: #0f766e;
+  --brand-sky: #003cf8;
+  --brand-indigo: #001450;
+  --success: #0d7a5f;
   --warning: #b45309;
   --surface: #ffffff;
   --ink-soft: #334155;
@@ -54,6 +59,7 @@
   --color-brand-sky: var(--brand-sky);
   --color-brand-indigo: var(--brand-indigo);
   --color-brand-navy: var(--brand-navy);
+  --color-brand-blue: var(--brand-blue);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-surface: var(--surface);
@@ -91,8 +97,8 @@ html {
 
 .site-shell {
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(14, 116, 144, 0.08), transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, rgba(15, 118, 110, 0.07), transparent 50%),
+    radial-gradient(1200px 600px at 10% -10%, rgba(0, 60, 248, 0.07), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(0, 20, 80, 0.06), transparent 50%),
     var(--background);
 }
 

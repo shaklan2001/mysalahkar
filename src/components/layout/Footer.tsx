@@ -25,11 +25,11 @@ const legal = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/80 bg-[#0a1628] text-slate-300">
+    <footer className="border-t border-border/80 bg-[#001450] text-slate-300">
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <MySalahkarLogo height={36} variant="white" />
+            <MySalahkarLogo height={52} variant="white" withTagline />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-400">
               Professional consultancy for India — AI consultants for tax, corporate,
               legal, FEMA, and wealth. WhatsApp, chat, or call. Human escalation
@@ -91,7 +91,7 @@ export function Footer() {
               <div className="mt-6 space-y-1 text-sm">
                 <a
                   href="mailto:support@mysalahkar.com"
-                  className="block text-teal-300/90 hover:text-teal-200"
+                  className="block text-blue-300/90 hover:text-blue-200"
                 >
                   support@mysalahkar.com
                 </a>

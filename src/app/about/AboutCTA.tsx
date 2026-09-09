@@ -10,7 +10,7 @@ export function AboutCTA() {
   return (
     <section className="section-pad">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-[#0a1628] px-8 py-12 text-center sm:px-12 sm:py-16">
+        <div className="rounded-2xl bg-[#001450] px-8 py-12 text-center sm:px-12 sm:py-16">
           <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
             Experience clearer professional advice
           </h2>

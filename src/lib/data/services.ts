@@ -24,7 +24,7 @@ export const serviceCategories: ServiceCategory[] = [
     category: "Start Your Business",
     summary: "Business registration & setup",
     type: "CS",
-    color: "#0f766e",
+    color: "#003cf8",
     agentSlug: "sneha-cs",
     services: [
       { name: "Proprietorship", consultant: "Ankit Gupta/Soniya Gupta", description: "Business registration & setup" },
@@ -51,7 +51,7 @@ export const serviceCategories: ServiceCategory[] = [
     category: "Income Tax & TDS",
     summary: "Direct tax, returns, assessments, and TDS compliance",
     type: "CA",
-    color: "#0e7490",
+    color: "#003cf8",
     agentSlug: "arjun-ca",
     services: [
       { name: "Income Tax", consultant: "", description: "Direct tax, returns, assessments, and TDS compliance" },
