@@ -29,7 +29,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <MySalahkarLogo height={52} variant="white" withTagline />
+            <MySalahkarLogo height={56} variant="white" withTagline />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-400">
               Professional consultancy for India — AI consultants for tax, corporate,
               legal, FEMA, and wealth. WhatsApp, chat, or call. Human escalation
