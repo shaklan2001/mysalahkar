@@ -23,7 +23,7 @@ export default async function AgentsPage({ searchParams }: AgentsPageProps) {
     <div>
       <PageHero
         eyebrow="Find Professionals"
-        title="AI consultants and verified human consultants."
+        title="AI consultants and verified human professionals."
         description="Chat or call with live AI specialists anytime — or schedule a call with a verified human professional when you want personal attention."
       />
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
