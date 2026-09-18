@@ -25,7 +25,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Business registration & setup",
     type: "CS",
     color: "#003cf8",
-    agentSlug: "sneha-cs",
+    agentSlug: "soniya-gupta-cs",
     services: [
       { name: "Proprietorship", consultant: "Ankit Gupta/Soniya Gupta", description: "Business registration & setup" },
       { name: "Partnership", consultant: "Ankit Gupta/Soniya Gupta", description: "Business registration & setup" },
@@ -52,7 +52,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Direct tax, returns, assessments, and TDS compliance",
     type: "CA",
     color: "#003cf8",
-    agentSlug: "arjun-ca",
+    agentSlug: "ankit-gupta-ca",
     services: [
       { name: "Income Tax", consultant: "", description: "Direct tax, returns, assessments, and TDS compliance" },
       { name: "Pan Application", consultant: "Ankit Gupta", description: "Direct tax, returns, assessments, and TDS compliance" },
@@ -75,7 +75,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Registration, filings, assessments, and GST advisory",
     type: "CA",
     color: "#0891b2",
-    agentSlug: "arjun-ca",
+    agentSlug: "ankit-gupta-ca",
     services: [
       { name: "GST", consultant: "Ankit Gupta", description: "Registration, filings, assessments, and GST advisory" },
       { name: "GST Registartion", consultant: "Ankit Gupta", description: "Registration, filings, assessments, and GST advisory" },
@@ -95,7 +95,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Search, registration, opposition, and renewal",
     type: "CS",
     color: "#7c3aed",
-    agentSlug: "sneha-cs",
+    agentSlug: "soniya-gupta-cs",
     services: [
       { name: "Trademark", consultant: "Soniya Gupta", description: "Search, registration, opposition, and renewal" },
       { name: "Trademark Search & Registration", consultant: "Soniya Gupta", description: "Search, registration, opposition, and renewal" },
@@ -112,7 +112,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "FDI, ODI, ECB, RBI compliance, and foreign investment",
     type: "FEMA",
     color: "#059669",
-    agentSlug: "kabir-fema",
+    agentSlug: "soniya-gupta-cs",
     services: [
       { name: "FEMA", consultant: "", description: "FDI, ODI, ECB, RBI compliance, and foreign investment" },
       { name: "FC-GPR", consultant: "Soniya Gupta", description: "FDI, ODI, ECB, RBI compliance, and foreign investment" },
@@ -136,7 +136,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Due diligence, valuations, mergers, and advisory",
     type: "CA",
     color: "#b45309",
-    agentSlug: "arjun-ca",
+    agentSlug: "nayansi-agrawal-ca",
     services: [
       { name: "Audit & Valuations", consultant: "", description: "Due diligence, valuations, mergers, and advisory" },
       { name: "Risk Advisory", consultant: "Avdesh Varshney", description: "Due diligence, valuations, mergers, and advisory" },
@@ -164,7 +164,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Project finance, loans, debt structuring, and capital advisory",
     type: "Lending",
     color: "#1d4ed8",
-    agentSlug: "veer-lending",
+    agentSlug: "ashok-mehta-funding",
     services: [
       { name: "Financial Services", consultant: "Ashok Mehta", description: "Project finance, loans, debt structuring, and capital advisory" },
       { name: "Project Finance", consultant: "Ashok Mehta", description: "Project finance, loans, debt structuring, and capital advisory" },
@@ -184,7 +184,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "UAE company setup, corporate tax, VAT, and transfer pricing",
     type: "CA",
     color: "#6366f1",
-    agentSlug: "arjun-ca",
+    agentSlug: "ankit-gupta-ca",
     services: [
       { name: "Services In UAE", consultant: "Ekansh Agarwal", description: "UAE company setup, corporate tax, VAT, and transfer pricing" },
       { name: "UAE Company Registrations", consultant: "Ekansh Agarwal", description: "UAE company setup, corporate tax, VAT, and transfer pricing" },
@@ -205,7 +205,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "ROC filings, board resolutions, conversions, and agreements",
     type: "CS",
     color: "#db2777",
-    agentSlug: "sneha-cs",
+    agentSlug: "soniya-gupta-cs",
     services: [
       { name: "DIN Application", consultant: "Soniya Gupta", description: "ROC filings, board resolutions, conversions, and agreements" },
       { name: "Alteration of Memorandum of Association", consultant: "Soniya Gupta", description: "ROC filings, board resolutions, conversions, and agreements" },
@@ -251,7 +251,7 @@ export const serviceCategories: ServiceCategory[] = [
     summary: "Compliance triggers, forms, and reporting timelines",
     type: "FEMA",
     color: "#047857",
-    agentSlug: "kabir-fema",
+    agentSlug: "soniya-gupta-cs",
     services: [
       { name: "Foreign Direct Investment (FDI)", consultant: "Pawan Agarwal / CS Sandhya Gupta", description: "Receipt of foreign investment · FC-GPR · Within prescribed RBI timeline after allotment" },
       { name: "Transfer of shares (Resident ↔ Non-Resident)", consultant: "Pawan Agarwal / CS Sandhya Gupta", description: "Sale/Purchase of shares · FC-TRS · Within prescribed RBI timeline" },

@@ -16,7 +16,7 @@ export function CommunitySidebar() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Users className="h-5 w-5 text-blue-600" />
-            Digest stats
+            Community stats
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">

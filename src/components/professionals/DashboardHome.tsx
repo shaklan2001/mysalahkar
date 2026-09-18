@@ -7,11 +7,13 @@ import {
   PerformanceChart,
   RecentLeadsPreview,
 } from "@/components/professionals/DashboardWidgets";
+import { AppointmentsCalendar } from "@/components/dashboard/AppointmentsCalendar";
 import { formatINR } from "@/lib/utils";
 import {
   mockMetrics,
   mockProfessional,
 } from "@/lib/data/professional";
+import { appointmentsForViewer } from "@/lib/data/appointments";
 import { toast } from "sonner";
 
 export function DashboardHome() {
@@ -37,6 +39,10 @@ export function DashboardHome() {
       </div>
 
       <MetricCards metrics={mockMetrics} />
+
+      <AppointmentsCalendar
+        appointments={appointmentsForViewer("professional")}
+      />
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <PerformanceChart />

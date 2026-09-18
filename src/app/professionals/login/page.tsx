@@ -8,13 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { LegalConsent } from "@/components/legal/LegalConsent";
 
 export default function ProfessionalLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!privacyConsent) {
+      toast.error("Please accept the Terms and DPDP consent to continue.");
+      return;
+    }
     setLoading(true);
     await new Promise((r) => setTimeout(r, 600));
     toast.success("Signed in (demo)");
@@ -24,11 +30,11 @@ export default function ProfessionalLoginPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-16 sm:px-6 lg:py-24">
       <Link
-        href="/professionals"
+        href="/"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        For professionals
+        Home
       </Link>
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">
         Professional sign in
@@ -62,7 +68,12 @@ export default function ProfessionalLoginPage() {
             defaultValue="demo"
           />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
+        <LegalConsent
+          id="login-dpdp"
+          checked={privacyConsent}
+          onChange={setPrivacyConsent}
+        />
+        <Button type="submit" className="w-full" disabled={loading || !privacyConsent}>
           {loading ? "Signing in…" : "Sign in to dashboard"}
         </Button>
       </form>

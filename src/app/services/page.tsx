@@ -48,8 +48,8 @@ export default function ServicesPage() {
             Need help choosing a service?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Start a consultation — our AI consultants route you to the right
-            consultant and service line from this catalogue.
+            Start a consultation — AI Consultation or Human Consultation for
+            any service in this catalogue.
           </p>
           <Button asChild size="lg" className="mt-6">
             <Link href="/agents">

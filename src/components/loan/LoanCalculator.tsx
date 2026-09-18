@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatINR, formatNumber } from "@/lib/utils";
-import { useConsult } from "@/components/consult/ConsultProvider";
+import Link from "next/link";
 import { Sparkles, TrendingDown, Building2, Users } from "lucide-react";
 
 interface LoanCalculatorProps {
@@ -51,8 +51,6 @@ export function LoanCalculator({
   onAmountChange,
   onTenureChange,
 }: LoanCalculatorProps) {
-  const { openConsult } = useConsult();
-
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     onAmountChange(Number(value));
@@ -169,12 +167,14 @@ export function LoanCalculator({
 
           {/* Get Expert Advice */}
           <Button
-            onClick={() => openConsult("veer-lending")}
+            asChild
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
             size="lg"
           >
-            <Sparkles className="h-4 w-4 mr-2" />
-            Get Expert Advice
+            <Link href="/agents/ashok-mehta-funding">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Get Expert Advice
+            </Link>
           </Button>
         </div>
       </Card>

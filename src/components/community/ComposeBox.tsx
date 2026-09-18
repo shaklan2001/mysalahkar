@@ -26,6 +26,9 @@ export function ComposeBox() {
     <Card>
       <CardHeader className="pb-3">
         <h3 className="font-semibold">Share with the community</h3>
+        <p className="text-xs text-muted-foreground">
+          Open to professionals and clients. Post views, questions, and updates.
+        </p>
       </CardHeader>
       <CardContent className="space-y-3">
         <Textarea

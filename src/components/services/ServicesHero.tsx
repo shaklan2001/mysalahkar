@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { uniqueConsultants } from "@/lib/data/services";
 
 interface ServicesHeroProps {
   categoryCount: number;
@@ -22,12 +21,12 @@ export function ServicesHero({
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
             {categoryCount} categories and {totalServices} services across
-            business setup, tax, GST, FEMA, secretarial, and advisory — each
-            mapped to the consultant responsible.
+            business setup, tax, GST, FEMA, secretarial, and advisory. Each
+            service is available as AI Consultation or Human Consultation.
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-3 gap-6 border-t border-border/80 pt-8 sm:max-w-xl">
+        <div className="mt-10 grid grid-cols-2 gap-6 border-t border-border/80 pt-8 sm:max-w-xl">
           <div>
             <p className="font-display text-2xl font-semibold tracking-tight text-foreground">
               {categoryCount}
@@ -39,12 +38,6 @@ export function ServicesHero({
               {totalServices}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">Services</p>
-          </div>
-          <div>
-            <p className="font-display text-2xl font-semibold tracking-tight text-foreground">
-              {uniqueConsultants.length}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">Consultants</p>
           </div>
         </div>
       </div>

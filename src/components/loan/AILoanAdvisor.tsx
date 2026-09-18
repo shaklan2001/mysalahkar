@@ -3,9 +3,9 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useConsult } from "@/components/consult/ConsultProvider";
 import { Bot, Lightbulb, TrendingUp } from "lucide-react";
 import { formatINR } from "@/lib/utils";
+import Link from "next/link";
 
 interface AILoanAdvisorProps {
   recommendedProduct: {
@@ -24,8 +24,6 @@ export function AILoanAdvisor({
   amount,
   tenure,
 }: AILoanAdvisorProps) {
-  const { openConsult } = useConsult();
-
   if (!recommendedProduct) {
     return null;
   }
@@ -110,12 +108,14 @@ export function AILoanAdvisor({
 
         {/* CTA */}
         <Button
-          onClick={() => openConsult("veer-lending")}
+          asChild
           className="w-full bg-purple-600 hover:bg-purple-700 text-white"
           size="lg"
         >
-          <Bot className="h-4 w-4 mr-2" />
-          Chat with Veer for Personalized Advice
+          <Link href="/agents/ashok-mehta-funding">
+            <Bot className="h-4 w-4 mr-2" />
+            Talk to Ashok Mehta for Personalized Advice
+          </Link>
         </Button>
       </div>
     </Card>

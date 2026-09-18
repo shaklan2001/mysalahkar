@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Smart Loan Comparison",
-  description:
-    "Compare home, personal, and business loans from India's leading banks and NBFCs. Get AI-powered recommendations from Veer, your loan advisor.",
+  title: "My Salahkar",
+  robots: { index: false, follow: false },
 };
 
 export default function LoanComparisonLayout({

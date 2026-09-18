@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   Bot,
+  Calendar,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/professionals/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
+  { href: "/professionals/dashboard/calendar", label: "Calendar", icon: Calendar },
   { href: "/professionals/dashboard/leads", label: "Leads", icon: MessageSquare },
   { href: "/professionals/dashboard/earnings", label: "Earnings", icon: Wallet },
   { href: "/professionals/dashboard/agent", label: "My AI consultant", icon: Bot },
@@ -77,7 +79,7 @@ export function ProDashboardShell({ children }: { children: React.ReactNode }) {
           <p className="truncate text-sm font-semibold">{pro.name}</p>
           <p className="truncate text-xs text-slate-400">{pro.firm}</p>
           <Link
-            href="/professionals"
+            href="/professionals/login"
             className="mt-3 inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white"
           >
             <LogOut className="h-3.5 w-3.5" />

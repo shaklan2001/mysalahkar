@@ -17,6 +17,7 @@ import {
 import { saveApplication } from "@/lib/applications-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { LegalConsent } from "@/components/legal/LegalConsent";
 
 const steps = [
   "You",
@@ -42,6 +43,7 @@ type FormState = {
   bio: string;
   fee: string;
   documents: ListingDocument[];
+  privacyConsent: boolean;
 };
 
 const initial: FormState = {
@@ -57,8 +59,9 @@ const initial: FormState = {
   displayName: "",
   tagline: "",
   bio: "",
-  fee: "2500",
+  fee: "1000",
   documents: [],
+  privacyConsent: false,
 };
 
 const listingOptions: {
@@ -127,10 +130,17 @@ export function SignupWizard() {
     if (step === 4) {
       return form.displayName && form.tagline && form.bio && form.fee;
     }
+    if (step === 5) {
+      return form.privacyConsent;
+    }
     return true;
   }
 
   async function submit() {
+    if (!form.privacyConsent) {
+      toast.error("Please accept the Terms and DPDP consent to continue.");
+      return;
+    }
     setSubmitting(true);
     const slugBase = slugifyName(form.displayName || form.name);
     const app = {
@@ -149,7 +159,7 @@ export function SignupWizard() {
       displayName: form.displayName,
       tagline: form.tagline,
       bio: form.bio,
-      fee: Number(form.fee) || 2500,
+      fee: Number(form.fee) || 1000,
       documents: form.documents,
       slug: `${slugBase}-${Date.now().toString(36).slice(-4)}`,
     };
@@ -165,11 +175,11 @@ export function SignupWizard() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <Link
-        href="/professionals"
+        href="/"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to for professionals
+        Back to home
       </Link>
 
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-foreground">
@@ -399,7 +409,7 @@ export function SignupWizard() {
                 />
               </div>
               <div>
-                <Label htmlFor="fee">Consultation fee (₹)</Label>
+                <Label htmlFor="fee">Consultation fee (₹ / 30 min)</Label>
                 <Input
                   id="fee"
                   type="number"
@@ -484,6 +494,11 @@ export function SignupWizard() {
                 </div>
               ))}
             </dl>
+            <LegalConsent
+              id="signup-dpdp"
+              checked={form.privacyConsent}
+              onChange={(checked) => update("privacyConsent", checked)}
+            />
           </div>
         )}
 
@@ -506,7 +521,7 @@ export function SignupWizard() {
               <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button type="button" disabled={submitting} onClick={submit}>
+            <Button type="button" disabled={submitting || !form.privacyConsent} onClick={submit}>
               {submitting ? "Submitting…" : "Submit for review"}
             </Button>
           )}
