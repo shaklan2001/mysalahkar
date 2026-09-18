@@ -109,3 +109,22 @@ html {
 .hairline {
   border-color: color-mix(in oklab, var(--border) 80%, transparent);
 }
+
+@keyframes digest-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.digest-marquee {
+  animation: digest-marquee 45s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .digest-marquee {
+    animation: none;
+  }
+}

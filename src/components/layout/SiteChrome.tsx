@@ -6,9 +6,12 @@ import { Footer } from "@/components/layout/Footer";
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isProDashboard = pathname.startsWith("/professionals/dashboard");
+  const hideChrome =
+    pathname.startsWith("/professionals/dashboard") ||
+    pathname.startsWith("/client/dashboard") ||
+    pathname.startsWith("/consult");
 
-  if (isProDashboard || pathname.startsWith("/consult")) {
+  if (hideChrome) {
     return <div className="flex min-h-full flex-1 flex-col">{children}</div>;
   }
 

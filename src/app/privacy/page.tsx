@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <h1 className="mb-8 text-4xl font-bold text-slate-900">Privacy Policy</h1>
         <p className="mb-8 text-sm text-slate-600">
-          Last updated: July 24, 2026
+          Last updated: September 16, 2026
         </p>
 
         <div className="prose prose-slate max-w-none space-y-8">
@@ -43,8 +43,8 @@ export default function PrivacyPage() {
                 you register or book a consultation
               </li>
               <li>
-                <strong>Consultation Data:</strong> Questions, queries, documents, and
-                information you share during AI or human consultations
+                <strong>Consultation Data:</strong> Questions, queries, documents (held with
+                a share password), and information you share during AI or human consultations
               </li>
               <li>
                 <strong>Payment Information:</strong> Billing details processed through our
@@ -85,8 +85,8 @@ export default function PrivacyPage() {
                 with human experts, and fulfill your service requests
               </li>
               <li>
-                <strong>Communication:</strong> To respond to inquiries, send appointment
-                confirmations, and provide support
+                <strong>Communication:</strong> To respond to inquiries, generate Google
+                Calendar / Google Meet details for human consultations, and provide support
               </li>
               <li>
                 <strong>Quality Control:</strong> To review AI responses for accuracy,
@@ -189,7 +189,10 @@ export default function PrivacyPage() {
             <h2 className="mb-4 text-2xl font-bold text-slate-900">
               6. Your Rights (Under DPDP Act)
             </h2>
-            <p className="text-slate-600">You have the following rights:</p>
+            <p className="text-slate-600">
+              You have the following rights. Consent for processing is collected by a
+              required tick-box at login and before AI or human consultations.
+            </p>
             <ul className="ml-6 list-disc space-y-2 text-slate-600">
               <li>
                 <strong>Right to Access:</strong> Request a copy of your personal data

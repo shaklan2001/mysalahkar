@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { LegalConsent } from "@/components/legal/LegalConsent";
 
 export function ContactForm() {
   const [loading, setLoading] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,6 +21,10 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!privacyConsent) {
+      toast.error("Please accept the Terms and DPDP consent to continue.");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -28,13 +34,18 @@ export function ContactForm() {
         body: JSON.stringify({
           ...formData,
           type: "booking",
+          privacyConsent: true,
         }),
       });
 
       const data = await response.json();
 
       if (data.ok) {
-        toast.success("Request received! We'll contact you within 24 hours.");
+        toast.success(
+          data.meetUrl
+            ? `Booked. Google Meet: ${data.meetUrl}`
+            : "Request received! We'll contact you within 24 hours.",
+        );
         setFormData({
           name: "",
           email: "",
@@ -42,6 +53,7 @@ export function ContactForm() {
           preferredTime: "",
           note: "",
         });
+        setPrivacyConsent(false);
       } else {
         toast.error("Something went wrong. Please try again or call us directly.");
       }
@@ -120,21 +132,15 @@ export function ContactForm() {
         />
       </div>
 
-      <Button type="submit" size="lg" className="w-full" disabled={loading}>
+      <LegalConsent
+        id="contact-dpdp"
+        checked={privacyConsent}
+        onChange={setPrivacyConsent}
+      />
+
+      <Button type="submit" size="lg" className="w-full" disabled={loading || !privacyConsent}>
         {loading ? "Submitting..." : "Request Consultation"}
       </Button>
-
-      <p className="text-center text-sm text-slate-500">
-        By submitting, you agree to our{" "}
-        <a href="/privacy" className="underline hover:text-slate-700">
-          Privacy Policy
-        </a>{" "}
-        and{" "}
-        <a href="/terms" className="underline hover:text-slate-700">
-          Terms
-        </a>
-        .
-      </p>
     </form>
   );
 }

@@ -1,20 +1,18 @@
 import { Card } from "@/components/ui/card";
 import { whyChooseFeatures } from "@/lib/data/stats";
-import { 
-  Brain, 
-  Clock, 
-  Users, 
-  Banknote, 
-  Lock, 
+import {
+  Brain,
+  Clock,
+  Users,
+  Lock,
   Award,
-  LucideIcon 
+  LucideIcon,
 } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
   Brain,
   Clock,
   Users,
-  Banknote,
   Lock,
   Award,
 };

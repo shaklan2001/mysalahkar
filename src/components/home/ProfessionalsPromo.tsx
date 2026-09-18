@@ -21,13 +21,13 @@ export function ProfessionalsPromo() {
           </div>
           <div className="flex flex-wrap gap-3 lg:justify-end">
             <Button asChild size="lg">
-              <Link href="/professionals">
-                Explore partner program
+              <Link href="/professionals/signup">
+                Create your AI consultant
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/professionals/signup">Create agent</Link>
+              <Link href="/professionals/login">Professional Login</Link>
             </Button>
           </div>
         </div>

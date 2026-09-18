@@ -5,13 +5,15 @@ const product = [
   ["/", "Home"],
   ["/agents", "Find Professionals"],
   ["/services", "Services"],
+  ["/community", "Community"],
   ["/how-it-works", "How it works"],
 ];
 
 const company = [
   ["/about", "About"],
-  ["/professionals", "For professionals"],
   ["/daily-digest", "Daily Digest"],
+  ["/client/login", "Client Login"],
+  ["/professionals/login", "Professional Login"],
   ["/contact", "Contact"],
   ["/security", "Security"],
 ];
@@ -106,14 +108,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center">
+        <div className="mt-12 border-t border-white/10 pt-8 text-sm text-slate-500">
           <p>© {new Date().getFullYear()} My Salahkar. All rights reserved.</p>
-          <Link
-            href="/loan-comparison"
-            className="text-xs tracking-wide text-slate-500 transition-colors hover:text-slate-300"
-          >
-            Loan comparison
-          </Link>
         </div>
       </div>
     </footer>

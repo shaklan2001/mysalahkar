@@ -11,7 +11,7 @@ export default function TermsPage() {
     <div className="bg-white py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <h1 className="mb-8 text-4xl font-bold text-slate-900">Terms of Service</h1>
-        <p className="mb-8 text-sm text-slate-600">Last updated: July 24, 2026</p>
+        <p className="mb-8 text-sm text-slate-600">Last updated: September 16, 2026</p>
 
         <div className="prose prose-slate max-w-none space-y-8">
           <section>
@@ -355,7 +355,46 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-4 text-2xl font-bold text-slate-900">16. Contact Us</h2>
+            <h2 className="mb-4 text-2xl font-bold text-slate-900">
+              16. Personal Data and Consent (DPDP Act, 2023)
+            </h2>
+            <p className="text-slate-600">
+              We process personal data as a Data Fiduciary under the Digital Personal Data
+              Protection Act, 2023. You must give informed, specific consent before signing
+              in and before starting an AI or human consultation. You may withdraw consent
+              by writing to{" "}
+              <a href="mailto:privacy@mysalahkar.com" className="text-blue-600 underline">
+                privacy@mysalahkar.com
+              </a>
+              . Withdrawal does not affect processing already completed for a consultation
+              you requested.
+            </p>
+            <ul className="mt-4 ml-6 list-disc space-y-2 text-slate-600">
+              <li>
+                Purpose of processing: providing consultations, scheduling calls, exchanging
+                documents, support, and billing.
+              </li>
+              <li>
+                Human consultations are conducted on Google Meet. A calendar invite is
+                generated for you and the consultant.
+              </li>
+              <li>
+                Documents shared for a consultation are exchanged in a password-protected
+                manner. Share the password only with your consultant.
+              </li>
+              <li>
+                AI consultations are informational only (see Section 6). We do not use your
+                consultation content to train AI models (see Section 9.3).
+              </li>
+              <li>
+                Further details on collection, rights, and retention are in our Privacy
+                Policy.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="mb-4 text-2xl font-bold text-slate-900">17. Contact Us</h2>
             <p className="text-slate-600">
               For questions about these Terms, contact:
             </p>

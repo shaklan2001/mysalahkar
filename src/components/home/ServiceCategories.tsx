@@ -20,7 +20,7 @@ export function ServiceCategories() {
             </h2>
             <p className="mt-3 text-muted-foreground">
               Business setup, tax, GST, FEMA, secretarial, and advisory — each
-              service mapped to your firm&apos;s consultants.
+              service as AI Consultation or Human Consultation.
             </p>
           </div>
           <Link

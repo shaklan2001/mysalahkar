@@ -165,9 +165,8 @@ export default function ContactPage() {
                 What's the cost of a human consultation?
               </h3>
               <p className="text-slate-600">
-                Initial 15-minute consultations are free. Extended consultations start at
-                ₹500 for 30 minutes, depending on complexity and domain. You'll see pricing
-                upfront before booking.
+                Consultations are ₹1,000 per 30 minutes for all consultants. You'll see
+                pricing upfront before booking.
               </p>
             </div>
 

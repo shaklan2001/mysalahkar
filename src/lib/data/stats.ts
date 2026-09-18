@@ -109,12 +109,6 @@ export const whyChooseFeatures: WhyChooseFeature[] = [
     icon: "Users",
   },
   {
-    title: "Smart Loan Comparison",
-    description:
-      "Compare home, personal, and business loans from 30+ banks. Calculate EMI, find best rates, and get expert guidance—all in one place.",
-    icon: "Banknote",
-  },
-  {
     title: "Secure & Confidential",
     description:
       "End-to-end encryption for all conversations. Your data is protected with bank-grade security. GDPR and DPDP compliant.",
@@ -145,7 +139,7 @@ export const howItWorksSteps: HowItWorksStep[] = [
     num: "2",
     title: "Book Consultation",
     description:
-      "Choose your preferred channel—WhatsApp, chat, or call. Share your query, documents, or concern. Consultation fees: ₹1,500–₹4,500.",
+      "Choose your preferred channel—WhatsApp, chat, or call. Share your query, documents, or concern. Consultation fees: ₹1,000 per 30 minutes.",
   },
   {
     num: "3",

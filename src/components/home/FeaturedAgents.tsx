@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { getLiveDemoAgents } from "@/lib/data/agents";
+import { agents } from "@/lib/data/agents";
 
-const featured = getLiveDemoAgents();
+const featured = agents;
 
 export function FeaturedAgents() {
   return (
