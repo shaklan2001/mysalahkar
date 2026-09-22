@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { createMockBookingArtifacts } from "@/lib/booking";
 
 const consultationSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -9,6 +10,11 @@ const consultationSchema = z.object({
   note: z.string().optional(),
   agentSlug: z.string().optional(),
   type: z.enum(["human-escalation", "booking"]).optional(),
+  privacyConsent: z.boolean().refine((v) => v === true, {
+    message: "DPDP consent is required",
+  }),
+  hasDocument: z.boolean().optional(),
+  documentName: z.string().max(200).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -16,13 +22,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = consultationSchema.parse(body);
 
-    // Log to console
-    console.log("[CONSULTATION]", {
-      timestamp: new Date().toISOString(),
-      ...data,
+    const booking = createMockBookingArtifacts({
+      title: "Human Consultation | My Salahkar",
+      guestEmail: data.email,
+      preferredTime: data.preferredTime,
+      hasDocument: data.hasDocument,
     });
 
-    // Send to webhook if configured
+    console.log("[CONSULTATION]", {
+      timestamp: new Date().toISOString(),
+      type: data.type ?? "booking",
+      agentSlug: data.agentSlug ?? null,
+      hasDocument: Boolean(data.hasDocument),
+    });
+
     const webhookUrl = process.env.CONSULTATION_WEBHOOK_URL || process.env.LEAD_WEBHOOK_URL;
     if (webhookUrl) {
       try {
@@ -32,27 +45,34 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({
             timestamp: new Date().toISOString(),
             type: "consultation",
-            ...data,
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            preferredTime: data.preferredTime,
+            note: data.note,
+            agentSlug: data.agentSlug,
+            bookingType: data.type,
+            meetUrl: booking.meetUrl,
           }),
         });
-        console.log("[CONSULTATION] Sent to webhook:", webhookUrl);
       } catch (webhookError) {
-        console.error("[CONSULTATION] Webhook failed:", webhookError);
+        console.error("[CONSULTATION] Webhook failed");
       }
     }
 
-    // Optional: Resend integration (logged but not implemented)
-    if (process.env.RESEND_API_KEY) {
-      console.log("[CONSULTATION] Resend API key present, would send confirmation email");
-    }
-
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, ...booking });
   } catch (error) {
-    console.error("[CONSULTATION] Error:", error);
+    console.error("[CONSULTATION] Error");
 
     if (error instanceof z.ZodError) {
+      const first = error.issues[0];
       return NextResponse.json(
-        { ok: false, errors: error.issues },
+        {
+          ok: false,
+          error: first?.message ?? "Validation failed",
+          field: first?.path[0],
+          errors: error.issues,
+        },
         { status: 400 }
       );
     }
