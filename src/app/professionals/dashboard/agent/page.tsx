@@ -72,7 +72,7 @@ export default function ProAgentPage() {
               />
             </div>
             <div>
-              <Label htmlFor="fee">Consultation fee (₹)</Label>
+              <Label htmlFor="fee">Consultation fee (₹ / 30 min)</Label>
               <Input
                 id="fee"
                 type="number"

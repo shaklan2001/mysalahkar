@@ -25,6 +25,8 @@ import {
 import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
+import { AiConsultGate } from "./AiConsultGate";
+import { LegalConsent } from "@/components/legal/LegalConsent";
 
 function createContactId(agentSlug: string) {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -55,6 +57,7 @@ export function ConsultSession({
   const [callActive, setCallActive] = useState(initialMode === "call");
   const [contactId, setContactId] = useState("");
   const [showEscalate, setShowEscalate] = useState(false);
+  const [escalateConsent, setEscalateConsent] = useState(false);
   const [escalateForm, setEscalateForm] = useState({
     name: "",
     email: "",
@@ -158,6 +161,10 @@ export function ConsultSession({
 
   async function submitEscalation(e: React.FormEvent) {
     e.preventDefault();
+    if (!escalateConsent) {
+      toast.error("Please accept the Terms and DPDP consent to continue.");
+      return;
+    }
     try {
       const res = await fetch("/api/consultation", {
         method: "POST",
@@ -166,11 +173,18 @@ export function ConsultSession({
           ...escalateForm,
           agentSlug: agent.slug,
           type: "human-escalation",
+          privacyConsent: true,
         }),
       });
-      if (!res.ok) throw new Error("Failed");
-      toast.success("Human consultation requested. We'll call you shortly.");
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error("Failed");
+      toast.success(
+        data.meetUrl
+          ? `Call booked. Meet: ${data.meetUrl}`
+          : "Human consultation requested.",
+      );
       setShowEscalate(false);
+      setEscalateConsent(false);
       setEscalateForm({
         name: "",
         email: "",
@@ -186,6 +200,7 @@ export function ConsultSession({
   const liveConfigured = isLiveDemoAgent(agent.slug);
 
   return (
+    <AiConsultGate>
     <div className="flex h-[100dvh] flex-col bg-[#f8fafc]">
       {/* Header */}
       <header className="shrink-0 border-b border-slate-200 bg-[#001450] text-white">
@@ -381,6 +396,11 @@ export function ConsultSession({
                   setEscalateForm((f) => ({ ...f, note: e.target.value }))
                 }
               />
+              <LegalConsent
+                id="esc-dpdp"
+                checked={escalateConsent}
+                onChange={setEscalateConsent}
+              />
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -390,8 +410,8 @@ export function ConsultSession({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1">
-                  Request call
+                <Button type="submit" className="flex-1" disabled={!escalateConsent}>
+                  Book Meet
                 </Button>
               </div>
             </form>
@@ -399,5 +419,6 @@ export function ConsultSession({
         </div>
       </footer>
     </div>
+    </AiConsultGate>
   );
 }

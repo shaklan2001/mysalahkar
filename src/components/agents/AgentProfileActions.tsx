@@ -51,7 +51,7 @@ export function AgentProfileActions({ listing }: AgentProfileActionsProps) {
         <ScheduleCallDialog
           professionalName={listing.name}
           professionalSlug={listing.slug}
-          triggerLabel="Schedule a call"
+          triggerLabel="Human Consultation"
           triggerVariant={showAi ? "outline" : "default"}
           triggerSize="lg"
           triggerClassName="w-full"
