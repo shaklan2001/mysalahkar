@@ -65,6 +65,21 @@ function kindLabel(kind: ListingKind) {
   return "AI consultant";
 }
 
+function matchesSearch(agent: MarketplaceListing, search: string) {
+  const q = search.trim().toLowerCase();
+  if (!q) return true;
+  if (agent.name.toLowerCase().includes(q)) return true;
+  if (agent.type.toLowerCase().includes(q)) return true;
+  if (agent.typeLabel.toLowerCase().includes(q)) return true;
+  if (agent.specializations.some((s) => s.toLowerCase().includes(q))) return true;
+  const typeMeta = AGENT_TYPES.find((t) => t.value === agent.type);
+  return Boolean(
+    typeMeta &&
+      (typeMeta.value.toLowerCase() === q ||
+        typeMeta.label.toLowerCase().includes(q)),
+  );
+}
+
 export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) {
   const { openConsult } = useConsult();
   const [extraListings, setExtraListings] = useState<MarketplaceListing[]>([]);
@@ -97,16 +112,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
 
   const filteredAgents = useMemo(() => {
     return allListings.filter((agent) => {
-      if (
-        search &&
-        !agent.name.toLowerCase().includes(search.toLowerCase()) &&
-        !agent.specializations.some((s) =>
-          s.toLowerCase().includes(search.toLowerCase()),
-        ) &&
-        !agent.typeLabel.toLowerCase().includes(search.toLowerCase())
-      ) {
-        return false;
-      }
+      if (search && !matchesSearch(agent, search)) return false;
       if (selectedType !== "all" && agent.type !== selectedType) return false;
       if (selectedKind !== "all" && agent.listingKind !== selectedKind) {
         return false;
@@ -360,7 +366,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                                 {formatINR(agent.consultationFee)}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                per consultation
+                                per 30 minutes
                               </div>
                             </div>
                           </div>
@@ -394,6 +400,23 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                           <div className="space-y-2">
                             <div>
                               <p className="mb-1 text-xs font-semibold text-foreground">
+                                Area of Specialization
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {agent.specializations.map((spec) => (
+                                  <Badge
+                                    key={spec}
+                                    variant="success"
+                                    className="text-xs"
+                                  >
+                                    {spec}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="mb-1 text-xs font-semibold text-foreground">
                                 Key Services
                               </p>
                               <div className="flex flex-wrap gap-1">
@@ -403,9 +426,9 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                                   );
                                   return (
                                     <>
-                                      {services.slice(0, 3).map((service, idx) => (
+                                      {services.slice(0, 3).map((service) => (
                                         <Badge
-                                          key={idx}
+                                          key={service}
                                           variant="outline"
                                           className="text-xs"
                                         >
@@ -420,23 +443,6 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                                     </>
                                   );
                                 })()}
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="mb-1 text-xs font-semibold text-foreground">
-                                Specializations
-                              </p>
-                              <div className="flex flex-wrap gap-1">
-                                {agent.specializations.map((spec, idx) => (
-                                  <Badge
-                                    key={idx}
-                                    variant="success"
-                                    className="text-xs"
-                                  >
-                                    {spec}
-                                  </Badge>
-                                ))}
                               </div>
                             </div>
 

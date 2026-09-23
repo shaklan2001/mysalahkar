@@ -209,12 +209,31 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
 
             <Card>
               <CardHeader>
+                <CardTitle>Areas of Specialization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {agent.specializations.map((spec) => (
+                    <Badge
+                      key={spec}
+                      variant="success"
+                      className="text-sm px-4 py-2"
+                    >
+                      {spec}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Services Offered</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {catalogServices.map((service, idx) => (
-                    <div key={idx} className="flex items-start gap-2">
+                  {catalogServices.map((service) => (
+                    <div key={service} className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span className="text-sm">{service}</span>
                     </div>
@@ -229,25 +248,6 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                     .
                   </p>
                 ) : null}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Areas of Specialization</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {agent.specializations.map((spec, idx) => (
-                    <Badge
-                      key={idx}
-                      variant="success"
-                      className="text-sm px-4 py-2"
-                    >
-                      {spec}
-                    </Badge>
-                  ))}
-                </div>
               </CardContent>
             </Card>
 
@@ -396,7 +396,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                     {formatINR(agent.consultationFee)}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    per consultation
+                    per 30 minutes
                   </div>
                 </div>
 

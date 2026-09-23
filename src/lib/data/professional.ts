@@ -72,7 +72,7 @@ export const mockProfessional: ProfessionalProfile = {
   agentSlug: "ananya-ca",
   tagline: "GST, tax planning & MSME compliance — clear and on time",
   bio: "Practising CA with 14 years advising startups and MSMEs on GST, direct tax, and statutory audits. My AI consultant handles first-line queries; I take over for audits, notices, and complex planning.",
-  consultationFee: 2500,
+  consultationFee: 1000,
   shareRate: 0.55,
   status: "live",
   joinedAt: "2026-03-12",
