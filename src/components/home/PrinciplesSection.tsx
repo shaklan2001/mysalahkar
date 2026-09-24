@@ -2,7 +2,7 @@ const principles = [
   {
     num: "01",
     title: "Choose your domain",
-    body: "Pick a service category or an AI consultant — CA, CS, Legal, FEMA, Wealth, and more.",
+    body: "Pick a service category or an AI Salahkar — CA, CS, Legal, FEMA, Wealth, and more.",
   },
   {
     num: "02",

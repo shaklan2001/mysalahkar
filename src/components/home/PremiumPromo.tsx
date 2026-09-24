@@ -22,7 +22,7 @@ export function PremiumPromo() {
           
           <p className="mb-8 text-lg leading-relaxed text-white/90 md:text-xl">
             From tax planning and wealth management to FEMA compliance and corporate structuring—get instant, 
-            expert-level guidance from AI consultants trained on decades of professional practice.
+            expert-level guidance from AI Salahkars trained on decades of professional practice.
           </p>
           
           <Button
