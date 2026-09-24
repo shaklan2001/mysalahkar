@@ -53,7 +53,7 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakarta.variable} ${sora.variable} h-full antialiased`}
     >
-      <body className="site-shell flex min-h-full flex-col font-sans text-foreground">
+      <body className="site-shell flex min-h-full flex-col">
         <ConsultProvider>
           <SiteChrome>{children}</SiteChrome>
           <AppToaster />

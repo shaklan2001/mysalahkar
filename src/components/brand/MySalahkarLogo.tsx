@@ -44,7 +44,7 @@ export function MySalahkarLogo({
             }}
           >
             <span style={{ color: navy }}>my</span>
-            <span style={{ color: blue }}>salahkar</span>
+            <span style={{ color: onDark ? "#6f93ff" : blue }}>salahkar</span>
           </span>
           {withTagline && (
             <span
