@@ -1,56 +1,10 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { agents, aiConsultantName, type Agent } from "@/lib/data/agents";
-import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
+import { agents, aiConsultantName } from "@/lib/data/agents";
+import { ExpertCard } from "@/components/agents/ExpertCard";
 
 const aiSalahkars = agents.filter((agent) => agent.liveDemo);
 const humanExperts = agents;
-
-function ExpertCard({
-  agent,
-  badge,
-  availability,
-  showAiBadge = false,
-  displayName,
-}: {
-  agent: Agent;
-  badge: string;
-  availability: string;
-  showAiBadge?: boolean;
-  displayName?: string;
-}) {
-  const name = displayName ?? agent.name;
-
-  return (
-    <Link
-      href={`/agents/${agent.slug}`}
-      className="group rounded-xl border border-border bg-white p-5 transition-colors hover:border-accent/40 hover:bg-[#f8fafb]"
-    >
-      <div className="flex items-center gap-3">
-        <ConsultantPhoto
-          src={agent.image}
-          alt={name}
-          showAiBadge={showAiBadge}
-          className="h-12 w-12"
-          sizes="48px"
-        />
-        <div className="min-w-0">
-          <p className="font-display text-base font-semibold tracking-tight text-foreground">
-            {name}
-          </p>
-          <p className="text-xs text-muted-foreground">{agent.typeLabel}</p>
-        </div>
-      </div>
-      <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-        {agent.tagline}
-      </p>
-      <p className="mt-4 text-xs font-medium text-accent">
-        <span className="mr-2 rounded-full bg-accent/10 px-2 py-0.5">{badge}</span>
-        {availability}
-      </p>
-    </Link>
-  );
-}
 
 export function FeaturedAgents() {
   return (
@@ -79,7 +33,7 @@ export function FeaturedAgents() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
             {aiSalahkars.map((agent) => (
               <ExpertCard
                 key={agent.slug}
@@ -113,13 +67,13 @@ export function FeaturedAgents() {
               href="/agents?kind=human"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground hover:text-accent"
             >
-              Browse human experts
+              Show all
               <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {humanExperts.map((agent) => (
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {humanExperts.slice(0, 6).map((agent) => (
               <ExpertCard
                 key={agent.slug}
                 agent={agent}
