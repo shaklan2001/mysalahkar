@@ -10,7 +10,7 @@ export function AnnouncementBanner() {
         <div className="flex items-center justify-center gap-2 text-center text-sm font-medium md:text-base">
           <Sparkles className="h-5 w-5 flex-shrink-0 text-yellow-300" />
           <span>
-            <strong className="font-bold">400+ Services Live</strong> — AI Consultants for CA, CS, Legal, FEMA, Wealth Management & More
+            <strong className="font-bold">400+ Services Live</strong> — AI Salahkars for CA, CS, Legal, FEMA, Wealth Management & More
           </span>
           <Link
             href="/services"
