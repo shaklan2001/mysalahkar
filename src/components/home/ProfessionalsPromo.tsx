@@ -12,7 +12,7 @@ export function ProfessionalsPromo() {
               For professionals
             </p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Practising CA, CS, or lawyer? Create your AI consultant and earn a share.
+              Practising CA, CS, or lawyer? Create an account and earn a share.
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
               List your AI Salahkar on the marketplace, handle escalations on your
@@ -22,7 +22,7 @@ export function ProfessionalsPromo() {
           <div className="flex flex-wrap gap-3 lg:justify-end">
             <Button asChild size="lg">
               <Link href="/professionals/signup">
-                Create your AI consultant
+                Create an account
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
