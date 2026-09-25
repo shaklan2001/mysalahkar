@@ -42,7 +42,7 @@ export default function AboutPage() {
                 decisions because expert guidance feels out of reach.
               </p>
               <p className="mb-4 text-lg text-slate-600">
-                My Salahkar changes that. We've built AI consultants trained on decades of
+                My Salahkar changes that. We've built AI Salahkars trained on decades of
                 regulatory knowledge, supervised by licensed professionals. The result?
                 Instant, accurate answers at a fraction of traditional costs.
               </p>
@@ -70,7 +70,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="mb-2 text-lg font-bold text-slate-900">Human Oversight</h3>
                 <p className="text-sm text-slate-600">
-                  Every AI consultant is supervised by domain experts. Complex cases escalate
+                  Every AI Salahkar is supervised by domain experts. Complex cases escalate
                   seamlessly.
                 </p>
               </div>
@@ -123,14 +123,14 @@ export default function AboutPage() {
 
             <p>
               We partnered with practicing CAs, CS professionals, lawyers, and wealth
-              advisors to build domain-specific AI consultants. Each consultant was trained, tested,
+              advisors to build domain-specific AI Salahkars. Each consultant was trained, tested,
               and refined over thousands of real queries. We added human oversight for
               quality control and escalation paths for complex cases.
             </p>
 
             <p>
               Today, My Salahkar handles thousands of consultations monthly across tax,
-              legal, compliance, and financial domains. Our AI consultants resolve 90%+ of queries
+              legal, compliance, and financial domains. Our AI Salahkars resolve 90%+ of queries
               instantly, while our network of licensed professionals handles the rest.
             </p>
 

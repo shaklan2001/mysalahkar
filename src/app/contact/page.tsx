@@ -112,7 +112,7 @@ export default function ContactPage() {
                     <div>
                       <h4 className="mb-1 font-semibold text-slate-900">Business Hours</h4>
                       <p className="text-slate-600">
-                        AI Consultants: 24/7
+                        AI Salahkars: 24/7
                         <br />
                         Human Support: Mon-Sat, 9 AM - 7 PM IST
                         <br />
@@ -126,7 +126,7 @@ export default function ContactPage() {
               <div className="rounded-xl bg-blue-50 p-6">
                 <h4 className="mb-2 font-bold text-slate-900">Need Immediate Help?</h4>
                 <p className="mb-4 text-slate-600">
-                  For instant answers to most queries, try our AI consultants first. They're
+                  For instant answers to most queries, try our AI Salahkars first. They're
                   available 24/7 and can resolve 90%+ of questions immediately.
                 </p>
                 <a
@@ -154,7 +154,7 @@ export default function ContactPage() {
                 How quickly will I get a response?
               </h3>
               <p className="text-slate-600">
-                AI consultants respond instantly (within seconds). For human consultations booked
+                AI Salahkars respond instantly (within seconds). For human consultations booked
                 via this form, we'll reach out within 24 hours on business days. Urgent
                 matters can be escalated by calling us directly.
               </p>

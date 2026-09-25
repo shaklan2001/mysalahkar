@@ -53,7 +53,7 @@ export default function ServicesPage() {
           </p>
           <Button asChild size="lg" className="mt-6">
             <Link href="/agents">
-              Talk to an AI consultant
+              Talk to an AI Salahkar
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
