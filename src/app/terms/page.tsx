@@ -128,7 +128,7 @@ export default function TermsPage() {
               6.1 Nature of AI Advice
             </h3>
             <p className="text-slate-600">
-              Our AI consultants provide informational guidance based on training data and
+              Our AI Salahkars provide informational guidance based on training data and
               regulatory knowledge. AI responses are not formal professional opinions and may
               contain errors, omissions, or outdated information.
             </p>
@@ -157,7 +157,7 @@ export default function TermsPage() {
               7.1 No Attorney-Client or CA-Client Privilege
             </h3>
             <p className="text-slate-600">
-              Conversations with AI consultants do not establish an attorney-client, CA-client, or
+              Conversations with AI Salahkars do not establish an attorney-client, CA-client, or
               any professional-client relationship unless you explicitly engage a licensed
               professional through our escalation service and a formal engagement letter is
               signed.
