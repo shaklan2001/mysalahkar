@@ -12,7 +12,9 @@ import { LegalConsent } from "@/components/legal/LegalConsent";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { signInClient } from "@/lib/client-session";
 
-export default function ClientLoginPage() {
+const MIN_PASSWORD_LENGTH = 8;
+
+export default function ClientSignupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
@@ -23,11 +25,23 @@ export default function ClientLoginPage() {
       toast.error("Please accept the Terms and DPDP consent to continue.");
       return;
     }
-    const email = String(new FormData(e.currentTarget).get("email") ?? "");
+    const data = new FormData(e.currentTarget);
+    const name = String(data.get("name") ?? "");
+    const email = String(data.get("email") ?? "");
+    const password = String(data.get("password") ?? "");
+    const confirm = String(data.get("confirm") ?? "");
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      toast.error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+      return;
+    }
+    if (password !== confirm) {
+      toast.error("Passwords do not match.");
+      return;
+    }
     setLoading(true);
     await new Promise((r) => setTimeout(r, 600));
-    signInClient({ name: "Demo Client", email });
-    toast.success("Signed in");
+    signInClient({ name, email });
+    toast.success("Client account created (demo)");
     router.push("/client/dashboard");
   }
 
@@ -41,11 +55,11 @@ export default function ClientLoginPage() {
         Home
       </Link>
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">
-        Client sign in
+        Create a client account
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Opens your consultations. Home, Community, and Daily Digest stay in the
-        left menu. Demo accepts any credentials.
+        Book consultations and track upcoming appointments. Demo does not store
+        your password.
       </p>
 
       <form
@@ -53,37 +67,51 @@ export default function ClientLoginPage() {
         className="mt-8 space-y-5 rounded-xl border border-border bg-white p-6 sm:p-8"
       >
         <div>
+          <Label htmlFor="name">Full name</Label>
+          <Input id="name" name="name" required autoComplete="name" className="mt-1.5" />
+        </div>
+        <div>
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             name="email"
             type="email"
             required
+            autoComplete="email"
             className="mt-1.5"
-            defaultValue="client@example.com"
           />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
+            name="password"
             type="password"
             required
+            minLength={MIN_PASSWORD_LENGTH}
+            autoComplete="new-password"
             className="mt-1.5"
-            defaultValue="demo"
+          />
+        </div>
+        <div>
+          <Label htmlFor="confirm">Confirm password</Label>
+          <Input
+            id="confirm"
+            name="confirm"
+            type="password"
+            required
+            minLength={MIN_PASSWORD_LENGTH}
+            autoComplete="new-password"
+            className="mt-1.5"
           />
         </div>
         <LegalConsent
-          id="client-login-dpdp"
+          id="client-signup-dpdp"
           checked={privacyConsent}
           onChange={setPrivacyConsent}
         />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading || !privacyConsent}
-        >
-          {loading ? "Signing in…" : "Sign in"}
+        <Button type="submit" className="w-full" disabled={loading || !privacyConsent}>
+          {loading ? "Creating account…" : "Create account"}
         </Button>
         <div className="relative">
           <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -93,25 +121,16 @@ export default function ClientLoginPage() {
             <span className="bg-white px-2 text-muted-foreground">or</span>
           </div>
         </div>
-        <GoogleAuthButton role="client" consent={privacyConsent} />
+        <GoogleAuthButton role="client" intent="signup" consent={privacyConsent} />
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        New here?{" "}
+        Already have an account?{" "}
         <Link
-          href="/client/signup"
+          href="/client/login"
           className="font-semibold text-foreground underline-offset-4 hover:underline"
         >
-          Create an account
-        </Link>
-      </p>
-      <p className="mt-2 text-center text-sm text-muted-foreground">
-        Are you a professional?{" "}
-        <Link
-          href="/professionals/login"
-          className="font-semibold text-foreground underline-offset-4 hover:underline"
-        >
-          Professional Login
+          Sign in
         </Link>
       </p>
     </div>

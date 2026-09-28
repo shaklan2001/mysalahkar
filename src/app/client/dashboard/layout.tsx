@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { ClientDashboardShell } from "@/components/client/ClientDashboardShell";
+import { ClientGate } from "@/components/client/ClientGate";
 
 export const metadata: Metadata = {
-  title: "Client dashboard",
+  title: "Your consultations",
   description: "Your consultations and upcoming Google Meet appointments.",
 };
 
@@ -11,5 +12,9 @@ export default function ClientDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ClientDashboardShell>{children}</ClientDashboardShell>;
+  return (
+    <ClientGate>
+      <ClientDashboardShell>{children}</ClientDashboardShell>
+    </ClientGate>
+  );
 }
