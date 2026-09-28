@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { AgentType, SPECIALIZATIONS } from "@/lib/data/agents";
+import { AgentType, SPECIALIZATIONS, aiConsultantName } from "@/lib/data/agents";
 import {
   canChatOrCall,
   canScheduleHuman,
+  isAiSalahkarListing,
   listingToAgentShape,
   type ListingKind,
   type MarketplaceListing,
 } from "@/lib/data/marketplace";
+import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
 import { listApprovedApplications } from "@/lib/applications-store";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,7 +29,6 @@ import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { useConsult } from "@/components/consult/ConsultProvider";
 import { ScheduleCallDialog } from "@/components/agents/ScheduleCallDialog";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Search,
   Star,
@@ -62,7 +63,7 @@ const AGENT_TYPES: { value: AgentType; label: string }[] = [
 function kindLabel(kind: ListingKind) {
   if (kind === "human") return "Human professional";
   if (kind === "both") return "AI + Human";
-  return "AI consultant";
+  return "AI Salahkar";
 }
 
 function matchesSearch(agent: MarketplaceListing, search: string) {
@@ -114,8 +115,12 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
     return allListings.filter((agent) => {
       if (search && !matchesSearch(agent, search)) return false;
       if (selectedType !== "all" && agent.type !== selectedType) return false;
-      if (selectedKind !== "all" && agent.listingKind !== selectedKind) {
-        return false;
+      if (selectedKind !== "all") {
+        const kind = agent.listingKind;
+        const matches =
+          kind === selectedKind ||
+          (kind === "both" && (selectedKind === "ai" || selectedKind === "human"));
+        if (!matches) return false;
       }
       if (
         selectedSpecialization !== "all" &&
@@ -202,7 +207,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="ai">AI consultants</SelectItem>
+                  <SelectItem value="ai">AI Salahkars</SelectItem>
                   <SelectItem value="human">Human professionals</SelectItem>
                   <SelectItem value="both">AI + Human</SelectItem>
                 </SelectContent>
@@ -311,7 +316,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
             <div className="space-y-3">
               <p className="text-lg font-semibold">No professionals found</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-                Try adjusting your filters to find the right AI consultant or human
+                Try adjusting your filters to find the right AI Salahkar or human
                 consultant.
               </p>
               {hasActiveFilters && (
@@ -326,6 +331,8 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
             {filteredAgents.map((agent) => {
               const showAi = canChatOrCall(agent) && Boolean(agent.liveDemo);
               const showSchedule = canScheduleHuman(agent);
+              const isAi = isAiSalahkarListing(agent);
+              const displayName = isAi ? aiConsultantName(agent) : agent.name;
               return (
                 <Card
                   key={agent.slug}
@@ -333,16 +340,14 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                 >
                   <CardContent className="p-6">
                     <div className="flex flex-col gap-6 sm:flex-row">
-                      <div className="flex-shrink-0">
-                        <div className="relative h-24 w-24 overflow-hidden rounded-xl">
-                          <Image
-                            src={agent.image}
-                            alt={agent.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      </div>
+                      <ConsultantPhoto
+                        src={agent.image}
+                        alt={displayName}
+                        showAiBadge={isAi}
+                        rounded="xl"
+                        className="h-24 w-24"
+                        sizes="96px"
+                      />
 
                       <div className="min-w-0 flex-1 space-y-4">
                         <div>
@@ -352,7 +357,7 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                                 href={`/agents/${agent.slug}`}
                                 className="text-xl font-bold transition-colors hover:text-primary"
                               >
-                                {agent.name}
+                                {displayName}
                               </Link>
                               <Badge variant="secondary" className="ml-2">
                                 {agent.typeLabel}
@@ -379,10 +384,12 @@ export function AgentsDirectory({ agents, searchParams }: AgentsDirectoryProps) 
                               </span>
                               <span>({agent.reviewCount} reviews)</span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              <span>{agent.location}</span>
-                            </div>
+                            {isAi ? null : (
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-4 w-4" />
+                                <span>{agent.location}</span>
+                              </div>
+                            )}
                             <div className="flex items-center gap-1">
                               <Briefcase className="h-4 w-4" />
                               <span>{agent.experience} years exp.</span>

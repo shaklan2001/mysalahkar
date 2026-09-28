@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 import {
   getMarketplaceListing,
   getMarketplaceListings,
+  isAiSalahkarListing,
 } from "@/lib/data/marketplace";
 import { getCatalogServicesForAgentType } from "@/lib/data/services";
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { formatINR } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,8 @@ import {
   Shield,
 } from "lucide-react";
 import { AgentProfileActions } from "@/components/agents/AgentProfileActions";
+import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
+import { aiConsultantName } from "@/lib/data/agents";
 
 interface AgentProfilePageProps {
   params: Promise<{
@@ -50,8 +52,12 @@ export async function generateMetadata({
     };
   }
 
+  const displayName = isAiSalahkarListing(agent)
+    ? aiConsultantName(agent)
+    : agent.name;
+
   return {
-    title: `${agent.name} - ${agent.typeLabel} | Salahkar`,
+    title: `${displayName} - ${agent.typeLabel} | Salahkar`,
     description: agent.bio,
   };
 }
@@ -64,27 +70,29 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
     notFound();
   }
 
+  const isAi = isAiSalahkarListing(agent);
+  const displayName = isAi ? aiConsultantName(agent) : agent.name;
   const catalogServices = getCatalogServicesForAgentType(agent.type);
 
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919876543210";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi, I want to consult with ${agent.name}`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi, I want to consult with ${displayName}`;
 
   const synthesizedReviews = [
     {
       name: "Anonymous Client",
       rating: 5,
-      text: `${agent.name}'s expertise in ${agent.specializations[0]} was exactly what I needed. Professional, thorough, and delivered results beyond expectations.`,
+      text: `${displayName}'s expertise in ${agent.specializations[0]} was exactly what I needed. Professional, thorough, and delivered results beyond expectations.`,
     },
     {
       name: "Business Owner",
       rating: agent.rating >= 4.8 ? 5 : 4,
-      text: `Highly recommend ${agent.name}. The consultation was clear, actionable, and helped solve our complex ${agent.type} challenges efficiently.`,
+      text: `Highly recommend ${displayName}. The consultation was clear, actionable, and helped solve our complex ${agent.type} challenges efficiently.`,
     },
     {
       name: "Satisfied Customer",
       rating: agent.rating >= 4.7 ? 5 : 4,
-      text: `${agent.name} provided exceptional guidance. ${agent.personality} Made the entire process smooth and stress-free.`,
+      text: `${displayName} provided exceptional guidance. ${agent.personality} Made the entire process smooth and stress-free.`,
     },
   ];
 
@@ -105,29 +113,25 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
               <CardContent className="p-8">
                 <div className="flex flex-col sm:flex-row gap-6 mb-6">
                   <div className="flex-shrink-0">
-                    <div className="relative w-32 h-32 rounded-2xl overflow-hidden ring-4 ring-primary ring-offset-4">
-                      <Image
-                        src={agent.image}
-                        alt={agent.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                    <ConsultantPhoto
+                      src={agent.image}
+                      alt={displayName}
+                      showAiBadge={isAi}
+                      rounded="2xl"
+                      className="h-32 w-32 ring-4 ring-primary ring-offset-4"
+                      sizes="128px"
+                    />
                   </div>
 
                   <div className="flex-1 space-y-3">
                     <div>
-                      <h1 className="text-3xl font-bold mb-2">{agent.name}</h1>
+                      <h1 className="text-3xl font-bold mb-2">{displayName}</h1>
                       <div className="flex flex-wrap items-center gap-3 mb-3">
                         <Badge variant="secondary" className="text-sm">
                           {agent.typeLabel}
                         </Badge>
                         <Badge variant="outline" className="text-sm">
-                          {agent.listingKind === "human"
-                            ? "Human professional"
-                            : agent.listingKind === "both"
-                              ? "AI + Human"
-                              : "AI consultant"}
+                          {isAi ? "AI Salahkar" : "Human professional"}
                         </Badge>
                         {agent.liveTag && (
                           <Badge variant="live" className="text-sm">
@@ -147,11 +151,15 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                           ({agent.reviewCount} reviews)
                         </span>
                       </div>
-                      <Separator orientation="vertical" className="h-4" />
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        <span>{agent.location}</span>
-                      </div>
+                      {isAi ? null : (
+                        <>
+                          <Separator orientation="vertical" className="h-4" />
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4" />
+                            <span>{agent.location}</span>
+                          </div>
+                        </>
+                      )}
                       <Separator orientation="vertical" className="h-4" />
                       <div className="flex items-center gap-1">
                         <Briefcase className="h-4 w-4" />
@@ -164,9 +172,11 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                       <span className="text-foreground font-medium">
                         {agent.availability}
                       </span>
-                      <span className="text-muted-foreground">
-                        • Response time: 2-4 hours
-                      </span>
+                      {isAi ? null : (
+                        <span className="text-muted-foreground">
+                          • Response time: 2-4 hours
+                        </span>
+                      )}
                     </div>
 
                     <p className="text-muted-foreground leading-relaxed">
@@ -253,7 +263,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
 
             <Card>
               <CardHeader>
-                <CardTitle>About {agent.name}</CardTitle>
+                <CardTitle>About {displayName}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
@@ -340,7 +350,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                           }`}
                         >
                           <p className="text-xs font-semibold mb-1 text-muted-foreground">
-                            {message.role === "agent" ? agent.name : "Client"}
+                            {message.role === "agent" ? displayName : "Client"}
                           </p>
                           <p className="text-sm">{message.text}</p>
                         </div>
@@ -405,7 +415,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                 <Separator />
 
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-sm">Why Book {agent.name}?</h4>
+                  <h4 className="font-semibold text-sm">Why Book {displayName}?</h4>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
@@ -414,21 +424,21 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
                       <span>
-                        {agent.listingKind === "human"
-                          ? "Verified human — schedule a personal call"
-                          : agent.listingKind === "both"
-                            ? "AI chat/call plus optional human appointment"
-                            : "Available 24/7 via Chat & Call"}
+                        {isAi
+                          ? "AI Salahkar — chat or call, online 24/7"
+                          : "Verified human — schedule a personal call"}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
                       <span>{agent.rating}/5 rating from {agent.reviewCount}+ clients</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
-                      <span>Fast response time (2-4 hours)</span>
-                    </li>
+                    {isAi ? null : (
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                        <span>Fast response time (2-4 hours)</span>
+                      </li>
+                    )}
                   </ul>
                 </div>
 

@@ -28,6 +28,8 @@ export type Agent = {
   channels: ("whatsapp" | "chat" | "call")[];
   accent: string;
   tagline: string;
+  /** Public name of the AI Salahkar when it differs from the human professional. */
+  aiName?: string;
   personality: string;
   kpis: { value: string; label: string }[];
   capabilities: { title: string; description: string }[];
@@ -50,6 +52,7 @@ export const agents: Agent[] = [
   {
     slug: "ankit-gupta-ca",
     name: "Ankit Gupta",
+    aiName: "Ankit AI",
     type: "CA",
     typeLabel: "Chartered Accountant",
     specializations: [
@@ -81,7 +84,7 @@ export const agents: Agent[] = [
     rating: 4.9,
     reviewCount: 312,
     consultationFee: STANDARD_HALF_HOUR_FEE,
-    bio: "CA Ankit Gupta is a Chartered Accountant and Business Consultant with 15+ years of experience in taxation, financial advisory, corporate finance, mergers & acquisitions, business restructuring and regulatory compliance. He provides strategic and practical solutions to businesses, startups and corporates across the complete business lifecycle—from business setup and tax structuring to financial management, compliance, transactions and growth advisory.",
+    bio: "Ankit AI is an AI-powered guidance tool on MySalahkar, guided by CA Ankit Gupta, Chartered Accountant. He has rich experience of more than 15 Years in Financial Reporting, Income Tax, Corporate tax, GST, TDS, Import Export, financial advisory, mergers & acquisitions, business restructuring and regulatory compliance. He provides strategic and practical solutions to businesses, startups and corporates across the complete business lifecycle—from business setup and tax structuring to financial management, compliance, transactions and growth advisory.",
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
     location: "Delhi, India",
@@ -169,6 +172,7 @@ export const agents: Agent[] = [
   {
     slug: "soniya-gupta-cs",
     name: "Soniya Gupta",
+    aiName: "Soniya AI",
     type: "CS",
     typeLabel: "Company Secretary · Insolvency Professional · POSH Trainer",
     specializations: [
@@ -201,7 +205,7 @@ export const agents: Agent[] = [
     rating: 4.9,
     reviewCount: 286,
     consultationFee: STANDARD_HALF_HOUR_FEE,
-    bio: "Soniya Gupta, FCS, LL.B., IP is a seasoned Company Secretary in Practice and Insolvency Professional with 18+ years of experience, specialising in Corporate & Commercial Advisory, IPO Due Diligence, Corporate Law, SEBI & Listing Compliances, Insolvency & Bankruptcy, Regulatory Approvals, Secretarial Audits, FEMA/RBI Compliance and POSH Advisory & Training. She provides end-to-end advisory and compliance support including representation before NCLT/NCLAT, MCA, Regional Director, ROC and other regulatory authorities.",
+    bio: "Soniya AI is an AI-powered guidance tool on MySalahkar, guided by CS Soniya Gupta, Company Secretary. She has a rich experience of more than 18 years in IPO, legal, Corporate Secretarial and Commercial Advisory, Certified POSH Trainer, adjudication before NCLT, NCLAT, Compounding of offences, Approvals of Regulatory Authorities, Audits, Compliances & Certification and Other Secretarial & Legal Areas etc.",
     image:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
     location: "New Delhi, India",
@@ -1211,6 +1215,11 @@ export const SPECIALIZATIONS: Record<AgentType, string[]> = {
     "Private Equity & Growth Capital",
   ],
 };
+
+/** Name shown for the AI Salahkar. Falls back to the professional's name. */
+export function aiConsultantName(agent: Pick<Agent, "name" | "aiName">): string {
+  return agent.aiName ?? agent.name;
+}
 
 export function getAgent(slug: string): Agent | undefined {
   return agents.find((agent) => agent.slug === slug);

@@ -46,7 +46,8 @@ export type MarketplaceListing = Agent & {
 };
 
 function listingKindFor(agent: Agent): ListingKind {
-  return agent.liveDemo ? "ai" : "human";
+  // Connected bots (Ankit, Soniya) are also real people you can book.
+  return agent.liveDemo ? "both" : "human";
 }
 
 export function getSeedHumanProfessionals(): MarketplaceListing[] {
@@ -99,7 +100,7 @@ export function listingToAgentShape(app: ListingApplication): MarketplaceListing
         ? "Verified professional"
         : app.listingKind === "both"
           ? "AI + human"
-          : "AI consultant",
+          : "AI Salahkar",
     listingKind: app.listingKind,
     isHumanProfessional: app.listingKind !== "ai",
     liveDemo: app.listingKind === "ai" || app.listingKind === "both",
@@ -111,7 +112,7 @@ export function getMarketplaceListings(): MarketplaceListing[] {
   return agents.map((a) => ({
     ...a,
     listingKind: listingKindFor(a),
-    isHumanProfessional: !a.liveDemo,
+    isHumanProfessional: true,
   }));
 }
 
@@ -119,6 +120,11 @@ export function getMarketplaceListing(
   slug: string,
 ): MarketplaceListing | undefined {
   return getMarketplaceListings().find((l) => l.slug === slug);
+}
+
+/** AI Salahkars do not show a city or a human response time. */
+export function isAiSalahkarListing(listing: { listingKind: ListingKind }): boolean {
+  return listing.listingKind !== "human";
 }
 
 export function canChatOrCall(listing: MarketplaceListing): boolean {

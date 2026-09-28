@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "My Salahkar — AI Professional Consultancy",
     description:
-      "Consult AI consultants for tax, legal, FEMA, insolvency, wealth and more — WhatsApp, chat or call.",
+      "Consult AI Salahkars for tax, legal, FEMA, insolvency, wealth and more — WhatsApp, chat or call.",
     type: "website",
     locale: "en_IN",
     images: [{ url: "/brand/mysalahkar-logo-on-white.png" }],

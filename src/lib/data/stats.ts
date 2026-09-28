@@ -4,7 +4,7 @@ export type HomeStat = {
 };
 
 export const homeStats: HomeStat[] = [
-  { value: "500+", label: "AI Consultants" },
+  { value: "500+", label: "AI Salahkars" },
   { value: "10,000+", label: "Consultations Handled" },
   { value: "50+", label: "Learning Sessions" },
   { value: "4.8/5", label: "Average Rating" },
@@ -93,7 +93,7 @@ export const whyChooseFeatures: WhyChooseFeature[] = [
   {
     title: "AI-Powered Experts",
     description:
-      "500+ AI consultants trained on years of professional practice—CA, CS, lawyers, FEMA, IRP, wealth advisors. Get expert guidance instantly.",
+      "500+ AI Salahkars trained on years of professional practice—CA, CS, lawyers, FEMA, IRP, wealth advisors. Get expert guidance instantly.",
     icon: "Brain",
   },
   {
@@ -133,7 +133,7 @@ export const howItWorksSteps: HowItWorksStep[] = [
     num: "1",
     title: "Find Your Expert",
     description:
-      "Browse 500+ AI consultants across CA, CS, lawyers, FEMA, wealth, real estate, insolvency. Filter by specialization, rating, and fees.",
+      "Browse 500+ AI Salahkars across CA, CS, lawyers, FEMA, wealth, real estate, insolvency. Filter by specialization, rating, and fees.",
   },
   {
     num: "2",

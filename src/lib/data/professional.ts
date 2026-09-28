@@ -71,7 +71,7 @@ export const mockProfessional: ProfessionalProfile = {
   agentName: "Ananya",
   agentSlug: "ananya-ca",
   tagline: "GST, tax planning & MSME compliance — clear and on time",
-  bio: "Practising CA with 14 years advising startups and MSMEs on GST, direct tax, and statutory audits. My AI consultant handles first-line queries; I take over for audits, notices, and complex planning.",
+  bio: "Practising CA with 14 years advising startups and MSMEs on GST, direct tax, and statutory audits. My AI Salahkar handles first-line queries; I take over for audits, notices, and complex planning.",
   consultationFee: 1000,
   shareRate: 0.55,
   status: "live",
@@ -225,12 +225,12 @@ export const shareTiers = [
   {
     title: "AI consultations",
     rate: "50–55%",
-    detail: "Your share of paid chat, WhatsApp, and call consultations handled by your AI consultant.",
+    detail: "Your share of paid chat, WhatsApp, and call consultations handled by your AI Salahkar.",
   },
   {
     title: "Service fulfilment",
     rate: "45–60%",
-    detail: "When a client books a filing or advisory package through your AI consultant listing.",
+    detail: "When a client books a filing or advisory package through your AI Salahkar listing.",
   },
   {
     title: "Human escalations",
@@ -240,7 +240,7 @@ export const shareTiers = [
   {
     title: "Referrals",
     rate: "10–25%",
-    detail: "Share when your AI consultant refers work to another domain consultant on the platform.",
+    detail: "Share when your AI Salahkar refers work to another domain consultant on the platform.",
   },
 ];
 
