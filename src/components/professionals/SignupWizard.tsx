@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, FileUp, Bot, User, Users } from "lucide-react";
@@ -18,6 +18,8 @@ import { saveApplication } from "@/lib/applications-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { LegalConsent } from "@/components/legal/LegalConsent";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import { readProAccount } from "@/lib/pro-account";
 
 const steps = [
   "You",
@@ -78,23 +80,35 @@ const listingOptions: {
   },
   {
     id: "ai",
-    title: "AI consultant only",
+    title: "AI Salahkar only",
     desc: "Your branded AI handles chat and voice. You escalate when needed.",
     icon: Bot,
   },
   {
     id: "both",
-    title: "AI consultant + myself",
+    title: "AI Salahkar + myself",
     desc: "AI for instant help; clients can also schedule a human call with you.",
     icon: Users,
   },
 ];
 
-export function SignupWizard() {
+export function SignupWizard({ phase = "account" }: { phase?: "account" | "consultant" }) {
   const router = useRouter();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(phase === "consultant" ? 1 : 0);
   const [form, setForm] = useState<FormState>(initial);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const account = readProAccount();
+    if (!account) return;
+    setForm((current) => ({
+      ...current,
+      name: account.name,
+      email: account.email,
+      phone: account.phone,
+      firm: account.firm,
+    }));
+  }, []);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -175,34 +189,48 @@ export function SignupWizard() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <Link
-        href="/"
+        href={phase === "consultant" ? "/professionals/dashboard" : "/"}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to home
+        {phase === "consultant" ? "Back to overview" : "Back to home"}
       </Link>
 
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-foreground">
-        Join as a professional
+        {phase === "consultant" ? "Create your AI Salahkar" : "Join as a professional"}
       </h1>
       <p className="mt-2 text-muted-foreground">
-        List yourself, launch an AI consultant, or both. Submit credentials for
-        superadmin review before you go live.
+        {phase === "consultant"
+          ? "Your account is ready. Choose how clients reach you, then submit credentials for review."
+          : "List yourself, launch an AI Salahkar, or both. Submit credentials for superadmin review before you go live."}
       </p>
+      {phase === "consultant" ? null : (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link
+            href="/professionals/login"
+            className="font-semibold text-foreground underline-offset-4 hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      )}
 
       <ol className="mt-8 flex gap-2">
-        {steps.map((label, i) => (
+        {(phase === "consultant" ? steps.slice(1) : steps).map((label, i) => (
           <li key={label} className="flex-1">
             <div
               className={cn(
                 "h-1 rounded-full",
-                i <= step ? "bg-accent" : "bg-border",
+                i <= step - (phase === "consultant" ? 1 : 0) ? "bg-accent" : "bg-border",
               )}
             />
             <p
               className={cn(
                 "mt-2 hidden text-xs font-medium sm:block",
-                i === step ? "text-foreground" : "text-muted-foreground",
+                i === step - (phase === "consultant" ? 1 : 0)
+                  ? "text-foreground"
+                  : "text-muted-foreground",
               )}
             >
               {label}
@@ -212,6 +240,30 @@ export function SignupWizard() {
       </ol>
 
       <div className="mt-8 rounded-xl border border-border bg-white p-6 sm:p-8">
+        {step === 0 && (
+          <div className="mb-6 space-y-4">
+            <LegalConsent
+              id="signup-google-dpdp"
+              checked={form.privacyConsent}
+              onChange={(checked) => update("privacyConsent", checked)}
+            />
+            <GoogleAuthButton
+              role="professional"
+              intent="signup"
+              consent={form.privacyConsent}
+            />
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-muted-foreground">
+                  or continue with email
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
         {step === 0 && (
           <div className="space-y-5">
             <div>
@@ -447,7 +499,7 @@ export function SignupWizard() {
             )}
             {form.listingKind === "ai" && (
               <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
-                After approval, your AI consultant can be provisioned for chat and
+                After approval, your AI Salahkar can be provisioned for chat and
                 voice (ops step).
               </p>
             )}
@@ -478,7 +530,7 @@ export function SignupWizard() {
                   form.listingKind === "human"
                     ? "Human only"
                     : form.listingKind === "ai"
-                      ? "AI consultant"
+                      ? "AI Salahkar"
                       : "AI + Human",
                 ],
                 ["Display name", form.displayName],
@@ -506,7 +558,7 @@ export function SignupWizard() {
           <Button
             type="button"
             variant="ghost"
-            disabled={step === 0}
+            disabled={step === (phase === "consultant" ? 1 : 0)}
             onClick={() => setStep((s) => s - 1)}
           >
             Back

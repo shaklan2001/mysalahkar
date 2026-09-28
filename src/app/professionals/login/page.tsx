@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LegalConsent } from "@/components/legal/LegalConsent";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 
 export default function ProfessionalLoginPage() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function ProfessionalLoginPage() {
         Professional sign in
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Access your AI consultant dashboard, earnings, and leads. Demo accepts any
+        Access your AI Salahkar dashboard, earnings, and leads. Demo accepts any
         credentials.
       </p>
 
@@ -76,6 +77,15 @@ export default function ProfessionalLoginPage() {
         <Button type="submit" className="w-full" disabled={loading || !privacyConsent}>
           {loading ? "Signing in…" : "Sign in to dashboard"}
         </Button>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-muted-foreground">or</span>
+          </div>
+        </div>
+        <GoogleAuthButton role="professional" consent={privacyConsent} />
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
@@ -84,7 +94,7 @@ export default function ProfessionalLoginPage() {
           href="/professionals/signup"
           className="font-semibold text-foreground underline-offset-4 hover:underline"
         >
-          Create your AI consultant
+          Sign up
         </Link>
       </p>
     </div>

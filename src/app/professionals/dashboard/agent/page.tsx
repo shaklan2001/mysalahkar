@@ -29,10 +29,10 @@ export default function ProAgentPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-            My AI consultant
+            My AI Salahkar
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Control how your AI consultant appears on the marketplace.
+            Control how your AI Salahkar appears on the marketplace.
           </p>
         </div>
         <Button asChild variant="outline" size="sm">

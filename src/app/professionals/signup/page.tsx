@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { SignupWizard } from "@/components/professionals/SignupWizard";
+import { ProAccountForm } from "@/components/professionals/ProAccountForm";
 
 export const metadata: Metadata = {
-  title: "Create your AI consultant",
-  description:
-    "Apply as a professional on My Salahkar — create your AI consultant and start earning a share of consultations.",
+  title: "Create a professional account",
+  description: "Create your My Salahkar professional account. Set up your AI Salahkar after you sign in.",
 };
 
 export default function ProfessionalSignupPage() {
-  return <SignupWizard />;
+  return <ProAccountForm />;
 }

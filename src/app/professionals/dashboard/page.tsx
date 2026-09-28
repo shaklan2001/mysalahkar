@@ -10,7 +10,7 @@ export default function ProDashboardPage() {
         </div>
       }
     >
-      <DashboardHome />
+      <DashboardHome heading="Home" />
     </Suspense>
   );
 }

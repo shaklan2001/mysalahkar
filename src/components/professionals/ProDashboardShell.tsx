@@ -6,11 +6,13 @@ import { useState } from "react";
 import {
   Bot,
   Calendar,
-  LayoutDashboard,
+  Home,
   LogOut,
   Menu,
   MessageSquare,
+  Newspaper,
   Settings,
+  Users,
   Wallet,
   X,
 } from "lucide-react";
@@ -18,12 +20,14 @@ import { MySalahkarLogo } from "@/components/brand/MySalahkarLogo";
 import { mockProfessional } from "@/lib/data/professional";
 import { cn } from "@/lib/utils";
 
-const nav = [
-  { href: "/professionals/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
+const nav: { href: string; label: string; icon: typeof Home; exact?: boolean }[] = [
+  { href: "/professionals/dashboard", label: "Home", icon: Home, exact: true },
+  { href: "/professionals/dashboard/community", label: "Community", icon: Users },
+  { href: "/professionals/dashboard/daily-digest", label: "Daily Digest", icon: Newspaper },
   { href: "/professionals/dashboard/calendar", label: "Calendar", icon: Calendar },
   { href: "/professionals/dashboard/leads", label: "Leads", icon: MessageSquare },
   { href: "/professionals/dashboard/earnings", label: "Earnings", icon: Wallet },
-  { href: "/professionals/dashboard/agent", label: "My AI consultant", icon: Bot },
+  { href: "/professionals/dashboard/agent", label: "My AI Salahkar", icon: Bot },
   { href: "/professionals/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -65,7 +69,7 @@ export function ProDashboardShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen bg-[#f4f6f8]">
       <aside className="hidden w-60 shrink-0 flex-col bg-[#001450] text-white lg:flex">
         <div className="border-b border-white/10 px-5 py-5">
-          <Link href="/">
+          <Link href="/professionals/dashboard">
             <MySalahkarLogo height={32} variant="white" />
           </Link>
           <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
