@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { resolveLiveDemoSlug } from "@/lib/data/agents";
+import { readClientSession } from "@/lib/client-session";
 
 export type ConsultMode = "chat" | "call";
 
@@ -24,6 +25,10 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
 
   const openConsult = useCallback(
     (slug?: string, mode: ConsultMode = "chat") => {
+      if (!readClientSession()) {
+        router.push("/client/login");
+        return;
+      }
       const resolved = resolveLiveDemoSlug(slug);
       router.push(`/consult/${resolved}?mode=${mode}`);
     },

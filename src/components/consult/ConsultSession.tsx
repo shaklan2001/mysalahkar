@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   MessageSquare,
@@ -21,12 +21,15 @@ import {
   getLiveDemoAgents,
   getAgent,
   isLiveDemoAgent,
+  aiConsultantName,
 } from "@/lib/data/agents";
+import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
 import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
 import { AiConsultGate } from "./AiConsultGate";
 import { LegalConsent } from "@/components/legal/LegalConsent";
+import { readClientSession } from "@/lib/client-session";
 
 function createContactId(agentSlug: string) {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -44,7 +47,9 @@ export function ConsultSession({
   agentSlug,
   initialMode = "chat",
 }: ConsultSessionProps) {
+  const router = useRouter();
   const { closeConsult } = useConsult();
+  const [allowed, setAllowed] = useState(false);
   const agent = useMemo(
     () => getAgent(agentSlug) ?? getLiveDemoAgents()[0],
     [agentSlug],
@@ -70,36 +75,47 @@ export function ConsultSession({
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!agent) return;
+    if (readClientSession()) {
+      setAllowed(true);
+      return;
+    }
+    const next = `${window.location.pathname}${window.location.search}`;
+    router.replace(`/client/login?next=${encodeURIComponent(next)}`);
+  }, [router]);
+
+  useEffect(() => {
+    if (!allowed || !agent) return;
     setContactId(createContactId(agent.slug));
     setMessages([
       {
         id: "welcome",
         role: "agent",
-        content: `Namaste! I'm ${agent.name}, your AI ${agent.typeLabel}. What's on your mind today?`,
+        content: `Namaste! I'm ${aiConsultantName(agent)}, your AI ${agent.typeLabel}. What's on your mind today?`,
         createdAt: Date.now(),
       },
     ]);
-  }, [agent]);
+  }, [agent, allowed]);
 
   useEffect(() => {
+    if (!allowed) return;
     setTab(initialMode);
     setCallActive(initialMode === "call");
-  }, [initialMode]);
+  }, [initialMode, allowed]);
 
   useEffect(() => {
+    if (!allowed) return;
     if (tab === "call") {
       setCallActive(true);
     } else {
       setCallActive(false);
     }
-  }, [tab]);
+  }, [tab, allowed]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streaming]);
 
-  if (!agent) return null;
+  if (!allowed || !agent) return null;
 
   async function sendMessage() {
     if (!input.trim() || streaming) return;
@@ -198,6 +214,7 @@ export function ConsultSession({
   }
 
   const liveConfigured = isLiveDemoAgent(agent.slug);
+  const displayName = aiConsultantName(agent);
 
   return (
     <AiConsultGate>
@@ -215,17 +232,15 @@ export function ConsultSession({
           </button>
 
           <div className="flex min-w-0 flex-1 items-center gap-3">
-            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-[#003cf8]">
-              <Image
-                src={agent.image}
-                alt={agent.name}
-                fill
-                className="object-cover"
-                sizes="44px"
-              />
-            </div>
+            <ConsultantPhoto
+              src={agent.image}
+              alt={displayName}
+              showAiBadge
+              className="h-11 w-11"
+              sizes="44px"
+            />
             <div className="min-w-0">
-              <p className="truncate font-semibold leading-tight">{agent.name}</p>
+              <p className="truncate font-semibold leading-tight">{displayName}</p>
               <p className="truncate text-xs text-blue-200/90">
                 {agent.typeLabel} · {liveConfigured ? "Live" : "Offline"}
               </p>
@@ -290,7 +305,7 @@ export function ConsultSession({
                 <Textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={`Ask ${agent.name}…`}
+                  placeholder={`Ask ${displayName}…`}
                   rows={2}
                   className="min-h-[52px] resize-none text-[15px]"
                   onKeyDown={(e) => {
@@ -319,7 +334,7 @@ export function ConsultSession({
             {liveConfigured && contactId ? (
               <VoiceCallPanel
                 agentSlug={agent.slug}
-                agentName={agent.name}
+                agentName={displayName}
                 contactId={contactId}
                 active={callActive}
                 onEnded={() => setCallActive(false)}

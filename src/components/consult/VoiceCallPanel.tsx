@@ -10,7 +10,12 @@ import {
   Track,
 } from "livekit-client";
 import { Loader2, Mic, MicOff, PhoneOff } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { CallLowBalanceDialog } from "@/components/consult/CallLowBalanceDialog";
+import { CallReviewDialog } from "@/components/consult/CallReviewDialog";
+import { formatClock, meterTick, readCallRates } from "@/lib/call-meter";
+import { debitWallet, formatRupees, readBalancePaise } from "@/lib/wallet";
 
 const TRANSCRIPT_TOPIC = "vibrium.voice.transcript";
 
@@ -55,6 +60,23 @@ export function VoiceCallPanel({
   const [micEnabled, setMicEnabled] = useState(false);
   const [agentOnline, setAgentOnline] = useState(false);
   const [transcripts, setTranscripts] = useState<TranscriptLine[]>([]);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [secondsRemaining, setSecondsRemaining] = useState<number | null>(null);
+  const [walletPaise, setWalletPaise] = useState(0);
+  const [lowBalance, setLowBalance] = useState(false);
+  const payingRef = useRef(false);
+  const ratesRef = useRef(readCallRates());
+  const hadCallRef = useRef(false);
+  const mountedRef = useRef(true);
+  const onEndedRef = useRef(onEnded);
+  onEndedRef.current = onEnded;
+  const [reviewOpen, setReviewOpen] = useState(false);
+
+  const promptReview = useCallback(() => {
+    if (!mountedRef.current || !hadCallRef.current) return;
+    hadCallRef.current = false;
+    setReviewOpen(true);
+  }, []);
 
   const addTranscript = useCallback((role: "user" | "agent", content: string) => {
     const trimmed = content.trim();
@@ -77,7 +99,8 @@ export function VoiceCallPanel({
     const room = roomRef.current;
     if (!room) {
       setStatus("idle");
-      onEnded();
+      promptReview();
+      onEndedRef.current();
       return;
     }
     setStatus("disconnecting");
@@ -91,8 +114,9 @@ export function VoiceCallPanel({
     setMicEnabled(false);
     setAgentOnline(false);
     setStatus("idle");
-    onEnded();
-  }, [onEnded]);
+    promptReview();
+    onEndedRef.current();
+  }, [promptReview]);
 
   const connect = useCallback(async () => {
     if (roomRef.current || !active) return;
@@ -122,6 +146,7 @@ export function VoiceCallPanel({
     const room = new Room({ adaptiveStream: true, dynacast: true });
 
     room.on(RoomEvent.Connected, () => {
+      hadCallRef.current = true;
       setStatus("connected");
       room.startAudio().catch(() => {});
     });
@@ -129,8 +154,10 @@ export function VoiceCallPanel({
     room.on(RoomEvent.Disconnected, () => {
       setMicEnabled(false);
       setAgentOnline(false);
-      setStatus("disconnected");
       roomRef.current = null;
+      setStatus("idle");
+      promptReview();
+      onEndedRef.current();
     });
 
     room.on(RoomEvent.Reconnecting, () => setStatus("reconnecting"));
@@ -199,19 +226,21 @@ export function VoiceCallPanel({
       setStatus("error");
       roomRef.current = null;
     }
-  }, [active, addTranscript, agentSlug, contactId]);
+  }, [active, addTranscript, agentSlug, contactId, promptReview]);
 
   useEffect(() => {
-    if (active && status === "idle") {
+    if (active && status === "idle" && !reviewOpen) {
       connect();
     }
     if (!active && roomRef.current) {
       disconnect();
     }
-  }, [active, status, connect, disconnect]);
+  }, [active, status, connect, disconnect, reviewOpen]);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       roomRef.current?.disconnect().catch(() => {});
       roomRef.current = null;
     };
@@ -226,6 +255,55 @@ export function VoiceCallPanel({
   };
 
   const isActive = status === "connected" || status === "reconnecting";
+  const disconnectRef = useRef(disconnect);
+  disconnectRef.current = disconnect;
+
+  useEffect(() => {
+    if (!isActive) return;
+    const startedAt = Date.now();
+    let chargedMinutes = 0;
+    const rates = ratesRef.current;
+    setWalletPaise(readBalancePaise());
+    setElapsedSeconds(0);
+
+    const id = window.setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+      const balancePaise = readBalancePaise();
+      const tick = meterTick({
+        elapsedSeconds: elapsed,
+        balancePaise,
+        chargedMinutes,
+        freeMinutes: rates.freeMinutes,
+        rupeesPerMinute: rates.rupeesPerMinute,
+      });
+
+      if (tick.debitPaise > 0) {
+        const next = debitWallet(tick.debitPaise);
+        if (next === null) {
+          window.clearInterval(id);
+          toast.error("Call ended. The wallet could not cover the next minute.");
+          void disconnectRef.current();
+          return;
+        }
+        chargedMinutes = tick.paidMinutesDue;
+      }
+
+      setElapsedSeconds(elapsed);
+      setWalletPaise(readBalancePaise());
+      setSecondsRemaining(tick.secondsRemaining);
+      setLowBalance(tick.warn);
+
+      if (tick.cut && !payingRef.current) {
+        window.clearInterval(id);
+        toast.error("Call ended. Add money to keep talking.");
+        void disconnectRef.current();
+      }
+    }, 1000);
+
+    return () => {
+      window.clearInterval(id);
+    };
+  }, [isActive]);
 
   return (
     <div className={`flex flex-1 flex-col ${fullScreen ? "px-6 py-8" : ""}`}>
@@ -255,6 +333,7 @@ export function VoiceCallPanel({
             {status === "reconnecting" && "Reconnecting…"}
             {status === "connected" && (agentOnline ? "Connected" : "Waiting for agent…")}
             {status === "disconnecting" && "Ending call…"}
+            {status === "disconnected" && "Call ended"}
             {status === "error" && "Call failed"}
           </h3>
           <p className="mt-2 text-sm text-slate-600">
@@ -264,6 +343,15 @@ export function VoiceCallPanel({
                 ? "Speak naturally — your mic is live and transcripts appear below."
                 : "Voice consultation with your AI specialist on MySalahkaar."}
           </p>
+          {isActive ? (
+            <p className="mt-2 text-sm font-medium text-slate-800">
+              {formatClock(elapsedSeconds)} · first {ratesRef.current.freeMinutes} min free, then{" "}
+              {formatRupees(ratesRef.current.rupeesPerMinute * 100)}/min · wallet {formatRupees(walletPaise)}
+              {secondsRemaining !== null && Number.isFinite(secondsRemaining)
+                ? ` · ${formatClock(secondsRemaining)} left`
+                : ""}
+            </p>
+          ) : null}
         </div>
 
         {transcripts.length > 0 && (
@@ -312,6 +400,27 @@ export function VoiceCallPanel({
           )}
         </div>
       </div>
+
+      {reviewOpen ? (
+        <CallReviewDialog
+          agentSlug={agentSlug}
+          agentName={agentName}
+          onClose={() => setReviewOpen(false)}
+        />
+      ) : null}
+
+      {lowBalance && isActive ? (
+        <CallLowBalanceDialog
+          secondsRemaining={secondsRemaining ?? 0}
+          balancePaise={walletPaise}
+          rupeesPerMinute={ratesRef.current.rupeesPerMinute}
+          onPaid={() => setLowBalance(false)}
+          onEnd={() => void disconnect()}
+          onPayingChange={(paying) => {
+            payingRef.current = paying;
+          }}
+        />
+      ) : null}
     </div>
   );
 }
