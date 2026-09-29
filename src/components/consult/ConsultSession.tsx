@@ -5,18 +5,27 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowUpRight,
+  Bot,
+  Calendar,
   MessageSquare,
   Phone,
+  Repeat,
   Send,
   Sparkles,
-  Calendar,
+  UserRound,
 } from "lucide-react";
 import { useConsult, type ConsultMode } from "./ConsultProvider";
 import { VoiceCallPanel } from "./VoiceCallPanel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   getLiveDemoAgents,
   getAgent,
@@ -24,6 +33,7 @@ import {
   aiConsultantName,
 } from "@/lib/data/agents";
 import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
+import { aiSalahkarHref } from "@/lib/data/marketplace";
 import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
@@ -48,7 +58,7 @@ export function ConsultSession({
   initialMode = "chat",
 }: ConsultSessionProps) {
   const router = useRouter();
-  const { closeConsult } = useConsult();
+  const { closeConsult, openConsult } = useConsult();
   const [allowed, setAllowed] = useState(false);
   const agent = useMemo(
     () => getAgent(agentSlug) ?? getLiveDemoAgents()[0],
@@ -90,7 +100,7 @@ export function ConsultSession({
       {
         id: "welcome",
         role: "agent",
-        content: `Namaste! I'm ${aiConsultantName(agent)}, your AI ${agent.typeLabel}. What's on your mind today?`,
+        content: `Namaste! I'm ${aiConsultantName(agent)}. What's on your mind today?`,
         createdAt: Date.now(),
       },
     ]);
@@ -157,7 +167,9 @@ export function ConsultSession({
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
       const message =
-        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.";
       setMessages((m) =>
         m.map((msg) =>
           msg.id === agentMsgId
@@ -215,123 +227,205 @@ export function ConsultSession({
 
   const liveConfigured = isLiveDemoAgent(agent.slug);
   const displayName = aiConsultantName(agent);
+  const firstName = displayName.split(" ")[0];
+  const suggestions = agent.faqs.map((faq) => faq.q).slice(0, 3);
+  const onlyWelcome = messages.length <= 1;
+
+  function openEscalation() {
+    const session = readClientSession();
+    setEscalateForm((f) => ({
+      ...f,
+      name: f.name || session?.name || "",
+      email: f.email || session?.email || "",
+    }));
+    setShowEscalate(true);
+  }
 
   return (
     <AiConsultGate>
-    <div className="flex h-[100dvh] flex-col bg-[#f8fafc]">
-      {/* Header */}
-      <header className="shrink-0 border-b border-slate-200 bg-[#001450] text-white">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6">
-          <button
-            onClick={closeConsult}
-            className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Back</span>
-          </button>
+      <div className="flex h-[100dvh] flex-col bg-background">
+        {/* Header */}
+        <header className="shrink-0 border-b border-border/70 bg-white">
+          <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
+            <button
+              onClick={closeConsult}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
 
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            <ConsultantPhoto
-              src={agent.image}
-              alt={displayName}
-              showAiBadge
-              className="h-11 w-11"
-              sizes="44px"
-            />
-            <div className="min-w-0">
-              <p className="truncate font-semibold leading-tight">{displayName}</p>
-              <p className="truncate text-xs text-blue-200/90">
-                {agent.typeLabel} · {liveConfigured ? "Live" : "Offline"}
-              </p>
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <ConsultantPhoto
+                src={agent.image}
+                alt=""
+                showAiBadge
+                rounded="xl"
+                className="h-10 w-10"
+                sizes="40px"
+              />
+              <div className="min-w-0">
+                <p className="truncate font-display text-[15px] font-semibold leading-tight tracking-tight text-foreground">
+                  {displayName}
+                </p>
+                <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+                  <span
+                    className={
+                      liveConfigured
+                        ? "h-1.5 w-1.5 rounded-full bg-success"
+                        : "h-1.5 w-1.5 rounded-full bg-border"
+                    }
+                  />
+                  AI Salahkar · {liveConfigured ? "Online 24/7" : "Offline"}
+                </p>
+              </div>
             </div>
+
+            <div
+              className="inline-flex shrink-0 rounded-lg border border-border bg-[#f8f9fc] p-1"
+              role="tablist"
+              aria-label="Consultation mode"
+            >
+              {(
+                [
+                  ["chat", "Chat", MessageSquare],
+                  ["call", "Call", Phone],
+                ] as const
+              ).map(([value, label, Icon]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === value}
+                  onClick={() => setTab(value)}
+                  className={
+                    tab === value
+                      ? "inline-flex h-8 items-center gap-1.5 rounded-md bg-[#001450] px-3 text-xs font-semibold text-white shadow-sm"
+                      : "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-muted-foreground hover:text-foreground"
+                  }
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{label}</span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => openConsult()}
+              className="hidden h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
+            >
+              <Repeat className="h-3.5 w-3.5" /> Switch
+            </button>
           </div>
+        </header>
 
-          <Link
-            href={`/agents/${agent.slug}`}
-            className="hidden text-xs text-slate-400 hover:text-white sm:block"
-          >
-            View profile
-          </Link>
-        </div>
-      </header>
+        <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-5 px-4 py-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:py-6">
+          {/* Conversation */}
+          <section className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-white">
+            {tab === "chat" ? (
+              <>
+                <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                  <div className="mx-auto max-w-3xl space-y-5">
+                    {messages.map((m) =>
+                      m.role === "user" ? (
+                        <div key={m.id} className="flex justify-end">
+                          <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#001450] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-white">
+                            {m.content}
+                          </div>
+                        </div>
+                      ) : (
+                        <div key={m.id} className="flex items-start gap-3">
+                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-blue/10 text-accent">
+                            <Bot className="h-4 w-4" />
+                          </span>
+                          <div className="max-w-[85%] rounded-2xl rounded-tl-md border border-border bg-[#fbfcfe] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-ink-soft">
+                            {m.content ||
+                              (streaming ? (
+                                <span
+                                  className="inline-flex items-center gap-1 py-1"
+                                  aria-label={`${firstName} is typing`}
+                                >
+                                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent/70" />
+                                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent/70 [animation-delay:120ms]" />
+                                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent/70 [animation-delay:240ms]" />
+                                </span>
+                              ) : null)}
+                          </div>
+                        </div>
+                      ),
+                    )}
 
-      {/* Main */}
-      <div className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col px-4 py-4 sm:px-6">
-        <Tabs
-          value={tab}
-          onValueChange={(v) => setTab(v as ConsultMode)}
-          className="flex min-h-0 flex-1 flex-col"
-        >
-          <TabsList className="mx-auto mb-4 grid w-full max-w-xs grid-cols-2 bg-white shadow-sm">
-            <TabsTrigger value="chat" className="gap-1.5">
-              <MessageSquare className="h-4 w-4" />
-              Chat
-            </TabsTrigger>
-            <TabsTrigger value="call" className="gap-1.5">
-              <Phone className="h-4 w-4" />
-              Call
-            </TabsTrigger>
-          </TabsList>
+                    {onlyWelcome && suggestions.length ? (
+                      <div className="pl-11">
+                        <p className="text-xs font-medium text-muted-foreground">
+                          Try asking
+                        </p>
+                        <div className="mt-2 flex flex-col items-start gap-2">
+                          {suggestions.map((q) => (
+                            <button
+                              key={q}
+                              type="button"
+                              onClick={() => setInput(q)}
+                              className="rounded-xl border border-border bg-white px-3.5 py-2 text-left text-sm text-ink-soft transition-colors hover:border-accent/40 hover:text-accent"
+                            >
+                              {q}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </div>
 
-          <TabsContent
-            value="chat"
-            className="mt-0 flex min-h-0 flex-1 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
-          >
-            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-              <div className="mx-auto max-w-3xl space-y-4">
-                {messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
-                        m.role === "user"
-                          ? "bg-primary text-white"
-                          : "bg-slate-100 text-slate-800"
-                      }`}
-                    >
-                      {m.content || (streaming ? "…" : "")}
+                <div className="shrink-0 border-t border-border/70 bg-white px-4 py-4 sm:px-6">
+                  <div className="mx-auto max-w-3xl">
+                    <div className="flex items-end gap-2 rounded-2xl border border-border bg-white p-2 transition-shadow focus-within:border-accent/50 focus-within:ring-3 focus-within:ring-accent/15">
+                      <textarea
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder={`Message ${displayName}…`}
+                        aria-label={`Message ${displayName}`}
+                        rows={1}
+                        className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-2 py-2.5 text-[15px] outline-none placeholder:text-muted-foreground"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                          }
+                        }}
+                      />
+                      <Button
+                        size="icon"
+                        variant="accent"
+                        className="h-11 w-11 shrink-0 rounded-xl"
+                        onClick={sendMessage}
+                        disabled={streaming || !input.trim()}
+                        aria-label="Send message"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] text-muted-foreground">
+                      <span>
+                        AI guidance, not a formal professional opinion.
+                      </span>
+                      <button
+                        type="button"
+                        onClick={openEscalation}
+                        className="inline-flex items-center gap-1 font-semibold text-foreground hover:text-accent lg:hidden"
+                      >
+                        <UserRound className="h-3 w-3" /> Talk to a human
+                      </button>
+                      <span className="hidden sm:inline lg:inline">
+                        Enter to send · Shift + Enter for a new line
+                      </span>
                     </div>
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
-
-            <div className="shrink-0 border-t border-slate-100 px-4 py-4 sm:px-6">
-              <div className="mx-auto flex max-w-3xl gap-3">
-                <Textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={`Ask ${displayName}…`}
-                  rows={2}
-                  className="min-h-[52px] resize-none text-[15px]"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      sendMessage();
-                    }
-                  }}
-                />
-                <Button
-                  size="icon"
-                  className="h-[52px] w-[52px] shrink-0"
-                  onClick={sendMessage}
-                  disabled={streaming || !input.trim()}
-                >
-                  <Send className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent
-            value="call"
-            className="mt-0 flex min-h-0 flex-1 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
-          >
-            {liveConfigured && contactId ? (
+                </div>
+              </>
+            ) : liveConfigured && contactId ? (
               <VoiceCallPanel
                 agentSlug={agent.slug}
                 agentName={displayName}
@@ -341,34 +435,91 @@ export function ConsultSession({
                 fullScreen
               />
             ) : (
-              <div className="flex flex-1 items-center justify-center text-slate-600">
-                Voice demo is not available for this agent.
+              <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+                Voice calls aren&apos;t available for this Salahkar yet.
               </div>
             )}
-          </TabsContent>
-        </Tabs>
-      </div>
+          </section>
 
-      {/* Footer escalation */}
-      <footer className="shrink-0 border-t border-slate-200 bg-white px-4 py-3 sm:px-6">
-        <div className="mx-auto max-w-5xl">
-          {!showEscalate ? (
-            <button
-              onClick={() => setShowEscalate(true)}
-              className="flex w-full items-center justify-center gap-2 text-sm font-medium text-slate-600 hover:text-primary"
-            >
-              <Calendar className="h-4 w-4" />
-              Need a human specialist? Schedule a call
-            </button>
-          ) : (
-            <form onSubmit={submitEscalation} className="mx-auto max-w-lg space-y-2">
-              <p className="flex items-center justify-center gap-1 text-xs font-semibold text-slate-700">
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                Human escalation
+          {/* Context rail */}
+          <aside className="hidden min-h-0 space-y-4 overflow-y-auto lg:block">
+            <div className="rounded-2xl border border-border bg-white p-5">
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent">
+                <Sparkles className="h-3.5 w-3.5" /> About this chat
               </p>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {displayName} is an AI assistant, not a live person. Answers are
+                informational and may be incomplete.
+              </p>
+              <Link
+                href={aiSalahkarHref(agent)}
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-foreground hover:text-accent"
+              >
+                What {firstName} can help with{" "}
+                <ArrowUpRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-white p-5">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                Guided by
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <ConsultantPhoto
+                  src={agent.image}
+                  alt=""
+                  rounded="xl"
+                  className="h-10 w-10"
+                  sizes="40px"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">
+                    {agent.name}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {agent.typeLabel}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-2xl bg-[#001450] p-5 text-white">
+              <div
+                className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-accent/40 blur-2xl"
+                aria-hidden
+              />
+              <UserRound className="relative h-5 w-5 text-blue-200" />
+              <p className="relative mt-3 font-display text-base font-semibold tracking-tight">
+                Need a human expert?
+              </p>
+              <p className="relative mt-1 text-sm text-slate-300">
+                For filings, notices or sign-off, book {agent.name} on Google
+                Meet. Your chat goes with you.
+              </p>
+              <button
+                type="button"
+                onClick={openEscalation}
+                className="relative mt-4 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md bg-white text-xs font-semibold text-[#001450] hover:bg-blue-50"
+              >
+                <Calendar className="h-3.5 w-3.5" /> Schedule a call
+              </button>
+            </div>
+          </aside>
+        </div>
+
+        {/* Human escalation */}
+        <Dialog open={showEscalate} onOpenChange={setShowEscalate}>
+          <DialogContent className="max-w-lg">
+            <DialogTitle>Book a human specialist</DialogTitle>
+            <DialogDescription>
+              {agent.name} or their team will join you on Google Meet. We share
+              this conversation so you don&apos;t have to repeat yourself.
+            </DialogDescription>
+            <form onSubmit={submitEscalation} className="mt-5 space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <Input
                   placeholder="Your name"
+                  aria-label="Your name"
                   required
                   value={escalateForm.name}
                   onChange={(e) =>
@@ -378,6 +529,7 @@ export function ConsultSession({
                 <Input
                   type="email"
                   placeholder="Email"
+                  aria-label="Email"
                   required
                   value={escalateForm.email}
                   onChange={(e) =>
@@ -386,6 +538,7 @@ export function ConsultSession({
                 />
                 <Input
                   placeholder="Phone"
+                  aria-label="Phone"
                   required
                   value={escalateForm.phone}
                   onChange={(e) =>
@@ -394,6 +547,7 @@ export function ConsultSession({
                 />
                 <Input
                   placeholder="Preferred time"
+                  aria-label="Preferred time"
                   value={escalateForm.preferredTime}
                   onChange={(e) =>
                     setEscalateForm((f) => ({
@@ -405,7 +559,8 @@ export function ConsultSession({
               </div>
               <Textarea
                 placeholder="What should the specialist know?"
-                rows={2}
+                aria-label="Notes for the specialist"
+                rows={3}
                 value={escalateForm.note}
                 onChange={(e) =>
                   setEscalateForm((f) => ({ ...f, note: e.target.value }))
@@ -416,7 +571,7 @@ export function ConsultSession({
                 checked={escalateConsent}
                 onChange={setEscalateConsent}
               />
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-1">
                 <Button
                   type="button"
                   variant="outline"
@@ -425,15 +580,18 @@ export function ConsultSession({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={!escalateConsent}>
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  disabled={!escalateConsent}
+                >
                   Book Meet
                 </Button>
               </div>
             </form>
-          )}
-        </div>
-      </footer>
-    </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </AiConsultGate>
   );
 }

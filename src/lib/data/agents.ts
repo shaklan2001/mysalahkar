@@ -1135,6 +1135,205 @@ export const agents: Agent[] = [
       "Formal secretarial certifications, signed filings and POSH programme delivery are handled through JVS & Associates under CS Jyoti Sharma.",
     liveTag: "Verified professional",
   },
+  {
+    slug: "anita-sinha-lawyer",
+    name: "Adv. Anita Sinha",
+    type: "Lawyer",
+    typeLabel: "Legal & Corporate Lawyer · Delhi High Court",
+    specializations: [
+      "Civil & Criminal Matters",
+      "Matrimonial & Family Disputes",
+      "Bail Matters",
+      "Cheque Bounce Matters",
+      "Securities & Share Disputes",
+      "Real Estate Matters",
+      "Cyber Crime Matters",
+      "Arbitration & Dispute Resolution",
+      "SAT Matters",
+      "Legal Documentation",
+    ],
+    services: [
+      "Representation and legal assistance in civil and criminal matters",
+      "Matrimonial and family dispute resolution",
+      "Bail applications and related legal proceedings",
+      "Cheque bounce litigation",
+      "Real estate dispute and legal advisory",
+      "Cyber crime legal matters",
+      "Arbitration proceedings and dispute resolution",
+      "Legal documentation and drafting",
+      "Matters relating to shares and securities",
+      "Representation before the Securities Appellate Tribunal (SAT)",
+    ],
+    experience: 15,
+    rating: 4.8,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "Adv. Anita Sinha is a legal and corporate lawyer practicing before the Delhi High Court, with 15+ years of professional experience. Qualifications: B.A. (Hons.) Economics, M.Com, CS, LL.B. She specializes in civil, criminal, matrimonial, family, real estate, cyber crime, arbitration, securities and other dispute-resolution matters, along with legal documentation and advisory services.",
+    image:
+      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    location: "Delhi, India",
+    availability: "By appointment",
+    languages: ["English", "Hindi"],
+    channels: ["call"],
+    accent: "#0f766e",
+    tagline: "Delhi High Court practice across disputes, securities & documentation",
+    personality:
+      "Court-focused and practical. Clear on forum, documents, and the next step in a dispute.",
+    kpis: [
+      { value: "15+", label: "Years Experience" },
+      { value: "DHC", label: "Delhi High Court" },
+      { value: "CS · LL.B.", label: "Qualifications" },
+      { value: "Delhi", label: "Location" },
+    ],
+    capabilities: [
+      {
+        title: "Civil, Criminal & Family",
+        description:
+          "Civil and criminal matters, matrimonial and family disputes, and bail applications.",
+      },
+      {
+        title: "Commercial Disputes",
+        description:
+          "Cheque bounce, real estate, shares and securities, and representation before the SAT.",
+      },
+      {
+        title: "Arbitration & Drafting",
+        description:
+          "Arbitration and dispute resolution, cyber crime matters, and legal documentation.",
+      },
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share the Matter",
+        desc: "Describe the dispute, forum, and documents you already have.",
+      },
+      {
+        num: "2",
+        title: "Legal Assessment",
+        desc: "Anita outlines the forum, risks, and a practical next step.",
+      },
+      {
+        num: "3",
+        title: "Draft or Appear",
+        desc: "Documentation, filings, or representation before the Delhi High Court and SAT.",
+      },
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "A cheque issued to my company was dishonoured. What should I do first?",
+      },
+      {
+        role: "agent",
+        text: "Keep the cheque, bank return memo, and your legal notice timeline. A dishonour matter usually starts with a demand notice, then a complaint if payment does not come. Share the cheque date, return date, and whether a notice has already gone out.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Which court do you practice before?",
+        a: "Delhi High Court, including civil, criminal, bail, and related dispute work.",
+      },
+      {
+        q: "Do you handle SAT and securities disputes?",
+        a: "Yes—share and securities disputes, and representation before the Securities Appellate Tribunal.",
+      },
+      {
+        q: "What are your qualifications?",
+        a: "B.A. (Hons.) Economics, M.Com, CS, and LL.B.",
+      },
+    ],
+    escalationNote:
+      "Court appearances, signed pleadings, and formal legal opinions are handled through Adv. Anita Sinha’s Delhi High Court practice.",
+    liveTag: "Verified professional",
+  },
+  {
+    slug: "isha-madaan-cs",
+    name: "CS Isha Madaan",
+    type: "CS",
+    typeLabel: "Company Secretary",
+    specializations: [
+      "Insolvency & Bankruptcy",
+      "Secretarial Affairs & Corporate Governance",
+    ],
+    services: [
+      "Compliances under the Insolvency and Bankruptcy Code, 2016",
+      "Secretarial compliances",
+      "IBC process support",
+    ],
+    experience: 6,
+    rating: 4.8,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "CS Isha Madaan is an Associate member of the Institute of Company Secretaries of India and a commerce graduate, with more than 6 years of experience in compliances under the Insolvency and Bankruptcy Code, 2016 and secretarial work. She presently works in the field of the IBC, 2016.",
+    image: "/consultants/isha-madaan.png",
+    location: "India",
+    availability: "By appointment",
+    languages: ["English", "Hindi"],
+    channels: ["call"],
+    accent: "#6d28d9",
+    tagline: "IBC, 2016 compliances and secretarial work",
+    personality:
+      "Compliance-focused company secretary. Clear on IBC timelines and secretarial filings.",
+    kpis: [
+      { value: "6+", label: "Years Experience" },
+      { value: "ACS", label: "ICSI Associate" },
+      { value: "IBC", label: "Current Focus" },
+      { value: "B.Com", label: "Commerce Graduate" },
+    ],
+    capabilities: [
+      {
+        title: "IBC Compliances",
+        description:
+          "Compliances under the Insolvency and Bankruptcy Code, 2016.",
+      },
+      {
+        title: "Secretarial Work",
+        description:
+          "Secretarial compliances alongside insolvency process support.",
+      },
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share the Matter",
+        desc: "Describe the IBC process or secretarial compliance you need.",
+      },
+      {
+        num: "2",
+        title: "Compliance Map",
+        desc: "Isha outlines filings, timelines, and what is still pending.",
+      },
+      {
+        num: "3",
+        title: "File & Follow",
+        desc: "Guidance on IBC and secretarial compliances through her practice.",
+      },
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "We need help with compliances under the IBC. Where do we start?",
+      },
+      {
+        role: "agent",
+        text: "Start with the process stage you are in — CIRP, liquidation, or a specific filing — and the last form you submitted. I work on IBC, 2016 compliances and can map what is due next.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Are you a member of ICSI?",
+        a: "Yes. Associate member of the Institute of Company Secretaries of India, and a commerce graduate.",
+      },
+      {
+        q: "What do you handle?",
+        a: "Compliances under the Insolvency and Bankruptcy Code, 2016, and secretarial work. Current practice is in the IBC, 2016.",
+      },
+    ],
+    escalationNote:
+      "Signed secretarial certifications and formal IBC appointments are handled through CS Isha Madaan’s practice.",
+    liveTag: "Verified professional",
+  },
 ];
 
 export const SPECIALIZATIONS: Record<AgentType, string[]> = {
@@ -1195,6 +1394,16 @@ export const SPECIALIZATIONS: Record<AgentType, string[]> = {
     "Civil and Commercial Litigation",
     "Negotiable Instruments Act",
     "Quashing Petitions",
+    "Civil & Criminal Matters",
+    "Matrimonial & Family Disputes",
+    "Bail Matters",
+    "Cheque Bounce Matters",
+    "Securities & Share Disputes",
+    "Real Estate Matters",
+    "Cyber Crime Matters",
+    "Arbitration & Dispute Resolution",
+    "SAT Matters",
+    "Legal Documentation",
   ],
   "Wealth Management": [
     "Investment Planning",

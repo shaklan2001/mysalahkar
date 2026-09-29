@@ -93,24 +93,24 @@ export const mockMetrics: DashboardMetrics = {
 };
 
 export const mockDailySeries: DailyPoint[] = [
-  { date: "Jul 1", consultations: 4, earnings: 5200 },
-  { date: "Jul 3", consultations: 6, earnings: 7800 },
-  { date: "Jul 5", consultations: 5, earnings: 6400 },
-  { date: "Jul 7", consultations: 8, earnings: 11200 },
-  { date: "Jul 9", consultations: 7, earnings: 9100 },
-  { date: "Jul 11", consultations: 9, earnings: 12400 },
-  { date: "Jul 13", consultations: 6, earnings: 8200 },
-  { date: "Jul 15", consultations: 11, earnings: 15800 },
-  { date: "Jul 17", consultations: 8, earnings: 10500 },
-  { date: "Jul 19", consultations: 10, earnings: 14200 },
-  { date: "Jul 21", consultations: 7, earnings: 9800 },
-  { date: "Jul 23", consultations: 12, earnings: 16800 },
+  { date: "Sep 8", consultations: 4, earnings: 5200 },
+  { date: "Sep 10", consultations: 6, earnings: 7800 },
+  { date: "Sep 12", consultations: 5, earnings: 6400 },
+  { date: "Sep 14", consultations: 8, earnings: 11200 },
+  { date: "Sep 16", consultations: 7, earnings: 9100 },
+  { date: "Sep 18", consultations: 9, earnings: 12400 },
+  { date: "Sep 20", consultations: 6, earnings: 8200 },
+  { date: "Sep 22", consultations: 11, earnings: 15800 },
+  { date: "Sep 24", consultations: 8, earnings: 10500 },
+  { date: "Sep 26", consultations: 10, earnings: 14200 },
+  { date: "Sep 28", consultations: 7, earnings: 9800 },
+  { date: "Sep 30", consultations: 12, earnings: 16800 },
 ];
 
 export const mockEarnings: EarningRow[] = [
   {
     id: "e1",
-    date: "2026-07-22",
+    date: "2026-09-28",
     type: "Consultation",
     client: "Ravi Traders",
     gross: 2500,
@@ -119,7 +119,7 @@ export const mockEarnings: EarningRow[] = [
   },
   {
     id: "e2",
-    date: "2026-07-21",
+    date: "2026-09-27",
     type: "Service",
     client: "Nova Soft Pvt Ltd",
     gross: 18000,
@@ -128,7 +128,7 @@ export const mockEarnings: EarningRow[] = [
   },
   {
     id: "e3",
-    date: "2026-07-20",
+    date: "2026-09-26",
     type: "Escalation",
     client: "Priya Nair",
     gross: 8500,
@@ -137,7 +137,7 @@ export const mockEarnings: EarningRow[] = [
   },
   {
     id: "e4",
-    date: "2026-07-18",
+    date: "2026-09-24",
     type: "Consultation",
     client: "Greenfield Foods",
     gross: 2500,
@@ -146,7 +146,7 @@ export const mockEarnings: EarningRow[] = [
   },
   {
     id: "e5",
-    date: "2026-07-16",
+    date: "2026-09-22",
     type: "Referral",
     client: "Orbit Logistics",
     gross: 12000,
@@ -155,7 +155,7 @@ export const mockEarnings: EarningRow[] = [
   },
   {
     id: "e6",
-    date: "2026-07-14",
+    date: "2026-09-20",
     type: "Service",
     client: "Saanvi Design Co",
     gross: 9500,
@@ -172,7 +172,7 @@ export const mockLeads: LeadRow[] = [
     topic: "GSTR-3B late fee mitigation",
     status: "Converted",
     value: 2500,
-    at: "2026-07-22T09:14:00",
+    at: "2026-09-28T09:14:00",
   },
   {
     id: "l2",
@@ -181,7 +181,7 @@ export const mockLeads: LeadRow[] = [
     topic: "Tax audit readiness FY25-26",
     status: "Escalated",
     value: 18000,
-    at: "2026-07-21T16:40:00",
+    at: "2026-09-27T16:40:00",
   },
   {
     id: "l3",
@@ -190,7 +190,7 @@ export const mockLeads: LeadRow[] = [
     topic: "IT scrutiny notice response",
     status: "Escalated",
     value: 8500,
-    at: "2026-07-20T11:05:00",
+    at: "2026-09-26T11:05:00",
   },
   {
     id: "l4",
@@ -199,7 +199,7 @@ export const mockLeads: LeadRow[] = [
     topic: "Startup India & 80-IAC",
     status: "Open",
     value: 0,
-    at: "2026-07-23T08:22:00",
+    at: "2026-09-29T08:22:00",
   },
   {
     id: "l5",
@@ -208,7 +208,7 @@ export const mockLeads: LeadRow[] = [
     topic: "ITC mismatch GSTR-2B",
     status: "Open",
     value: 0,
-    at: "2026-07-23T07:55:00",
+    at: "2026-09-29T07:55:00",
   },
   {
     id: "l6",
@@ -217,7 +217,7 @@ export const mockLeads: LeadRow[] = [
     topic: "TDS return filing",
     status: "Closed",
     value: 2500,
-    at: "2026-07-18T14:10:00",
+    at: "2026-09-24T14:10:00",
   },
 ];
 
