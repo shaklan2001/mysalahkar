@@ -1,89 +1,125 @@
 "use client";
 
-import { ServiceCategory } from "@/lib/data/services";
-import { Agent } from "@/lib/data/agents";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  BadgeCheck,
+  Briefcase,
+  Building2,
+  Calculator,
+  ChartLine,
+  FileText,
+  Globe,
+  Landmark,
+  Receipt,
+  Sparkles,
+  Table,
+  TrendingUp,
+  type LucideIcon,
+} from "lucide-react";
+import type { ServiceCategory, ServiceItem } from "@/lib/data/services";
+import type { Agent } from "@/lib/data/agents";
 import { Button } from "@/components/ui/button";
 import { useConsult } from "@/components/consult/ConsultProvider";
 import { ScheduleCallDialog } from "@/components/agents/ScheduleCallDialog";
-import * as Icons from "lucide-react";
-import { LucideIcon } from "lucide-react";
+
+const icons: Record<string, LucideIcon> = {
+  Building2,
+  Calculator,
+  Receipt,
+  BadgeCheck,
+  Landmark,
+  LineChart: ChartLine,
+  TrendingUp,
+  Globe,
+  Briefcase,
+  Table,
+};
 
 interface ServiceCategoryCardProps {
   category: ServiceCategory;
-  agent?: Agent;
+  agent?: Pick<Agent, "slug" | "name">;
+  /** Services to show — defaults to all of the category's services */
+  services?: ServiceItem[];
 }
 
 export function ServiceCategoryCard({
   category,
   agent,
+  services = category.services,
 }: ServiceCategoryCardProps) {
   const { openConsult } = useConsult();
-
-  const IconComponent = (Icons[category.iconName as keyof typeof Icons] ||
-    Icons.FileText) as LucideIcon;
+  const Icon = icons[category.iconName] ?? FileText;
 
   return (
-    <Card className="overflow-hidden border border-border bg-white shadow-none">
-      <CardHeader className="border-b border-border/80 bg-[#f8fafb] pb-5">
+    <article className="overflow-hidden rounded-2xl border border-border bg-white">
+      <header className="flex flex-col gap-4 border-b border-border/70 p-6 sm:flex-row sm:items-start sm:justify-between sm:p-7">
         <div className="flex items-start gap-4">
-          <div
-            className="rounded-lg p-3"
-            style={{ backgroundColor: `${category.color}18` }}
-          >
-            <IconComponent
-              className="h-6 w-6"
-              style={{ color: category.color }}
-              strokeWidth={1.75}
-            />
-          </div>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-blue/10 text-accent">
+            <Icon className="h-5 w-5" strokeWidth={1.75} />
+          </span>
           <div>
-            <CardTitle className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
+            <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
               {category.category}
-            </CardTitle>
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {category.summary}
             </p>
-            <div className="mt-3">
-              <Badge variant="secondary">{category.services.length} services</Badge>
-            </div>
           </div>
         </div>
-      </CardHeader>
-
-      <CardContent className="pt-6">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {category.services.map((service) => (
-            <div
-              key={service.name}
-              className="flex flex-col rounded-lg border border-border bg-white p-4 transition-colors hover:bg-[#f8fafb]"
+        <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end sm:gap-2">
+          <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-ink-soft">
+            {category.services.length} services
+          </span>
+          {agent ? (
+            <Link
+              href={`/agents/${agent.slug}`}
+              className="group inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-accent"
             >
-              <h4 className="text-sm font-semibold leading-snug text-foreground">
-                {service.name}
-              </h4>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="accent"
-                  onClick={() => openConsult(category.agentSlug)}
-                >
-                  AI Consultation
-                </Button>
-                <ScheduleCallDialog
-                  professionalName={agent?.name ?? "specialist"}
-                  professionalSlug={category.agentSlug}
-                  serviceName={service.name}
-                  triggerLabel="Human Consultation"
-                  triggerVariant="outline"
-                  triggerSize="sm"
-                />
-              </div>
-            </div>
-          ))}
+              Led by {agent.name}
+              <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          ) : null}
         </div>
-      </CardContent>
-    </Card>
+      </header>
+
+      <ul className="grid divide-y divide-border/70 md:grid-cols-2 md:divide-y-0">
+        {services.map((service, index) => (
+          <li
+            key={service.name}
+            className={
+              "flex flex-col items-start gap-2.5 px-6 py-4 transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-4 hover:bg-[#f8f9fc] sm:px-7 " +
+              (index >= 2 ? "md:border-t md:border-border/70 " : "") +
+              (index % 2 === 0 ? "md:border-r md:border-border/70" : "")
+            }
+          >
+            <p className="min-w-0 text-sm font-medium text-foreground">
+              {service.name}
+            </p>
+            <div className="-ml-2.5 flex shrink-0 items-center gap-1.5 sm:ml-0">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-8 px-2.5 text-xs text-accent hover:bg-brand-blue/10 hover:text-accent"
+                onClick={() => openConsult(category.agentSlug)}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Ask AI
+              </Button>
+              <ScheduleCallDialog
+                professionalName={agent?.name ?? "specialist"}
+                professionalSlug={category.agentSlug}
+                serviceName={service.name}
+                triggerLabel="Book expert"
+                triggerVariant="outline"
+                triggerSize="sm"
+                triggerClassName="h-8 px-2.5 text-xs"
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </article>
   );
 }
