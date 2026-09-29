@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Calendar, Copy, ExternalLink, FileLock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { toast } from "sonner";
+import { readClientSession } from "@/lib/client-session";
 
 type ScheduleCallDialogProps = {
   professionalName: string;
@@ -17,6 +19,7 @@ type ScheduleCallDialogProps = {
   triggerVariant?: "default" | "outline" | "secondary";
   triggerSize?: "default" | "sm" | "lg";
   triggerClassName?: string;
+  initialOpen?: boolean;
 };
 
 type BookingResult = {
@@ -33,8 +36,14 @@ export function ScheduleCallDialog({
   triggerVariant = "default",
   triggerSize = "sm",
   triggerClassName,
+  initialOpen = false,
 }: ScheduleCallDialogProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialOpen && readClientSession()) setOpen(true);
+  }, [initialOpen]);
   const [submitting, setSubmitting] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [documentName, setDocumentName] = useState("");
@@ -100,7 +109,14 @@ export function ScheduleCallDialog({
         variant={triggerVariant}
         size={triggerSize}
         className={triggerClassName}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          if (!readClientSession()) {
+            const next = `/client/dashboard/find?book=${encodeURIComponent(professionalSlug)}`;
+            router.push(`/client/login?next=${encodeURIComponent(next)}`);
+            return;
+          }
+          setOpen(true);
+        }}
       >
         <Calendar className="mr-2 h-4 w-4" />
         {triggerLabel}

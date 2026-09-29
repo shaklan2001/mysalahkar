@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getAgent, isLiveDemoAgent } from "@/lib/data/agents";
+import { aiConsultantName, getAgent, isLiveDemoAgent } from "@/lib/data/agents";
 import { ConsultSession } from "@/components/consult/ConsultSession";
 import type { ConsultMode } from "@/components/consult/ConsultProvider";
 import type { Metadata } from "next";
@@ -16,8 +16,8 @@ export async function generateMetadata({
   const agent = getAgent(slug);
   if (!agent) return { title: "Consult" };
   return {
-    title: `Consult ${agent.name}`,
-    description: `Chat or call with ${agent.name} — ${agent.typeLabel} on MySalahkaar`,
+    title: `Consult ${aiConsultantName(agent)}`,
+    description: `Chat or call with ${aiConsultantName(agent)} on MySalahkaar`,
   };
 }
 
