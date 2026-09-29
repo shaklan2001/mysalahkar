@@ -1,21 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ArrowRight, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import { signInClient } from "@/lib/client-session";
+import {
+  AuthField,
+  AuthFrame,
+  AuthOr,
+  PasswordField,
+} from "@/components/auth/AuthFrame";
+import {
+  readClientSession,
+  signInClient,
+  useAuthNext,
+} from "@/lib/client-session";
 
 export default function ClientLoginPage() {
   const router = useRouter();
+  const { next, href } = useAuthNext();
   const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+
+  useEffect(() => {
+    if (readClientSession()) router.replace(next);
+  }, [next, router]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,51 +41,48 @@ export default function ClientLoginPage() {
     await new Promise((r) => setTimeout(r, 600));
     signInClient({ name: "Demo Client", email });
     toast.success("Signed in");
-    router.push("/client/dashboard");
+    router.replace(next);
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-16 sm:px-6 lg:py-24">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Home
-      </Link>
-      <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">
-        Client sign in
-      </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Opens your consultations. Home, Community, and Daily Digest stay in the
-        left menu. Demo accepts any credentials.
-      </p>
-
-      <form
-        onSubmit={onSubmit}
-        className="mt-8 space-y-5 rounded-xl border border-border bg-white p-6 sm:p-8"
-      >
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="mt-1.5"
-            defaultValue="client@example.com"
-          />
-        </div>
-        <div>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            required
-            className="mt-1.5"
-            defaultValue="demo"
-          />
-        </div>
+    <AuthFrame
+      audience="client"
+      mode="signin"
+      title="Welcome back"
+      description="Sign in to your consultations, bookings and wallet."
+      switchHrefs={{ client: href("/client/login") }}
+      footer={
+        <p>
+          New to My Salahkar?{" "}
+          <Link
+            href={href("/client/signup")}
+            className="font-semibold text-accent hover:underline"
+          >
+            Create a free account
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
+        <AuthField
+          id="email"
+          name="email"
+          label="Email"
+          type="email"
+          icon={Mail}
+          placeholder="you@company.com"
+          autoComplete="email"
+          required
+        />
+        <PasswordField
+          id="password"
+          name="password"
+          label="Password"
+          icon={Lock}
+          placeholder="Your password"
+          autoComplete="current-password"
+          required
+        />
         <LegalConsent
           id="client-login-dpdp"
           checked={privacyConsent}
@@ -80,40 +90,16 @@ export default function ClientLoginPage() {
         />
         <Button
           type="submit"
-          className="w-full"
+          variant="accent"
+          className="h-11 w-full"
           disabled={loading || !privacyConsent}
         >
           {loading ? "Signing in…" : "Sign in"}
+          {loading ? null : <ArrowRight className="h-4 w-4" />}
         </Button>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <span className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-muted-foreground">or</span>
-          </div>
-        </div>
+        <AuthOr />
         <GoogleAuthButton role="client" consent={privacyConsent} />
       </form>
-
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        New here?{" "}
-        <Link
-          href="/client/signup"
-          className="font-semibold text-foreground underline-offset-4 hover:underline"
-        >
-          Create an account
-        </Link>
-      </p>
-      <p className="mt-2 text-center text-sm text-muted-foreground">
-        Are you a professional?{" "}
-        <Link
-          href="/professionals/login"
-          className="font-semibold text-foreground underline-offset-4 hover:underline"
-        >
-          Professional Login
-        </Link>
-      </p>
-    </div>
+    </AuthFrame>
   );
 }

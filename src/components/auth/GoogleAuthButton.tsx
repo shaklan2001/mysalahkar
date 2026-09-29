@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { signInClient } from "@/lib/client-session";
+import { signInClient, useAuthNext } from "@/lib/client-session";
 import { saveProAccount } from "@/lib/pro-account";
 
 type GoogleAuthButtonProps = {
@@ -43,10 +43,11 @@ export function GoogleAuthButton({
   intent = "signin",
 }: GoogleAuthButtonProps) {
   const router = useRouter();
+  const { next } = useAuthNext();
   const [loading, setLoading] = useState(false);
   const destination =
     role === "client"
-      ? "/client/dashboard"
+      ? next
       : intent === "signup"
         ? "/professionals/dashboard?new=1"
         : "/professionals/dashboard";
@@ -74,14 +75,14 @@ export function GoogleAuthButton({
         ? "Account created with Google (demo)"
         : "Signed in with Google (demo)",
     );
-    router.push(destination);
+    router.replace(destination);
   }
 
   return (
     <Button
       type="button"
       variant="outline"
-      className="w-full"
+      className="h-11 w-full"
       disabled={loading || !consent}
       onClick={onClick}
     >
