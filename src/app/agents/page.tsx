@@ -1,7 +1,7 @@
+import type { Metadata } from "next";
 import { getMarketplaceListings } from "@/lib/data/marketplace";
 import { AgentsDirectory } from "@/components/agents/AgentsDirectory";
 import { PageHero } from "@/components/layout/PageHero";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Find Professionals",
@@ -13,6 +13,7 @@ interface AgentsPageProps {
   searchParams: Promise<{
     type?: string;
     kind?: string;
+    book?: string;
   }>;
 }
 
@@ -20,15 +21,20 @@ export default async function AgentsPage({ searchParams }: AgentsPageProps) {
   const params = await searchParams;
 
   return (
-    <div>
+    <>
       <PageHero
-        eyebrow="Find Professionals"
-        title="AI Salahkars and verified human professionals."
-        description="Chat or call with live AI specialists anytime — or schedule a call with a verified human professional when you want personal attention."
+        size="compact"
+        badge={{ label: "Find experts" }}
+        title="Start with an AI Salahkar,"
+        highlight="book a human when it matters."
+        description="AI Salahkars answer instantly, 24/7. Human experts are verified professionals you book by appointment. Every card tells you which one you're choosing."
       />
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <AgentsDirectory agents={getMarketplaceListings()} searchParams={params} />
+      <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
+        <AgentsDirectory
+          agents={getMarketplaceListings()}
+          searchParams={params}
+        />
       </div>
-    </div>
+    </>
   );
 }

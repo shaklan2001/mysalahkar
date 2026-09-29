@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useConsult } from "@/components/consult/ConsultProvider";
 import { ScheduleCallDialog } from "@/components/agents/ScheduleCallDialog";
+import { aiConsultantName } from "@/lib/data/agents";
 import {
   canChatOrCall,
   canScheduleHuman,
@@ -18,6 +19,8 @@ export function AgentProfileActions({ listing }: AgentProfileActionsProps) {
   const { openConsult } = useConsult();
   const showAi = canChatOrCall(listing) && Boolean(listing.liveDemo);
   const showSchedule = canScheduleHuman(listing);
+  const isBoth = listing.listingKind === "both";
+  const aiName = aiConsultantName(listing);
 
   const handleDownloadProfile = () => {
     alert("Profile PDF download coming soon!");
@@ -33,7 +36,7 @@ export function AgentProfileActions({ listing }: AgentProfileActionsProps) {
             size="lg"
           >
             <MessageSquare className="mr-2 h-5 w-5" />
-            Start Chat
+            {isBoth ? `Chat with ${aiName}` : "Start Chat"}
           </Button>
           <Button
             onClick={() => openConsult(listing.slug, "call")}
@@ -42,7 +45,7 @@ export function AgentProfileActions({ listing }: AgentProfileActionsProps) {
             size="lg"
           >
             <Phone className="mr-2 h-5 w-5" />
-            Start Call
+            {isBoth ? `Call ${aiName}` : "Start Call"}
           </Button>
         </>
       )}
@@ -51,7 +54,7 @@ export function AgentProfileActions({ listing }: AgentProfileActionsProps) {
         <ScheduleCallDialog
           professionalName={listing.name}
           professionalSlug={listing.slug}
-          triggerLabel="Human Consultation"
+          triggerLabel={isBoth ? `Book ${listing.name}` : "Human Consultation"}
           triggerVariant={showAi ? "outline" : "default"}
           triggerSize="lg"
           triggerClassName="w-full"
