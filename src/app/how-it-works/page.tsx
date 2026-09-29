@@ -1,6 +1,21 @@
 import type { Metadata } from "next";
-import { MessageSquare, Phone, UserCheck, Sparkles, Clock, Shield } from "lucide-react";
-import { HowItWorksCTA } from "./HowItWorksCTA";
+import Link from "next/link";
+import {
+  Check,
+  Clock,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Smartphone,
+  UserCheck,
+  type LucideIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PageHero } from "@/components/layout/PageHero";
+import { SectionHeading } from "@/components/layout/SectionHeading";
+import { ConsultButton } from "@/components/consult/ConsultButton";
+import { FinalCTA } from "@/components/home/FinalCTA";
 
 export const metadata: Metadata = {
   title: "How It Works",
@@ -8,343 +23,359 @@ export const metadata: Metadata = {
     "Learn how My Salahkar's AI Salahkars work — consult via WhatsApp, chat, or call. Instant answers with human escalation when you need it.",
 };
 
+type Step = { title: string; body: string };
+
+const clientSteps: Step[] = [
+  {
+    title: "Ask your question",
+    body: "Type or speak in plain language. The AI understands context and nuance across multiple languages.",
+  },
+  {
+    title: "Instant analysis",
+    body: "Your Salahkar checks the query against regulatory frameworks, case law and best practice.",
+  },
+  {
+    title: "Actionable answers",
+    body: "Clear, step-by-step guidance with citations, deadlines and next steps. No jargon unless you want it.",
+  },
+  {
+    title: "Escalate when needed",
+    body: "Book a verified professional who sees your full conversation, so you never repeat yourself.",
+  },
+];
+
+const professionalSteps: Step[] = [
+  {
+    title: "Apply & get verified",
+    body: "Share your practice details and credentials. We verify every CA, CS and lawyer before listing.",
+  },
+  {
+    title: "Launch your AI Salahkar",
+    body: "A branded AI assistant, guided by your expertise, answers routine questions around the clock.",
+  },
+  {
+    title: "Take escalations",
+    body: "Clients book the matters that need you, with context attached. You choose your hours and rate.",
+  },
+  {
+    title: "Get paid",
+    body: "Calls are metered and collected automatically. Track earnings and payouts in your dashboard.",
+  },
+];
+
+const channels: {
+  icon: LucideIcon;
+  name: string;
+  body: string;
+  points: string[];
+  tone: string;
+}[] = [
+  {
+    icon: Smartphone,
+    name: "WhatsApp",
+    body: "Message AI Salahkars directly on WhatsApp and get instant responses in your preferred language, 24/7.",
+    points: [
+      "No app installation needed",
+      "Voice notes supported",
+      "Document sharing",
+    ],
+    tone: "bg-[#25d366]/12 text-[#128c4a]",
+  },
+  {
+    icon: MessageCircle,
+    name: "Web chat",
+    body: "Real-time chat with specialist AI Salahkars on the web, with rich formatting and file uploads.",
+    points: [
+      "Multi-file upload support",
+      "Conversation history",
+      "Desktop & mobile friendly",
+    ],
+    tone: "bg-brand-blue/10 text-accent",
+  },
+  {
+    icon: Phone,
+    name: "Voice call",
+    body: "Talk to an AI voice agent, or request a human expert for complex matters.",
+    points: [
+      "Natural conversation flow",
+      "Complex query resolution",
+      "Human expert fallback",
+    ],
+    tone: "bg-[#001450]/8 text-[#001450]",
+  },
+];
+
+const coverage = [
+  { label: "GST & Tax Compliance", value: 95 },
+  { label: "Company Law & ROC", value: 92 },
+  { label: "Wealth Management", value: 90 },
+  { label: "FEMA & Cross-Border", value: 88 },
+];
+
+const safeguards: { icon: LucideIcon; title: string; body: string }[] = [
+  {
+    icon: UserCheck,
+    title: "Automatic escalation triggers",
+    body: "Court filings, litigation strategy, regulatory audits and M&A transactions route to human experts automatically.",
+  },
+  {
+    icon: Clock,
+    title: "Request human review anytime",
+    body: "Not satisfied with an AI answer? Choose “Escalate to Expert” and we’ll schedule a consultation within 24 hours.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "All AI advice supervised",
+    body: "Every AI response is logged and periodically reviewed by domain experts for quality and compliance.",
+  },
+];
+
+const escalateWhen = [
+  "Court representation or litigation support",
+  "Tax notices, scrutiny or assessment appeals",
+  "Complex cross-border M&A or restructuring",
+  "High-value wealth structuring (₹1 Cr+)",
+  "Regulatory filings requiring attestation",
+  "Sensitive IP, employment or family matters",
+];
+
+function Steps({ steps }: { steps: Step[] }) {
+  return (
+    <ol className="relative grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <span
+        className="absolute top-[2.35rem] right-[12%] left-[12%] hidden h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_12px)] lg:block"
+        aria-hidden
+      />
+      {steps.map((step, index) => (
+        <li
+          key={step.title}
+          className="relative rounded-2xl border border-border bg-white p-6"
+        >
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#001450] font-display text-sm font-semibold text-white ring-4 ring-background">
+            {index + 1}
+          </span>
+          <h3 className="mt-5 font-display text-base font-semibold tracking-tight text-foreground">
+            {step.title}
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            {step.body}
+          </p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 export default function HowItWorksPage() {
   return (
-    <div className="bg-white">
-      {/* Hero Section */}
-      <section className="border-b border-border/70 bg-white/60 section-pad">
+    <>
+      <PageHero
+        badge={{ label: "How it works" }}
+        title="From first question to"
+        highlight="expert sign-off."
+        description="Consult an AI Salahkar on WhatsApp, chat or call, and bring in a verified professional the moment a matter needs one."
+      >
+        <ConsultButton className="w-full sm:w-auto" />
+        <Button
+          asChild
+          size="lg"
+          variant="outline"
+          className="w-full sm:w-auto"
+        >
+          <Link href="/professionals/signup">I&apos;m a professional</Link>
+        </Button>
+      </PageHero>
+
+      {/* Journeys */}
+      <section className="pt-6 pb-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-              How it works
-            </p>
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-[2.75rem] md:leading-[1.15]">
-              How My Salahkar works
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Expert AI consultancy at your fingertips. Consult via WhatsApp,
-              chat, or call — with human oversight when you need it most.
+          <Tabs defaultValue="clients">
+            <SectionHeading
+              eyebrow="The journey"
+              title="Four steps, whichever side you're on."
+              action={
+                <TabsList>
+                  <TabsTrigger value="clients" className="px-4">
+                    For clients
+                  </TabsTrigger>
+                  <TabsTrigger value="professionals" className="px-4">
+                    For professionals
+                  </TabsTrigger>
+                </TabsList>
+              }
+            />
+            <TabsContent value="clients" className="mt-12">
+              <Steps steps={clientSteps} />
+            </TabsContent>
+            <TabsContent value="professionals" className="mt-12">
+              <Steps steps={professionalSteps} />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+
+      {/* Channels */}
+      <section className="pb-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            align="center"
+            eyebrow="Channels"
+            title="Three ways to get expert advice."
+            description="Same Salahkar, same context. Start on one channel and continue on another."
+          />
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            {channels.map(({ icon: Icon, name, body, points, tone }) => (
+              <div
+                key={name}
+                className="flex flex-col rounded-2xl border border-border bg-white p-7"
+              >
+                <span
+                  className={`flex h-11 w-11 items-center justify-center rounded-xl ${tone}`}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-6 font-display text-lg font-semibold tracking-tight text-foreground">
+                  {name}
+                </h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  {body}
+                </p>
+                <ul className="mt-6 space-y-2.5 border-t border-border/70 pt-5 text-sm">
+                  {points.map((point) => (
+                    <li
+                      key={point}
+                      className="flex items-center gap-2.5 text-ink-soft"
+                    >
+                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AI coverage */}
+      <section className="pb-24">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
+          <div>
+            <SectionHeading
+              eyebrow="AI Salahkars"
+              title="AI that understands Indian regulation."
+              description="Our AI Salahkars are trained on decades of professional knowledge across tax, legal, compliance and financial domains, so most questions are answered on the spot."
+            />
+            <div className="mt-8 rounded-2xl border border-border bg-white p-4">
+              <p className="px-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                Sample conversation
+              </p>
+              <div className="mt-3 space-y-2.5 text-[13px] leading-relaxed">
+                <div className="ml-auto max-w-[80%] rounded-2xl rounded-br-md bg-[#001450] px-3.5 py-2.5 text-white">
+                  We received a GST notice for an ITC mismatch. What should we
+                  do first?
+                </div>
+                <div className="max-w-[88%] rounded-2xl rounded-bl-md border border-border bg-[#fbfcfe] px-3.5 py-2.5 text-ink-soft">
+                  Reconcile GSTR-2B with your purchase register for the period
+                  in the notice, then reply within the time it states. Since
+                  this is a notice, I&apos;d suggest a CA reviews your reply
+                  before you file it.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-border bg-white p-8 sm:p-10">
+            <h3 className="font-display text-lg font-semibold tracking-tight text-foreground">
+              Queries resolved by AI, by domain
+            </h3>
+            <ul className="mt-8 space-y-6">
+              {coverage.map((item) => (
+                <li key={item.label}>
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span className="font-medium text-ink-soft">
+                      {item.label}
+                    </span>
+                    <span className="font-display font-semibold text-foreground">
+                      {item.value}%
+                    </span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[#003cf8] to-[#4f7bff]"
+                      style={{ width: `${item.value}%` }}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-8 border-t border-border/70 pt-5 text-sm text-muted-foreground">
+              Based on 10,000+ resolved queries in 2026. Complex cases are
+              escalated to human experts.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Three Channels Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-slate-900">
-              Three Ways to Get Expert Advice
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
-              Choose the channel that works best for you. Same expertise, different access points.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="rounded-xl border bg-white p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600">
-                <MessageSquare className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 text-xl font-bold text-slate-900">WhatsApp</h3>
-              <p className="mb-4 text-slate-600">
-                Message our AI Salahkars directly on WhatsApp. Get instant responses in your
-                preferred language, 24/7.
-              </p>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-green-600">✓</span>
-                  <span>No app installation needed</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-green-600">✓</span>
-                  <span>Voice notes supported</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-green-600">✓</span>
-                  <span>Document sharing</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-xl border bg-white p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                <Sparkles className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 text-xl font-bold text-slate-900">Web Chat</h3>
-              <p className="mb-4 text-slate-600">
-                Real-time chat with specialized AI Salahkars through our web platform. Rich
-                formatting and file uploads.
-              </p>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-blue-600">✓</span>
-                  <span>Multi-file upload support</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-blue-600">✓</span>
-                  <span>Conversation history</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-blue-600">✓</span>
-                  <span>Desktop & mobile friendly</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-xl border bg-white p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
-                <Phone className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 text-xl font-bold text-slate-900">Phone Call</h3>
-              <p className="mb-4 text-slate-600">
-                Schedule a call with our AI voice agents or request human escalation for
-                complex matters.
-              </p>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-purple-600">✓</span>
-                  <span>Natural conversation flow</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-purple-600">✓</span>
-                  <span>Complex query resolution</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1 text-purple-600">✓</span>
-                  <span>Human expert fallback</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How AI Resolves Queries */}
-      <section className="bg-slate-50 py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-slate-900">
-              AI That Understands Your Needs
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
-              Our AI Salahkars are trained on decades of professional knowledge across tax, legal,
-              compliance, and financial domains.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-2">
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                  <span className="font-bold">1</span>
-                </div>
-                <div>
-                  <h3 className="mb-2 text-lg font-bold text-slate-900">
-                    Ask Your Question
-                  </h3>
-                  <p className="text-slate-600">
-                    Type or speak your query in plain language. Our AI understands context
-                    and nuance across multiple languages.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                  <span className="font-bold">2</span>
-                </div>
-                <div>
-                  <h3 className="mb-2 text-lg font-bold text-slate-900">
-                    Instant Analysis
-                  </h3>
-                  <p className="text-slate-600">
-                    The AI Salahkar analyzes your query against regulatory frameworks, case
-                    law, and best practices — in milliseconds.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                  <span className="font-bold">3</span>
-                </div>
-                <div>
-                  <h3 className="mb-2 text-lg font-bold text-slate-900">
-                    Get Actionable Answers
-                  </h3>
-                  <p className="text-slate-600">
-                    Receive clear, step-by-step guidance with relevant citations, deadlines,
-                    and next steps — no legal jargon unless you want it.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                  <span className="font-bold">4</span>
-                </div>
-                <div>
-                  <h3 className="mb-2 text-lg font-bold text-slate-900">
-                    Follow-Up & Clarify
-                  </h3>
-                  <p className="text-slate-600">
-                    Ask follow-ups, request examples, or dive deeper. The conversation is
-                    natural and continuous.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-white p-8 shadow-sm">
-              <h3 className="mb-6 text-xl font-bold text-slate-900">
-                Our AI Handles Most Queries
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700">GST & Tax Compliance</span>
-                    <span className="text-slate-500">95%</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full w-[95%] rounded-full bg-blue-600" />
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700">Company Law & ROC</span>
-                    <span className="text-slate-500">92%</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full w-[92%] rounded-full bg-blue-600" />
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700">FEMA & Cross-Border</span>
-                    <span className="text-slate-500">88%</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full w-[88%] rounded-full bg-blue-600" />
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700">Wealth Management</span>
-                    <span className="text-slate-500">90%</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full w-[90%] rounded-full bg-blue-600" />
-                  </div>
-                </div>
-              </div>
-              <p className="mt-6 text-sm text-slate-600">
-                Based on 10,000+ resolved queries in 2026. Complex cases are escalated to
-                human experts.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Human Escalation */}
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+      {/* Escalation */}
+      <section className="px-4 pb-24 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-[#001450] text-white">
+          <div
+            className="absolute -top-40 -left-40 h-[26rem] w-[26rem] rounded-full bg-accent/30 blur-[120px]"
+            aria-hidden
+          />
+          <div className="relative grid gap-12 px-6 py-14 sm:px-10 md:py-16 lg:grid-cols-2 lg:px-14">
             <div>
-              <h2 className="mb-4 text-3xl font-bold text-slate-900">
-                Human Expert Escalation When You Need It
-              </h2>
-              <p className="mb-6 text-lg text-slate-600">
-                Our AI knows its limits. For complex, sensitive, or high-stakes matters, we
-                seamlessly connect you with licensed professionals.
+              <p className="text-xs font-semibold tracking-[0.14em] text-blue-300 uppercase">
+                Human escalation
               </p>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                    <UserCheck className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">
-                      Automatic Escalation Triggers
-                    </h4>
-                    <p className="text-sm text-slate-600">
-                      Court filings, litigation strategy, regulatory audits, M&A transactions
-                      — these automatically route to human experts.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                    <Clock className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">
-                      Request Human Review Anytime
-                    </h4>
-                    <p className="text-sm text-slate-600">
-                      Not satisfied with the AI response? Click "Escalate to Expert" and
-                      we'll schedule a consultation within 24 hours.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                    <Shield className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">
-                      All AI Advice Supervised
-                    </h4>
-                    <p className="text-sm text-slate-600">
-                      Every AI response is logged and periodically reviewed by domain experts
-                      to ensure quality and compliance.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <h2 className="mt-3 text-balance font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Our AI knows its limits.
+              </h2>
+              <p className="mt-4 max-w-md text-slate-300">
+                For complex, sensitive or high-stakes matters, we connect you
+                with a licensed professional, with your conversation attached.
+              </p>
+              <ul className="mt-10 space-y-6">
+                {safeguards.map(({ icon: Icon, title, body }) => (
+                  <li key={title} className="flex gap-4">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-blue-200 ring-1 ring-white/15">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <h3 className="font-display text-[15px] font-semibold tracking-tight">
+                        {title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                        {body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="rounded-xl border border-border bg-white p-8 lg:p-12">
-              <h3 className="mb-6 text-2xl font-bold text-slate-900">
-                When to Escalate to a Human Expert
+            <div className="self-center rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm sm:p-8">
+              <h3 className="font-display text-lg font-semibold tracking-tight">
+                When to escalate to a human expert
               </h3>
-              <ul className="space-y-3 text-slate-700">
-                <li className="flex gap-3">
-                  <span className="text-blue-600">•</span>
-                  <span>Court representation or litigation support</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-blue-600">•</span>
-                  <span>Tax notices, scrutiny, or assessment appeals</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-blue-600">•</span>
-                  <span>Complex cross-border M&A or restructuring</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-blue-600">•</span>
-                  <span>High-value wealth structuring (₹1Cr+)</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-blue-600">•</span>
-                  <span>Regulatory filings requiring attestation</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-blue-600">•</span>
-                  <span>Sensitive IP, employment, or family matters</span>
-                </li>
+              <ul className="mt-6 divide-y divide-white/10">
+                {escalateWhen.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 py-3.5 text-sm text-slate-200"
+                  >
+                    <UserCheck className="h-4 w-4 shrink-0 text-blue-300" />
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <HowItWorksCTA />
-    </div>
+      <FinalCTA />
+    </>
   );
 }
