@@ -11,7 +11,8 @@ export function ClientGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!ready || session) return;
-    router.replace(`/client/login?next=${encodeURIComponent(pathname)}`);
+    const next = `${pathname}${window.location.search}`;
+    router.replace(`/client/login?next=${encodeURIComponent(next)}`);
   }, [ready, session, pathname, router]);
 
   if (!ready || !session) return null;

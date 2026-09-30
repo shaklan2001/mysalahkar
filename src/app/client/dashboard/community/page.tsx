@@ -1,5 +1,5 @@
-import { CommunityPageView } from "@/components/community/CommunityPageView";
+import { ClientCommunity } from "@/components/client/ClientCommunity";
 
 export default function ClientCommunityPage() {
-  return <CommunityPageView compact />;
+  return <ClientCommunity />;
 }

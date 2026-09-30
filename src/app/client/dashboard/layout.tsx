@@ -3,8 +3,8 @@ import { ClientDashboardShell } from "@/components/client/ClientDashboardShell";
 import { ClientGate } from "@/components/client/ClientGate";
 
 export const metadata: Metadata = {
-  title: "Your consultations",
-  description: "Your consultations and upcoming Google Meet appointments.",
+  title: { default: "Client dashboard", template: "%s | My Salahkar" },
+  description: "Your consultations, experts, wallet and upcoming Google Meet appointments.",
 };
 
 export default function ClientDashboardLayout({
