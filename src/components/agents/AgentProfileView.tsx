@@ -245,7 +245,7 @@ export function AgentProfileView({
         </div>
 
         {/* Booking rail */}
-        <aside className="space-y-5 lg:sticky lg:top-20">
+        <aside className="space-y-5 lg:sticky lg:top-28">
           <div className="rounded-3xl border border-border bg-white p-6">
             <p className="text-sm text-muted-foreground">Consultation fee</p>
             <p className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">

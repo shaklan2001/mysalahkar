@@ -29,7 +29,7 @@ const bars = [38, 52, 44, 61, 58, 72, 66, 84, 78, 92];
 
 export function ProfessionalsSection() {
   return (
-    <section id="professionals" className="scroll-mt-20 px-4 sm:px-6 lg:px-8">
+    <section id="professionals" className="scroll-mt-28 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-[#001450] text-white">
         <div className="bg-grid-dark absolute inset-0 [mask-image:radial-gradient(ellipse_80%_70%_at_80%_0%,#000,transparent)]" aria-hidden />
         <div

@@ -44,7 +44,7 @@ export function HomeHero() {
           <motion.div {...fadeUp} transition={{ duration: 0.5 }}>
             <Link
               href="/daily-digest"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-white/80 py-1 pr-3 pl-1 text-xs font-medium text-ink-soft shadow-sm backdrop-blur transition-colors hover:border-accent/40"
+              className="beam-border inline-flex items-center gap-2 rounded-full py-1 pr-3 pl-1 text-xs font-medium text-ink-soft transition-colors hover:text-foreground"
             >
               <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
                 New

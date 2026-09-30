@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { MySalahkarLogo } from "@/components/brand/MySalahkarLogo";
+import { HeadlineTicker } from "@/components/layout/HeadlineTicker";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -147,18 +148,32 @@ function MegaLink({ link }: { link: MenuLink }) {
   );
 }
 
+const authRoutes = new Set([
+  "/client/login",
+  "/client/signup",
+  "/professionals/login",
+  "/professionals/signup",
+]);
+
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showTicker, setShowTicker] = useState(false);
   const { openConsult } = useConsult();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+      setShowTicker(window.scrollY > 160);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // No headlines over the sign-in / sign-up forms.
+  const tickerAllowed = !authRoutes.has(pathname);
 
   const isActive = (href: string) =>
     !href.includes("#") &&
@@ -347,6 +362,22 @@ export function Header() {
           </div>
         )}
       </div>
+
+      {/* Headline strip: absolutely positioned so it never shifts the page. */}
+      {tickerAllowed ? (
+        <div
+          className={cn(
+            "absolute inset-x-0 top-full transition-all duration-300 ease-out",
+            showTicker && !mobileOpen
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-2 opacity-0",
+          )}
+          aria-hidden={!showTicker || mobileOpen || undefined}
+          inert={!showTicker || mobileOpen || undefined}
+        >
+          <HeadlineTicker />
+        </div>
+      ) : null}
     </header>
   );
 }

@@ -293,7 +293,7 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
         </div>
 
         {/* Sidebar */}
-        <aside className="space-y-5 lg:sticky lg:top-20">
+        <aside className="space-y-5 lg:sticky lg:top-28">
           <div className="grid grid-cols-2 divide-x divide-border rounded-2xl border border-border bg-white text-center">
             {[
               ["Members", communityStats.members],

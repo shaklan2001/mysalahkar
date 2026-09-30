@@ -43,7 +43,7 @@ export function ServicesCatalog({
 
   return (
     <div>
-      <div className="sticky top-16 z-30 -mx-4 border-b border-border/70 bg-background/90 px-4 py-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="sticky top-[6.25rem] z-30 -mx-4 border-b border-border/70 bg-background/90 px-4 py-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <label className="relative block lg:w-72 lg:shrink-0">
             <span className="sr-only">Search services</span>
@@ -117,7 +117,7 @@ export function ServicesCatalog({
       {results.length ? (
         <div className="mt-5 space-y-6">
           {results.map(({ category, services }) => (
-            <div key={category.id} id={category.id} className="scroll-mt-40">
+            <div key={category.id} id={category.id} className="scroll-mt-52">
               <ServiceCategoryCard
                 category={category}
                 agent={category.agent}

@@ -358,7 +358,7 @@ export function PublicDigest() {
       </div>
 
       {/* Sidebar */}
-      <aside className="space-y-5 lg:sticky lg:top-20">
+      <aside className="space-y-5 lg:sticky lg:top-28">
         <div className="rounded-2xl border border-border bg-white p-5">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <CalendarClock className="h-4 w-4 text-accent" /> Upcoming due dates

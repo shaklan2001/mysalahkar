@@ -32,7 +32,7 @@ export function PageHero({
   const centered = align === "center";
 
   const pill = badge ? (
-    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-white/80 px-3 py-1 text-xs font-medium text-ink-soft shadow-sm backdrop-blur">
+    <span className="beam-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium text-ink-soft">
       <span className="h-1.5 w-1.5 rounded-full bg-accent" />
       {badge.label}
       {badge.href ? <ArrowRight className="h-3 w-3" /> : null}

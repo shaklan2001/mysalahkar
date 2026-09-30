@@ -22,7 +22,7 @@ const steps = [
 
 export function ClientsSection() {
   return (
-    <section id="clients" className="section-pad scroll-mt-20">
+    <section id="clients" className="section-pad scroll-mt-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
         <div>
           <p className="eyebrow">For clients</p>

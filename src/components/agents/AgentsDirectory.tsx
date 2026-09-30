@@ -116,7 +116,7 @@ export function AgentsDirectory({
   searchParams,
   profileBase = "/agents",
   aiBase = "/ai-salahkars",
-  stickyTop = "top-16",
+  stickyTop = "top-[6.25rem]",
 }: AgentsDirectoryProps) {
   const [extraListings, setExtraListings] = useState<MarketplaceListing[]>([]);
   const [view, setView] = useState<View>(initialView(searchParams?.kind));

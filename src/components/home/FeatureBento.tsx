@@ -248,7 +248,7 @@ export function FeatureBento({
   withHeading?: boolean;
 }) {
   return (
-    <section id="platform" className="section-pad scroll-mt-20">
+    <section id="platform" className="section-pad scroll-mt-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {withHeading ? (
           <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
