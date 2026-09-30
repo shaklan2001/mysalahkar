@@ -172,8 +172,9 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // No headlines over the sign-in / sign-up forms.
-  const tickerAllowed = !authRoutes.has(pathname);
+  // No headlines over the sign-in / sign-up forms, or on the Digest itself
+  // (the page already is the full feed the ticker links to).
+  const tickerAllowed = !authRoutes.has(pathname) && pathname !== "/daily-digest";
 
   const isActive = (href: string) =>
     !href.includes("#") &&
@@ -199,7 +200,7 @@ export function Header() {
             <MySalahkarLogo height={34} />
           </Link>
 
-          <NavigationMenu className="hidden lg:flex" viewport={false}>
+          <NavigationMenu className="relative z-20 hidden lg:flex" viewport={false}>
             <NavigationMenuList className="gap-0.5">
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={navTriggerClass}>
@@ -249,7 +250,7 @@ export function Header() {
           </NavigationMenu>
 
           <div className="hidden items-center gap-2 lg:flex">
-            <NavigationMenu viewport={false}>
+            <NavigationMenu className="relative z-20" viewport={false}>
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className={navTriggerClass}>
@@ -367,7 +368,7 @@ export function Header() {
       {tickerAllowed ? (
         <div
           className={cn(
-            "absolute inset-x-0 top-full transition-all duration-300 ease-out",
+            "absolute inset-x-0 top-full z-10 transition-all duration-300 ease-out",
             showTicker && !mobileOpen
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-2 opacity-0",

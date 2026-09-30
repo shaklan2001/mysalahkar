@@ -76,12 +76,6 @@ export function MarketStrip() {
         <p className="inline-flex items-center gap-2 text-xs font-semibold text-foreground">
           <TrendingUp className="h-3.5 w-3.5 text-accent" /> Markets
         </p>
-        <p className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <Info className="h-3 w-3" />
-          {marketSnapshot.isSample
-            ? "Indicative snapshot, not a live feed"
-            : "Delayed quotes"}
-        </p>
       </div>
       <ul className="flex divide-x divide-border/70 overflow-x-auto [scrollbar-width:none]">
         {marketSnapshot.quotes.map((quote) => {
