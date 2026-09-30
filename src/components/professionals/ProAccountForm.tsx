@@ -3,13 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import {
+  ArrowRight,
+  Building2,
+  Lock,
+  Mail,
+  Phone,
+  UserRound,
+} from "lucide-react";
+import {
+  AuthField,
+  AuthFrame,
+  AuthOr,
+  PasswordField,
+} from "@/components/auth/AuthFrame";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { saveProAccount } from "@/lib/pro-account";
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -33,7 +44,9 @@ export function ProAccountForm() {
     const password = String(data.get("password") ?? "");
     const confirm = String(data.get("confirm") ?? "");
     if (password.length < MIN_PASSWORD_LENGTH) {
-      toast.error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+      toast.error(
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+      );
       return;
     }
     if (password !== confirm) {
@@ -48,71 +61,81 @@ export function ProAccountForm() {
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-16 sm:px-6 lg:py-24">
-      <Link
-        href="/professionals/login"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Professional sign in
-      </Link>
-      <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">
-        Create a professional account
-      </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Set up your login first. You create your AI Salahkar after the account
-        exists.
-      </p>
-
-      <form
-        onSubmit={onSubmit}
-        className="mt-8 space-y-5 rounded-xl border border-border bg-white p-6 sm:p-8"
-      >
-        <div>
-          <Label htmlFor="name">Full name</Label>
-          <Input id="name" name="name" required autoComplete="name" className="mt-1.5" />
-        </div>
-        <div>
-          <Label htmlFor="email">Work email</Label>
-          <Input
+    <AuthFrame
+      audience="professional"
+      mode="signup"
+      title="Create your professional account"
+      description="Set up your login first. You'll verify credentials and launch your AI Salahkar from the dashboard."
+      footer={
+        <p>
+          Already have an account?{" "}
+          <Link
+            href="/professionals/login"
+            className="font-semibold text-accent hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AuthField
+            id="name"
+            name="name"
+            label="Full name"
+            icon={UserRound}
+            placeholder="CA Ananya Mehta"
+            autoComplete="name"
+            required
+          />
+          <AuthField
+            id="firm"
+            name="firm"
+            label="Firm / practice"
+            icon={Building2}
+            placeholder="Mehta & Associates"
+            autoComplete="organization"
+            required
+          />
+          <AuthField
             id="email"
             name="email"
+            label="Work email"
             type="email"
-            required
+            icon={Mail}
+            placeholder="you@yourfirm.com"
             autoComplete="email"
-            className="mt-1.5"
+            required
           />
-        </div>
-        <div>
-          <Label htmlFor="phone">Mobile</Label>
-          <Input id="phone" name="phone" required autoComplete="tel" className="mt-1.5" />
-        </div>
-        <div>
-          <Label htmlFor="firm">Firm / practice name</Label>
-          <Input id="firm" name="firm" required className="mt-1.5" />
-        </div>
-        <div>
-          <Label htmlFor="password">Password</Label>
-          <Input
+          <AuthField
+            id="phone"
+            name="phone"
+            label="Mobile"
+            type="tel"
+            icon={Phone}
+            placeholder="+91 98xxx xxxxx"
+            autoComplete="tel"
+            required
+          />
+          <PasswordField
             id="password"
             name="password"
-            type="password"
-            required
+            label="Password"
+            icon={Lock}
+            hint={`At least ${MIN_PASSWORD_LENGTH} characters`}
             minLength={MIN_PASSWORD_LENGTH}
             autoComplete="new-password"
-            className="mt-1.5"
+            required
           />
-        </div>
-        <div>
-          <Label htmlFor="confirm">Confirm password</Label>
-          <Input
+          <PasswordField
             id="confirm"
             name="confirm"
-            type="password"
-            required
+            label="Confirm password"
+            icon={Lock}
             minLength={MIN_PASSWORD_LENGTH}
             autoComplete="new-password"
-            className="mt-1.5"
+            required
           />
         </div>
         <LegalConsent
@@ -120,19 +143,21 @@ export function ProAccountForm() {
           checked={privacyConsent}
           onChange={setPrivacyConsent}
         />
-        <Button type="submit" className="w-full" disabled={loading || !privacyConsent}>
+        <Button
+          type="submit"
+          className="h-11 w-full"
+          disabled={loading || !privacyConsent}
+        >
           {loading ? "Creating account…" : "Create account"}
+          {loading ? null : <ArrowRight className="h-4 w-4" />}
         </Button>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <span className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-muted-foreground">or</span>
-          </div>
-        </div>
-        <GoogleAuthButton role="professional" intent="signup" consent={privacyConsent} />
+        <AuthOr />
+        <GoogleAuthButton
+          role="professional"
+          intent="signup"
+          consent={privacyConsent}
+        />
       </form>
-    </div>
+    </AuthFrame>
   );
 }

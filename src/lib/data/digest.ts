@@ -145,3 +145,47 @@ export function getDigestForDate(date = todayKey()): DigestUpdate {
 export function getTickerItems(): DigestUpdate[] {
   return [...digestUpdates].sort((a, b) => b.date.localeCompare(a.date));
 }
+
+export type MarketQuote = {
+  id: string;
+  label: string;
+  value: string;
+  /** Percent change vs previous close */
+  change: number;
+};
+
+/**
+ * Sample market snapshot for the public digest. Not a live feed — the UI
+ * labels it as indicative until a market-data provider is connected.
+ */
+export const marketSnapshot: { asOf: string; isSample: boolean; quotes: MarketQuote[] } = {
+  asOf: "2026-09-30",
+  isSample: true,
+  quotes: [
+    { id: "nifty", label: "NIFTY 50", value: "25,412.60", change: 0.42 },
+    { id: "sensex", label: "SENSEX", value: "83,105.35", change: 0.37 },
+    { id: "banknifty", label: "BANK NIFTY", value: "54,980.10", change: -0.18 },
+    { id: "usdinr", label: "USD / INR", value: "84.21", change: 0.06 },
+    { id: "gold", label: "Gold (10g)", value: "₹76,850", change: 0.55 },
+    { id: "gsec", label: "10Y G-Sec", value: "6.71%", change: -0.3 },
+    { id: "brent", label: "Brent crude", value: "$73.40", change: -0.92 },
+  ],
+};
+
+export type ComplianceDeadline = {
+  id: string;
+  date: string; // YYYY-MM-DD
+  source: DigestSource;
+  title: string;
+  who: string;
+};
+
+/** Typical statutory due dates — always confirm on the official portal. */
+export const upcomingDeadlines: ComplianceDeadline[] = [
+  { id: "dl-tds-oct", date: "2026-10-07", source: "Income Tax", title: "TDS / TCS deposit for September", who: "All deductors" },
+  { id: "dl-gstr1-oct", date: "2026-10-11", source: "GST", title: "GSTR-1 (monthly filers)", who: "Turnover above ₹5 Cr" },
+  { id: "dl-iff-oct", date: "2026-10-13", source: "GST", title: "GSTR-1 for Jul–Sep (QRMP)", who: "QRMP filers" },
+  { id: "dl-gstr3b-oct", date: "2026-10-20", source: "GST", title: "GSTR-3B (monthly filers)", who: "Monthly filers" },
+  { id: "dl-tdsret-oct", date: "2026-10-31", source: "Income Tax", title: "TDS return for Q2 (24Q / 26Q)", who: "All deductors" },
+  { id: "dl-aoc4-oct", date: "2026-10-29", source: "ROC", title: "AOC-4 financial statements", who: "Companies (30 days from AGM)" },
+];

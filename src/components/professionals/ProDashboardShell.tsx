@@ -1,154 +1,125 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
+  BadgeCheck,
   Bot,
-  Calendar,
+  CalendarDays,
   Home,
-  LogOut,
-  Menu,
-  MessageSquare,
+  Inbox,
+  IndianRupee,
   Newspaper,
   Settings,
+  Store,
   Users,
-  Wallet,
-  X,
 } from "lucide-react";
-import { MySalahkarLogo } from "@/components/brand/MySalahkarLogo";
-import { mockProfessional } from "@/lib/data/professional";
+import {
+  DashboardShell,
+  SidebarPromo,
+  sidebarPromoButtonClass,
+  type DashboardNavGroup,
+} from "@/components/dashboard/DashboardShell";
+import { mockProfessional, type ProfessionalStatus } from "@/lib/data/professional";
 import { cn } from "@/lib/utils";
 
-const nav: { href: string; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { href: "/professionals/dashboard", label: "Home", icon: Home, exact: true },
-  { href: "/professionals/dashboard/community", label: "Community", icon: Users },
-  { href: "/professionals/dashboard/daily-digest", label: "Daily Digest", icon: Newspaper },
-  { href: "/professionals/dashboard/calendar", label: "Calendar", icon: Calendar },
-  { href: "/professionals/dashboard/leads", label: "Leads", icon: MessageSquare },
-  { href: "/professionals/dashboard/earnings", label: "Earnings", icon: Wallet },
-  { href: "/professionals/dashboard/agent", label: "My AI Salahkar", icon: Bot },
-  { href: "/professionals/dashboard/settings", label: "Settings", icon: Settings },
+const groups: DashboardNavGroup[] = [
+  {
+    label: "Practice",
+    items: [
+      { href: "/professionals/dashboard", label: "Home", icon: Home, exact: true },
+      { href: "/professionals/dashboard/leads", label: "Leads", icon: Inbox },
+      { href: "/professionals/dashboard/calendar", label: "Calendar", icon: CalendarDays },
+      { href: "/professionals/dashboard/earnings", label: "Earnings", icon: IndianRupee },
+    ],
+  },
+  {
+    label: "AI Salahkar",
+    items: [{ href: "/professionals/dashboard/agent", label: "My AI Salahkar", icon: Bot }],
+  },
+  {
+    label: "Stay informed",
+    items: [
+      { href: "/professionals/dashboard/daily-digest", label: "Daily Digest", icon: Newspaper },
+      { href: "/professionals/dashboard/community", label: "Community", icon: Users },
+    ],
+  },
+  {
+    label: "Account",
+    items: [{ href: "/professionals/dashboard/settings", label: "Settings", icon: Settings }],
+  },
 ];
 
+export const statusMeta: Record<ProfessionalStatus, { label: string; dot: string }> = {
+  live: { label: "Live", dot: "bg-emerald-400" },
+  paused: { label: "Paused", dot: "bg-amber-400" },
+  pending_review: { label: "In review", dot: "bg-sky-400" },
+  draft: { label: "Draft", dot: "bg-slate-400" },
+};
+
+function ListingStatus() {
+  const pro = mockProfessional;
+  const status = statusMeta[pro.status];
+  return (
+    <Link
+      href="/professionals/dashboard/agent"
+      className="flex items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-2.5 ring-1 ring-white/10 transition-colors hover:bg-white/[0.12]"
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-white">
+        <Bot className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold text-white">
+          {pro.agentName} AI · {pro.domain}
+        </span>
+        <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-400">
+          <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />
+          {status.label}
+          {pro.verified ? (
+            <>
+              <span aria-hidden>·</span>
+              <BadgeCheck className="h-3 w-3 text-blue-300" /> Verified
+            </>
+          ) : null}
+        </span>
+      </span>
+    </Link>
+  );
+}
+
 export function ProDashboardShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
   const pro = mockProfessional;
 
-  function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
-    return (
-      <nav className="flex flex-col gap-0.5">
-        {nav.map((item) => {
-          const Icon = item.icon;
-          const active = item.exact
-            ? pathname === item.href
-            : pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "bg-white text-foreground shadow-sm"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
-    );
-  }
-
   return (
-    <div className="flex min-h-screen bg-[#f4f6f8]">
-      <aside className="hidden w-60 shrink-0 flex-col bg-[#001450] text-white lg:flex">
-        <div className="border-b border-white/10 px-5 py-5">
-          <Link href="/professionals/dashboard">
-            <MySalahkarLogo height={32} variant="white" />
-          </Link>
-          <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-            Partner console
-          </p>
-        </div>
-        <div className="flex-1 px-3 py-4">
-          <NavLinks />
-        </div>
-        <div className="border-t border-white/10 p-4">
-          <p className="truncate text-sm font-semibold">{pro.name}</p>
-          <p className="truncate text-xs text-slate-400">{pro.firm}</p>
-          <Link
-            href="/professionals/login"
-            className="mt-3 inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            Exit to site
-          </Link>
-        </div>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/70 bg-white/90 px-4 backdrop-blur-md lg:px-8">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="rounded-md p-2 lg:hidden"
-              onClick={() => setOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-            <div>
-              <p className="text-sm font-semibold tracking-tight text-foreground">
-                {pro.agentName} · AI {pro.domain}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {pro.verified ? "Verified partner" : "Pending verification"} ·{" "}
-                <span className="capitalize text-accent">{pro.status.replace("_", " ")}</span>
-              </p>
-            </div>
-          </div>
-          <Link
-            href={`/agents`}
-            className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
-          >
-            View marketplace
-          </Link>
-        </header>
-
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
-      </div>
-
-      {open ? (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button
-            className="absolute inset-0 bg-slate-950/50"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-          />
-          <div className="relative flex h-full w-64 flex-col bg-[#001450] text-white">
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-              <MySalahkarLogo height={28} variant="white" />
-              <button
-                type="button"
-                className="rounded-md p-2"
-                onClick={() => setOpen(false)}
-                aria-label="Close"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="flex-1 px-3 py-4">
-              <NavLinks onNavigate={() => setOpen(false)} />
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
+    <DashboardShell
+      homeHref="/professionals/dashboard"
+      ariaLabel="Partner dashboard"
+      groups={groups}
+      top={<ListingStatus />}
+      promo={(close) => (
+        <SidebarPromo
+          icon={Store}
+          title="See your listing"
+          body="How clients see you on the marketplace."
+          action={
+            <Link href="/agents" className={sidebarPromoButtonClass} onClick={close}>
+              View marketplace
+            </Link>
+          }
+        />
+      )}
+      user={{ name: pro.name, detail: pro.firm }}
+      onSignOut={() => router.push("/professionals/login")}
+      signOutLabel="Sign out"
+      mobileRight={
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-2.5 py-1 text-xs font-semibold text-foreground">
+          <span className={cn("h-1.5 w-1.5 rounded-full", statusMeta[pro.status].dot)} />
+          {statusMeta[pro.status].label}
+        </span>
+      }
+    >
+      {children}
+    </DashboardShell>
   );
 }

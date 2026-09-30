@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 const STORAGE_KEY = "mysalahkar.client";
 const CHANGE_EVENT = "mysalahkar-client";
@@ -33,6 +34,24 @@ export function signInClient(input: { name?: string; email: string }) {
   };
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
+/** Relative in-app path only. Blocks open redirects. */
+export function safeNextPath(value: string | null | undefined, fallback = "/client/dashboard") {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\") || value.includes("://")) {
+    return fallback;
+  }
+  if (value.startsWith("/client/login") || value.startsWith("/client/signup")) return fallback;
+  return value;
+}
+
+export function useAuthNext(fallback = "/client/dashboard") {
+  const raw = useSearchParams().get("next");
+  const next = safeNextPath(raw, fallback);
+  return {
+    next,
+    href: (path: string) => (raw ? `${path}?next=${encodeURIComponent(next)}` : path),
+  };
 }
 
 export function signOutClient() {

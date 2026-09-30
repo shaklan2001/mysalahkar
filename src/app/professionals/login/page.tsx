@@ -3,13 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ArrowRight, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import {
+  AuthField,
+  AuthFrame,
+  AuthOr,
+  PasswordField,
+} from "@/components/auth/AuthFrame";
 
 export default function ProfessionalLoginPage() {
   const router = useRouter();
@@ -29,74 +33,59 @@ export default function ProfessionalLoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-16 sm:px-6 lg:py-24">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Home
-      </Link>
-      <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">
-        Professional sign in
-      </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Access your AI Salahkar dashboard, earnings, and leads. Demo accepts any
-        credentials.
-      </p>
-
-      <form
-        onSubmit={onSubmit}
-        className="mt-8 space-y-5 rounded-xl border border-border bg-white p-6 sm:p-8"
-      >
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            required
-            className="mt-1.5"
-            defaultValue="ananya.mehta@example.com"
-          />
-        </div>
-        <div>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            required
-            className="mt-1.5"
-            defaultValue="demo"
-          />
-        </div>
+    <AuthFrame
+      audience="professional"
+      mode="signin"
+      title="Professional sign in"
+      description="Open your dashboard: leads, calendar, AI Salahkar and earnings."
+      footer={
+        <p>
+          New to My Salahkar?{" "}
+          <Link
+            href="/professionals/signup"
+            className="font-semibold text-accent hover:underline"
+          >
+            Create a professional account
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
+        <AuthField
+          id="email"
+          name="email"
+          label="Work email"
+          type="email"
+          icon={Mail}
+          placeholder="you@yourfirm.com"
+          autoComplete="email"
+          required
+        />
+        <PasswordField
+          id="password"
+          name="password"
+          label="Password"
+          icon={Lock}
+          placeholder="Your password"
+          autoComplete="current-password"
+          required
+        />
         <LegalConsent
           id="login-dpdp"
           checked={privacyConsent}
           onChange={setPrivacyConsent}
         />
-        <Button type="submit" className="w-full" disabled={loading || !privacyConsent}>
+        <Button
+          type="submit"
+          className="h-11 w-full"
+          disabled={loading || !privacyConsent}
+        >
           {loading ? "Signing in…" : "Sign in to dashboard"}
+          {loading ? null : <ArrowRight className="h-4 w-4" />}
         </Button>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <span className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-muted-foreground">or</span>
-          </div>
-        </div>
+        <AuthOr />
         <GoogleAuthButton role="professional" consent={privacyConsent} />
       </form>
-
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        New here?{" "}
-        <Link
-          href="/professionals/signup"
-          className="font-semibold text-foreground underline-offset-4 hover:underline"
-        >
-          Sign up
-        </Link>
-      </p>
-    </div>
+    </AuthFrame>
   );
 }

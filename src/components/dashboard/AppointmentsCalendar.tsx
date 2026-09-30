@@ -1,5 +1,5 @@
 import { Calendar, ExternalLink, Video } from "lucide-react";
-import type { Appointment } from "@/lib/data/appointments";
+import { splitAppointments, type Appointment } from "@/lib/data/appointments";
 
 type AppointmentsCalendarProps = {
   appointments: Appointment[];
@@ -28,9 +28,7 @@ export function AppointmentsCalendar({
   appointments,
   title = "Upcoming appointments",
 }: AppointmentsCalendarProps) {
-  const sorted = [...appointments].sort((a, b) =>
-    a.startsAt.localeCompare(b.startsAt),
-  );
+  const sorted = splitAppointments(appointments).upcoming;
 
   return (
     <section className="rounded-xl border border-border bg-white p-5 sm:p-6">
