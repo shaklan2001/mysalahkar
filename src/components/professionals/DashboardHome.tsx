@@ -116,7 +116,9 @@ export function DashboardHome() {
                 <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />{" "}
                 {status.label.toLowerCase()}
               </span>
-              · {mockMetrics.consultations} consultations in 30 days
+              <span className="hidden sm:inline">
+                · {mockMetrics.consultations} consultations in 30 days
+              </span>
             </p>
 
             {next && nextSlot ? (

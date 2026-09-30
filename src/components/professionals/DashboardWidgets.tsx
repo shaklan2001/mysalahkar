@@ -140,7 +140,7 @@ export function PerformanceChart({ className }: { className?: string }) {
           return (
             <div
               key={point.date}
-              className="group flex flex-1 flex-col items-center gap-2"
+              className="group flex h-full flex-1 flex-col items-center gap-2"
             >
               <div className="relative flex w-full flex-1 items-end">
                 <div
