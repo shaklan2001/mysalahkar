@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import { ConsultProvider } from "@/components/consult/ConsultProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
@@ -55,7 +56,9 @@ export default function RootLayout({
     >
       <body className="site-shell flex min-h-full flex-col">
         <ConsultProvider>
-          <SiteChrome>{children}</SiteChrome>
+          <SiteChrome>
+            <Suspense fallback={null}>{children}</Suspense>
+          </SiteChrome>
           <AppToaster />
         </ConsultProvider>
       </body>
