@@ -1,7 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CalendarDays, Home, Newspaper, Search, Settings, Sparkles, Users } from "lucide-react";
+import {
+  CalendarDays,
+  Home,
+  Newspaper,
+  Search,
+  Settings,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { ClientWallet } from "@/components/client/ClientWallet";
 import { useConsult } from "@/components/consult/ConsultProvider";
 import {
@@ -18,23 +26,37 @@ const groups: DashboardNavGroup[] = [
     items: [
       { href: "/client/dashboard", label: "Home", icon: Home, exact: true },
       { href: "/client/dashboard/find", label: "Find experts", icon: Search },
-      { href: "/client/dashboard/calendar", label: "Calendar", icon: CalendarDays },
+      {
+        href: "/client/dashboard/calendar",
+        label: "Calendar",
+        icon: CalendarDays,
+      },
     ],
   },
   {
     label: "Stay informed",
     items: [
-      { href: "/client/dashboard/daily-digest", label: "Daily Digest", icon: Newspaper },
+      {
+        href: "/client/dashboard/daily-digest",
+        label: "Daily Digest",
+        icon: Newspaper,
+      },
       { href: "/client/dashboard/community", label: "Community", icon: Users },
     ],
   },
   {
     label: "Account",
-    items: [{ href: "/client/dashboard/settings", label: "Settings", icon: Settings }],
+    items: [
+      { href: "/client/dashboard/settings", label: "Settings", icon: Settings },
+    ],
   },
 ];
 
-export function ClientDashboardShell({ children }: { children: React.ReactNode }) {
+export function ClientDashboardShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const { session } = useClientSession();
   const { openConsult } = useConsult();

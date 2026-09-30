@@ -58,7 +58,8 @@ export function AppointmentRow({
   viewer = "client",
   rebookHref,
 }: { apt: Appointment } & RowOptions) {
-  const counterpart = viewer === "professional" ? (apt.clientName ?? apt.withName) : apt.withName;
+  const counterpart =
+    viewer === "professional" ? (apt.clientName ?? apt.withName) : apt.withName;
   const slot = formatSlot(apt);
   return (
     <li className="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center">
@@ -144,14 +145,19 @@ export function AppointmentList({
 
 export function EmptyAppointments({
   message = "Book a verified expert and your Meet link will appear here.",
-  action = { href: "/client/dashboard/find?kind=human", label: "Find an expert" },
+  action = {
+    href: "/client/dashboard/find?kind=human",
+    label: "Find an expert",
+  },
 }: {
   message?: string;
   action?: { href: string; label: string } | null;
 }) {
   return (
     <div className="rounded-xl border border-dashed border-border px-6 py-10 text-center">
-      <p className="font-display text-base font-semibold text-foreground">No consultations booked</p>
+      <p className="font-display text-base font-semibold text-foreground">
+        No consultations booked
+      </p>
       <p className="mt-1 text-sm text-muted-foreground">{message}</p>
       {action ? (
         <Link

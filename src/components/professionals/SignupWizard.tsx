@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, FileUp, Bot, User, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  FileUp,
+  Bot,
+  User,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,7 +100,11 @@ const listingOptions: {
   },
 ];
 
-export function SignupWizard({ phase = "account" }: { phase?: "account" | "consultant" }) {
+export function SignupWizard({
+  phase = "account",
+}: {
+  phase?: "account" | "consultant";
+}) {
   const router = useRouter();
   const [step, setStep] = useState(phase === "consultant" ? 1 : 0);
   const [form, setForm] = useState<FormState>(initial);
@@ -187,17 +199,19 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div className={phase === "consultant" ? "mx-auto max-w-3xl" : "mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16"}>
       <Link
         href={phase === "consultant" ? "/professionals/dashboard" : "/"}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        {phase === "consultant" ? "Back to overview" : "Back to home"}
+        {phase === "consultant" ? "Back to dashboard" : "Back to home"}
       </Link>
 
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-foreground">
-        {phase === "consultant" ? "Create your AI Salahkar" : "Join as a professional"}
+        {phase === "consultant"
+          ? "Create your AI Salahkar"
+          : "Join as a professional"}
       </h1>
       <p className="mt-2 text-muted-foreground">
         {phase === "consultant"
@@ -216,30 +230,40 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
         </p>
       )}
 
-      <ol className="mt-8 flex gap-2">
-        {(phase === "consultant" ? steps.slice(1) : steps).map((label, i) => (
-          <li key={label} className="flex-1">
-            <div
-              className={cn(
-                "h-1 rounded-full",
-                i <= step - (phase === "consultant" ? 1 : 0) ? "bg-accent" : "bg-border",
-              )}
-            />
-            <p
-              className={cn(
-                "mt-2 hidden text-xs font-medium sm:block",
-                i === step - (phase === "consultant" ? 1 : 0)
-                  ? "text-foreground"
-                  : "text-muted-foreground",
-              )}
-            >
-              {label}
-            </p>
-          </li>
-        ))}
+      <ol className="mt-8 flex items-center gap-2" aria-label="Progress">
+        {(phase === "consultant" ? steps.slice(1) : steps).map((label, i, all) => {
+          const current = step - (phase === "consultant" ? 1 : 0);
+          const done = i < current;
+          const active = i === current;
+          return (
+            <li key={label} className="flex flex-1 items-center gap-2" aria-current={active ? "step" : undefined}>
+              <span
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors",
+                  done && "bg-accent text-white",
+                  active && "bg-[#001450] text-white ring-4 ring-accent/15",
+                  !done && !active && "border border-border bg-white text-muted-foreground",
+                )}
+              >
+                {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
+              </span>
+              <span
+                className={cn(
+                  "hidden text-xs font-medium whitespace-nowrap md:block",
+                  active ? "text-foreground" : "text-muted-foreground",
+                )}
+              >
+                {label}
+              </span>
+              {i < all.length - 1 ? (
+                <span className={cn("h-px flex-1", done ? "bg-accent" : "bg-border")} aria-hidden />
+              ) : null}
+            </li>
+          );
+        })}
       </ol>
 
-      <div className="mt-8 rounded-xl border border-border bg-white p-6 sm:p-8">
+      <div className="mt-8 rounded-2xl border border-border bg-white p-6 sm:p-8">
         {step === 0 && (
           <div className="mb-6 space-y-4">
             <LegalConsent
@@ -253,7 +277,10 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
               consent={form.privacyConsent}
             />
             <div className="relative">
-              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div
+                className="absolute inset-0 flex items-center"
+                aria-hidden="true"
+              >
                 <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
@@ -407,7 +434,10 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
               [
                 ["credential", "Professional certificate / membership card"],
                 ["id_proof", "Government ID (PAN / Aadhaar — demo only)"],
-                ["practice_proof", "Firm letterhead or practice proof (optional)"],
+                [
+                  "practice_proof",
+                  "Firm letterhead or practice proof (optional)",
+                ],
               ] as const
             ).map(([kind, label]) => {
               const existing = form.documents.find((d) => d.kind === kind);
@@ -515,8 +545,8 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
         {step === 5 && (
           <div className="space-y-4 text-sm">
             <p className="text-muted-foreground">
-              Submit for superadmin review. You won’t appear on Find Professionals
-              until approved.
+              Submit for superadmin review. You won’t appear on Find
+              Professionals until approved.
             </p>
             <dl className="divide-y divide-border rounded-lg border border-border">
               {[
@@ -542,7 +572,9 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4 px-4 py-3">
                   <dt className="text-muted-foreground">{k}</dt>
-                  <dd className="text-right font-medium text-foreground">{v}</dd>
+                  <dd className="text-right font-medium text-foreground">
+                    {v}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -573,7 +605,11 @@ export function SignupWizard({ phase = "account" }: { phase?: "account" | "consu
               <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button type="button" disabled={submitting || !form.privacyConsent} onClick={submit}>
+            <Button
+              type="button"
+              disabled={submitting || !form.privacyConsent}
+              onClick={submit}
+            >
               {submitting ? "Submitting…" : "Submit for review"}
             </Button>
           )}

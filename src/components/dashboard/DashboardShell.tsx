@@ -33,7 +33,9 @@ type DashboardShellProps = {
 };
 
 function isActive(pathname: string, item: DashboardNavItem) {
-  return item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);
+  return item.exact
+    ? pathname === item.href
+    : pathname === item.href || pathname.startsWith(`${item.href}/`);
 }
 
 function initials(name: string) {
@@ -67,7 +69,8 @@ export function DashboardShell({
   const close = () => setOpen(false);
 
   const allItems = groups.flatMap((group) => group.items);
-  const current = allItems.find((item) => isActive(pathname, item)) ?? allItems[0];
+  const current =
+    allItems.find((item) => isActive(pathname, item)) ?? allItems[0];
 
   const sidebar = (
     <div className="flex h-full flex-col">
@@ -78,10 +81,15 @@ export function DashboardShell({
         {top ? <div className="mt-5">{top}</div> : null}
       </div>
 
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2" aria-label={ariaLabel}>
+      <nav
+        className="flex-1 space-y-6 overflow-y-auto px-3 py-2"
+        aria-label={ariaLabel}
+      >
         {groups.map((group) => (
           <div key={group.label}>
-            <p className="px-3 text-[10px] font-semibold tracking-[0.16em] text-slate-500 uppercase">{group.label}</p>
+            <p className="px-3 text-[10px] font-semibold tracking-[0.16em] text-slate-500 uppercase">
+              {group.label}
+            </p>
             <ul className="mt-2 space-y-0.5">
               {group.items.map((item) => {
                 const Icon = item.icon;
@@ -94,7 +102,9 @@ export function DashboardShell({
                       onClick={close}
                       className={cn(
                         "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                        active ? "bg-white/[0.09] text-white" : "text-slate-400 hover:bg-white/[0.05] hover:text-white",
+                        active
+                          ? "bg-white/[0.09] text-white"
+                          : "text-slate-400 hover:bg-white/[0.05] hover:text-white",
                       )}
                     >
                       {active ? (
@@ -103,7 +113,12 @@ export function DashboardShell({
                           aria-hidden
                         />
                       ) : null}
-                      <Icon className={cn("h-4 w-4 shrink-0", active && "text-blue-300")} />
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 shrink-0",
+                          active && "text-blue-300",
+                        )}
+                      />
                       {item.label}
                     </Link>
                   </li>
@@ -121,8 +136,12 @@ export function DashboardShell({
             {initials(user.name)}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-white">{user.name}</p>
-            {user.detail ? <p className="truncate text-xs text-slate-400">{user.detail}</p> : null}
+            <p className="truncate text-sm font-semibold text-white">
+              {user.name}
+            </p>
+            {user.detail ? (
+              <p className="truncate text-xs text-slate-400">{user.detail}</p>
+            ) : null}
           </div>
           <button
             type="button"
@@ -140,7 +159,9 @@ export function DashboardShell({
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 bg-[#001450] text-white lg:block">{sidebar}</aside>
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 bg-[#001450] text-white lg:block">
+        {sidebar}
+      </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Phones only: the sidebar is a drawer, so keep a slim bar to open it. */}
@@ -158,7 +179,9 @@ export function DashboardShell({
           </p>
           {mobileRight}
         </header>
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          {children}
+        </main>
       </div>
 
       {open ? (
@@ -199,7 +222,10 @@ export function SidebarPromo({
 }) {
   return (
     <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#0a2a8a] to-[#001450] p-4 ring-1 ring-white/10">
-      <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-accent/40 blur-2xl" aria-hidden />
+      <div
+        className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-accent/40 blur-2xl"
+        aria-hidden
+      />
       <Icon className="relative h-4 w-4 text-blue-200" />
       <p className="relative mt-2 text-sm font-semibold text-white">{title}</p>
       <p className="relative mt-0.5 text-xs text-slate-300">{body}</p>

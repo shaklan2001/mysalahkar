@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { CalendarPlus } from "lucide-react";
-import { appointmentsForViewer, splitAppointments } from "@/lib/data/appointments";
-import { AppointmentList, EmptyAppointments } from "@/components/client/ClientAppointments";
+import {
+  appointmentsForViewer,
+  splitAppointments,
+} from "@/lib/data/appointments";
+import {
+  AppointmentList,
+  EmptyAppointments,
+} from "@/components/client/ClientAppointments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
@@ -17,14 +23,22 @@ type ScheduleViewProps = {
 };
 
 /** Upcoming / past consultations with Meet links — shared by both dashboards. */
-export function ScheduleView({ viewer, description, action, rebookHref, emptyMessage }: ScheduleViewProps) {
+export function ScheduleView({
+  viewer,
+  description,
+  action,
+  rebookHref,
+  emptyMessage,
+}: ScheduleViewProps) {
   const { upcoming, past } = splitAppointments(appointmentsForViewer(viewer));
 
   return (
     <div className="mx-auto max-w-4xl">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Calendar</h1>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Calendar
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
         {action ? (
@@ -39,10 +53,14 @@ export function ScheduleView({ viewer, description, action, rebookHref, emptyMes
       <Tabs defaultValue="upcoming" className="mt-8">
         <TabsList>
           <TabsTrigger value="upcoming" className="px-4">
-            Upcoming <span className="ml-1.5 text-muted-foreground">{upcoming.length}</span>
+            Upcoming{" "}
+            <span className="ml-1.5 text-muted-foreground">
+              {upcoming.length}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="past" className="px-4">
-            Past <span className="ml-1.5 text-muted-foreground">{past.length}</span>
+            Past{" "}
+            <span className="ml-1.5 text-muted-foreground">{past.length}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -61,15 +79,24 @@ export function ScheduleView({ viewer, description, action, rebookHref, emptyMes
         <TabsContent value="past" className="mt-5">
           <section className="rounded-2xl border border-border bg-white p-5 sm:p-6">
             {past.length ? (
-              <AppointmentList appointments={past} past viewer={viewer} rebookHref={rebookHref} />
+              <AppointmentList
+                appointments={past}
+                past
+                viewer={viewer}
+                rebookHref={rebookHref}
+              />
             ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">No past consultations yet.</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                No past consultations yet.
+              </p>
             )}
           </section>
         </TabsContent>
       </Tabs>
 
-      <p className="mt-4 text-xs text-muted-foreground">Demo data. Meet links open Google Meet in a new tab. Times are in IST.</p>
+      <p className="mt-4 text-xs text-muted-foreground">
+        Demo data. Meet links open Google Meet in a new tab. Times are in IST.
+      </p>
     </div>
   );
 }
@@ -79,7 +106,10 @@ export function ClientCalendar() {
     <ScheduleView
       viewer="client"
       description="Every consultation with its Google Meet link."
-      action={{ href: "/client/dashboard/find?kind=human", label: "Book a consultation" }}
+      action={{
+        href: "/client/dashboard/find?kind=human",
+        label: "Book a consultation",
+      }}
       rebookHref="/client/dashboard/find?kind=human"
     />
   );

@@ -3,7 +3,14 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowRight, Bot, CalendarClock, Sparkles, Video, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  Bot,
+  CalendarClock,
+  Sparkles,
+  Video,
+  Wallet,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   Delta,
@@ -11,16 +18,31 @@ import {
   PerformanceChart,
   RecentLeadsPreview,
 } from "@/components/professionals/DashboardWidgets";
-import { AppointmentList, EmptyAppointments, formatSlot } from "@/components/client/ClientAppointments";
+import {
+  AppointmentList,
+  EmptyAppointments,
+  formatSlot,
+} from "@/components/client/ClientAppointments";
 import { statusMeta } from "@/components/professionals/ProDashboardShell";
 import { Button } from "@/components/ui/button";
 import { formatINR, cn } from "@/lib/utils";
-import { mockEarnings, mockMetrics, mockProfessional } from "@/lib/data/professional";
-import { appointmentsForViewer, splitAppointments } from "@/lib/data/appointments";
+import {
+  mockEarnings,
+  mockMetrics,
+  mockProfessional,
+} from "@/lib/data/professional";
+import {
+  appointmentsForViewer,
+  splitAppointments,
+} from "@/lib/data/appointments";
 
 function greeting() {
   const hour = Number(
-    new Intl.DateTimeFormat("en-IN", { hour: "numeric", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date()),
+    new Intl.DateTimeFormat("en-IN", {
+      hour: "numeric",
+      hour12: false,
+      timeZone: "Asia/Kolkata",
+    }).format(new Date()),
   );
   if (hour < 12) return "Good morning";
   if (hour < 17) return "Good afternoon";
@@ -34,8 +56,12 @@ export function DashboardHome() {
   const { upcoming } = splitAppointments(appointmentsForViewer("professional"));
   const next = upcoming[0];
   const nextSlot = next ? formatSlot(next) : null;
-  const paid = mockEarnings.filter((e) => e.status === "Paid").reduce((sum, e) => sum + e.share, 0);
-  const pending = mockEarnings.filter((e) => e.status !== "Paid").reduce((sum, e) => sum + e.share, 0);
+  const paid = mockEarnings
+    .filter((e) => e.status === "Paid")
+    .reduce((sum, e) => sum + e.share, 0);
+  const pending = mockEarnings
+    .filter((e) => e.status !== "Paid")
+    .reduce((sum, e) => sum + e.share, 0);
 
   useEffect(() => {
     if (searchParams.get("welcome") === "1") {
@@ -51,9 +77,12 @@ export function DashboardHome() {
             <Sparkles className="h-5 w-5" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className="font-display text-lg font-semibold tracking-tight text-foreground">Create your AI Salahkar</h2>
+            <h2 className="font-display text-lg font-semibold tracking-tight text-foreground">
+              Create your AI Salahkar
+            </h2>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              Your account is ready. Set up the Salahkar clients will chat with and call.
+              Your account is ready. Set up the Salahkar clients will chat with
+              and call.
             </p>
           </div>
           <Button asChild variant="accent">
@@ -67,16 +96,25 @@ export function DashboardHome() {
       {/* Welcome + this month */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <section className="relative overflow-hidden rounded-3xl bg-[#001450] p-6 text-white sm:p-8">
-          <div className="bg-grid-dark absolute inset-0 [mask-image:radial-gradient(ellipse_at_top_right,#000,transparent_70%)]" aria-hidden />
-          <div className="absolute -top-32 -right-24 h-80 w-80 rounded-full bg-accent/35 blur-[100px]" aria-hidden />
+          <div
+            className="bg-grid-dark absolute inset-0 [mask-image:radial-gradient(ellipse_at_top_right,#000,transparent_70%)]"
+            aria-hidden
+          />
+          <div
+            className="absolute -top-32 -right-24 h-80 w-80 rounded-full bg-accent/35 blur-[100px]"
+            aria-hidden
+          />
           <div className="relative">
             <p className="text-sm text-blue-200">{greeting()},</p>
-            <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight sm:text-[2.1rem]">{pro.agentName}</h1>
+            <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight sm:text-[2.1rem]">
+              {pro.agentName}
+            </h1>
             <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/[0.08] px-3 py-1 text-xs font-medium text-slate-200 ring-1 ring-white/10">
               <Bot className="h-3.5 w-3.5 text-blue-200" />
               {pro.agentName} AI is
               <span className="inline-flex items-center gap-1 font-semibold text-white">
-                <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} /> {status.label.toLowerCase()}
+                <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />{" "}
+                {status.label.toLowerCase()}
               </span>
               · {mockMetrics.consultations} consultations in 30 days
             </p>
@@ -84,13 +122,20 @@ export function DashboardHome() {
             {next && nextSlot ? (
               <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm sm:flex-row sm:items-center">
                 <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-white text-[#001450]">
-                  <span className="font-display text-lg leading-none font-semibold">{nextSlot.day}</span>
-                  <span className="mt-1 text-[10px] font-semibold tracking-wide uppercase">{nextSlot.month}</span>
+                  <span className="font-display text-lg leading-none font-semibold">
+                    {nextSlot.day}
+                  </span>
+                  <span className="mt-1 text-[10px] font-semibold tracking-wide uppercase">
+                    {nextSlot.month}
+                  </span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-semibold tracking-wide text-blue-200 uppercase">Next client call</p>
+                  <p className="text-[11px] font-semibold tracking-wide text-blue-200 uppercase">
+                    Next client call
+                  </p>
                   <p className="mt-0.5 truncate text-sm font-semibold">
-                    {next.service ?? next.title} · {next.clientName ?? next.withName}
+                    {next.service ?? next.title} ·{" "}
+                    {next.clientName ?? next.withName}
                   </p>
                   <p className="text-xs text-slate-300">
                     {nextSlot.weekday}, {nextSlot.time} IST
@@ -120,16 +165,21 @@ export function DashboardHome() {
             {formatINR(mockMetrics.yourShare)}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {Math.round(pro.shareRate * 100)}% consultation share · gross {formatINR(mockMetrics.grossGmv)}
+            {Math.round(pro.shareRate * 100)}% consultation share · gross{" "}
+            {formatINR(mockMetrics.grossGmv)}
           </p>
           <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-border/70 pt-4 text-sm">
             <div>
               <dt className="text-xs text-muted-foreground">Paid out</dt>
-              <dd className="mt-0.5 font-semibold text-foreground">{formatINR(paid)}</dd>
+              <dd className="mt-0.5 font-semibold text-foreground">
+                {formatINR(paid)}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-muted-foreground">Pending</dt>
-              <dd className="mt-0.5 font-semibold text-foreground">{formatINR(pending)}</dd>
+              <dd className="mt-0.5 font-semibold text-foreground">
+                {formatINR(pending)}
+              </dd>
             </div>
           </dl>
           <Link
@@ -147,7 +197,8 @@ export function DashboardHome() {
         <section className="rounded-2xl border border-border bg-white p-5 sm:p-6">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-2 font-display text-base font-semibold tracking-tight text-foreground">
-              <CalendarClock className="h-4 w-4 text-accent" /> Upcoming client calls
+              <CalendarClock className="h-4 w-4 text-accent" /> Upcoming client
+              calls
             </h2>
             <Link
               href="/professionals/dashboard/calendar"
@@ -158,9 +209,15 @@ export function DashboardHome() {
           </div>
           <div className="mt-5">
             {upcoming.length ? (
-              <AppointmentList appointments={upcoming.slice(0, 4)} viewer="professional" />
+              <AppointmentList
+                appointments={upcoming.slice(0, 4)}
+                viewer="professional"
+              />
             ) : (
-              <EmptyAppointments message="New bookings from clients will appear here." action={null} />
+              <EmptyAppointments
+                message="New bookings from clients will appear here."
+                action={null}
+              />
             )}
           </div>
         </section>

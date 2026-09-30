@@ -43,7 +43,9 @@ export function AppointmentsCalendar({
       </p>
 
       {sorted.length === 0 ? (
-        <p className="mt-6 text-sm text-muted-foreground">No upcoming appointments.</p>
+        <p className="mt-6 text-sm text-muted-foreground">
+          No upcoming appointments.
+        </p>
       ) : (
         <ul className="mt-5 divide-y divide-border">
           {sorted.map((apt) => {
@@ -54,7 +56,9 @@ export function AppointmentsCalendar({
                 className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">{apt.title}</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {apt.title}
+                  </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {day} · {time} IST · with {apt.withName}
                     {apt.service ? ` · ${apt.service}` : ""}
