@@ -52,6 +52,10 @@ export function VoiceCallPanel({
   fullScreen = false,
 }: VoiceCallPanelProps) {
   const roomRef = useRef<Room | null>(null);
+  /** True while a connect() is in flight — blocks a second, parallel room (StrictMode / re-renders). */
+  const connectingRef = useRef(false);
+  /** Bumped on every hang-up so a connect() still in flight knows it was cancelled. */
+  const attemptRef = useRef(0);
   const audioContainerRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -95,31 +99,53 @@ export function VoiceCallPanel({
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [transcripts]);
 
+  /** Stop and remove every agent audio element, so nothing keeps playing after hang-up. */
+  const teardownAudio = useCallback((room: Room | null) => {
+    room?.remoteParticipants.forEach((participant) => {
+      participant.audioTrackPublications.forEach((pub) => {
+        pub.track?.detach().forEach((el) => el.remove());
+      });
+    });
+    audioContainerRef.current?.querySelectorAll("audio").forEach((el) => {
+      el.pause();
+      el.srcObject = null;
+      el.remove();
+    });
+  }, []);
+
   const disconnect = useCallback(async () => {
+    attemptRef.current += 1; // cancel any connect() still in flight
+    connectingRef.current = false;
     const room = roomRef.current;
     if (!room) {
+      teardownAudio(null);
       setStatus("idle");
       promptReview();
       onEndedRef.current();
       return;
     }
+    roomRef.current = null;
     setStatus("disconnecting");
+    teardownAudio(room);
     try {
       await room.localParticipant.setMicrophoneEnabled(false);
     } catch {
       // ignore
     }
-    await room.disconnect();
-    roomRef.current = null;
+    await room.disconnect().catch(() => {});
+    teardownAudio(room);
     setMicEnabled(false);
     setAgentOnline(false);
     setStatus("idle");
     promptReview();
     onEndedRef.current();
-  }, [promptReview]);
+  }, [promptReview, teardownAudio]);
 
   const connect = useCallback(async () => {
-    if (roomRef.current || !active) return;
+    if (roomRef.current || connectingRef.current || !active) return;
+    connectingRef.current = true;
+    const attempt = ++attemptRef.current;
+    const cancelled = () => attempt !== attemptRef.current;
     setStatus("connecting");
     setErrorMessage(null);
     setTranscripts([]);
@@ -135,7 +161,10 @@ export function VoiceCallPanel({
       }),
     });
 
+    if (cancelled()) return;
+
     if (!sessionRes.ok) {
+      connectingRef.current = false;
       const data = await sessionRes.json().catch(() => ({}));
       setErrorMessage(data.error || "Could not start voice call");
       setStatus("error");
@@ -143,6 +172,7 @@ export function VoiceCallPanel({
     }
 
     const session = await sessionRes.json();
+    if (cancelled()) return;
     const room = new Room({ adaptiveStream: true, dynacast: true });
 
     room.on(RoomEvent.Connected, () => {
@@ -152,6 +182,8 @@ export function VoiceCallPanel({
     });
 
     room.on(RoomEvent.Disconnected, () => {
+      teardownAudio(room);
+      if (roomRef.current !== room) return; // already handled by disconnect() or a stale room
       setMicEnabled(false);
       setAgentOnline(false);
       roomRef.current = null;
@@ -177,6 +209,7 @@ export function VoiceCallPanel({
 
     room.on(RoomEvent.TrackSubscribed, (track, _pub, participant) => {
       if (track.kind === Track.Kind.Audio) {
+        if (roomRef.current !== room) return; // never play audio from a cancelled room
         const el = track.attach() as HTMLAudioElement;
         el.autoplay = true;
         audioContainerRef.current?.appendChild(el);
@@ -214,9 +247,15 @@ export function VoiceCallPanel({
 
     try {
       await room.connect(session.url, session.token);
+      if (cancelled()) {
+        await room.disconnect().catch(() => {});
+        teardownAudio(room);
+        return;
+      }
       await room.localParticipant.setMicrophoneEnabled(true);
       setMicEnabled(true);
     } catch (err) {
+      if (cancelled()) return;
       const msg = err instanceof Error ? err.message : String(err);
       let userMsg = msg;
       if (/permission|notallowed|microphone/i.test(msg)) {
@@ -225,8 +264,10 @@ export function VoiceCallPanel({
       setErrorMessage(userMsg);
       setStatus("error");
       roomRef.current = null;
+    } finally {
+      if (!cancelled()) connectingRef.current = false;
     }
-  }, [active, addTranscript, agentSlug, contactId, promptReview]);
+  }, [active, addTranscript, agentSlug, contactId, promptReview, teardownAudio]);
 
   useEffect(() => {
     if (active && status === "idle" && !reviewOpen) {
@@ -241,10 +282,14 @@ export function VoiceCallPanel({
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
-      roomRef.current?.disconnect().catch(() => {});
+      attemptRef.current += 1;
+      connectingRef.current = false;
+      const room = roomRef.current;
       roomRef.current = null;
+      teardownAudio(room);
+      room?.disconnect().catch(() => {});
     };
-  }, []);
+  }, [teardownAudio]);
 
   const toggleMic = async () => {
     const room = roomRef.current;

@@ -85,8 +85,7 @@ export const agents: Agent[] = [
     reviewCount: 312,
     consultationFee: STANDARD_HALF_HOUR_FEE,
     bio: "Ankit AI is an AI-powered guidance tool on MySalahkar, guided by CA Ankit Gupta, Chartered Accountant. He has rich experience of more than 15 Years in Financial Reporting, Income Tax, Corporate tax, GST, TDS, Import Export, financial advisory, mergers & acquisitions, business restructuring and regulatory compliance. He provides strategic and practical solutions to businesses, startups and corporates across the complete business lifecycle—from business setup and tax structuring to financial management, compliance, transactions and growth advisory.",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    image: "/consultants/ankit-gupta.jpg",
     location: "Delhi, India",
     availability: "Online 24/7",
     languages: ["English", "Hindi"],
@@ -206,8 +205,7 @@ export const agents: Agent[] = [
     reviewCount: 286,
     consultationFee: STANDARD_HALF_HOUR_FEE,
     bio: "Soniya AI is an AI-powered guidance tool on MySalahkar, guided by CS Soniya Gupta, Company Secretary. She has a rich experience of more than 18 years in IPO, legal, Corporate Secretarial and Commercial Advisory, Certified POSH Trainer, adjudication before NCLT, NCLAT, Compounding of offences, Approvals of Regulatory Authorities, Audits, Compliances & Certification and Other Secretarial & Legal Areas etc.",
-    image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    image: "/consultants/soniya-gupta.jpg",
     location: "New Delhi, India",
     availability: "Online 24/7",
     languages: ["English", "Hindi"],
@@ -527,8 +525,7 @@ export const agents: Agent[] = [
     reviewCount: 72,
     consultationFee: STANDARD_HALF_HOUR_FEE,
     bio: "Nayansi Agrawal is an IBBI Registered Valuer – Securities & Financial Assets and a Fellow Chartered Accountant (FCA) with expertise in business valuation, corporate advisory, M&A, fundraising, financial reporting and regulatory valuations. She has 6+ years of compliance advisory experience, including GST audits, certifications and end-to-end regulatory support.",
-    image:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    image: "/consultants/nayansi-agrawal.png",
     location: "Ghaziabad, India",
     availability: "By appointment",
     languages: ["English", "Hindi"],

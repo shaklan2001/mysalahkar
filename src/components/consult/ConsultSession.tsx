@@ -237,6 +237,7 @@ export function ConsultSession({
       ...f,
       name: f.name || session?.name || "",
       email: f.email || session?.email || "",
+      phone: f.phone || (session?.phone ? `+91 ${session.phone}` : ""),
     }));
     setShowEscalate(true);
   }

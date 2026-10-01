@@ -86,7 +86,10 @@ export function ClientDashboardShell({
           }
         />
       )}
-      user={{ name: session?.name ?? "Client", detail: session?.email }}
+      user={{
+        name: session?.name ?? "Client",
+        detail: session?.email || (session?.phone ? `+91 ${session.phone}` : undefined),
+      }}
       onSignOut={() => {
         signOutClient();
         router.push("/");

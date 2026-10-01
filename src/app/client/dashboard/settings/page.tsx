@@ -31,17 +31,19 @@ export default function ClientSettingsPage() {
   // so reading it directly here is safe (the hook would start as null).
   const [name, setName] = useState(() => readClientSession()?.name ?? "");
   const [email, setEmail] = useState(() => readClientSession()?.email ?? "");
+  const [phone] = useState(() => readClientSession()?.phone);
   const [reminders, setReminders] = useState(true);
   const [digestEmail, setDigestEmail] = useState(false);
   const [productNews, setProductNews] = useState(false);
 
   function saveProfile(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.includes("@")) {
+    // Phone-OTP accounts may have no email yet; only validate one if given.
+    if ((email || !phone) && !email.includes("@")) {
       toast.error("Enter a valid email.");
       return;
     }
-    signInClient({ name, email });
+    signInClient({ name, email, phone });
     toast.success("Profile saved");
   }
 
@@ -88,9 +90,15 @@ export default function ClientSettingsPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              required
+              required={!phone}
+              placeholder={phone ? "Add an email for receipts" : undefined}
             />
           </div>
+          {phone ? (
+            <p className="text-xs text-muted-foreground">
+              Signed in with <span className="font-medium text-foreground">+91 {phone}</span> (verified by OTP).
+            </p>
+          ) : null}
           <div className="flex justify-end">
             <Button type="submit">Save profile</Button>
           </div>

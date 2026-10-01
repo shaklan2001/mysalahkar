@@ -9,6 +9,10 @@ import { Button } from "@/components/ui/button";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import {
+  PhoneOtpForm,
+  SignInMethodSwitch,
+} from "@/components/auth/PhoneOtpForm";
+import {
   AuthField,
   AuthFrame,
   AuthOr,
@@ -25,6 +29,7 @@ export default function ClientLoginPage() {
   const { next, href } = useAuthNext();
   const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [method, setMethod] = useState<"email" | "phone">("email");
 
   useEffect(() => {
     if (readClientSession()) router.replace(next);
@@ -43,6 +48,14 @@ export default function ClientLoginPage() {
     toast.success("Signed in");
     router.replace(next);
   }
+
+  const consent = (
+    <LegalConsent
+      id="client-login-dpdp"
+      checked={privacyConsent}
+      onChange={setPrivacyConsent}
+    />
+  );
 
   return (
     <AuthFrame
@@ -63,43 +76,57 @@ export default function ClientLoginPage() {
         </p>
       }
     >
-      <form onSubmit={onSubmit} className="space-y-4">
-        <AuthField
-          id="email"
-          name="email"
-          label="Email"
-          type="email"
-          icon={Mail}
-          placeholder="you@company.com"
-          autoComplete="email"
-          required
-        />
-        <PasswordField
-          id="password"
-          name="password"
-          label="Password"
-          icon={Lock}
-          placeholder="Your password"
-          autoComplete="current-password"
-          required
-        />
-        <LegalConsent
-          id="client-login-dpdp"
-          checked={privacyConsent}
-          onChange={setPrivacyConsent}
-        />
-        <Button
-          type="submit"
-          variant="accent"
-          className="h-11 w-full"
-          disabled={loading || !privacyConsent}
-        >
-          {loading ? "Signing in…" : "Sign in"}
-          {loading ? null : <ArrowRight className="h-4 w-4" />}
-        </Button>
+      <div className="space-y-5">
+        <SignInMethodSwitch value={method} onChange={setMethod} />
+
+        {method === "email" ? (
+          <form onSubmit={onSubmit} className="space-y-4">
+            <AuthField
+              id="email"
+              name="email"
+              label="Email"
+              type="email"
+              icon={Mail}
+              placeholder="you@company.com"
+              autoComplete="email"
+              required
+            />
+            <PasswordField
+              id="password"
+              name="password"
+              label="Password"
+              icon={Lock}
+              placeholder="Your password"
+              autoComplete="current-password"
+              required
+            />
+            {consent}
+            <Button
+              type="submit"
+              variant="accent"
+              className="h-11 w-full"
+              disabled={loading || !privacyConsent}
+            >
+              {loading ? "Signing in…" : "Sign in"}
+              {loading ? null : <ArrowRight className="h-4 w-4" />}
+            </Button>
+          </form>
+        ) : (
+          <PhoneOtpForm
+            role="client"
+            consent={privacyConsent}
+            consentSlot={consent}
+            onVerified={(phone) => {
+              signInClient({ name: "Client", phone });
+              toast.success("Signed in");
+              router.replace(next);
+            }}
+          />
+        )}
+
         <AuthOr />
         <GoogleAuthButton role="client" consent={privacyConsent} />
-      </form>
+      </div>
     </AuthFrame>
   );
 }

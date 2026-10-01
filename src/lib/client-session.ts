@@ -8,7 +8,9 @@ const CHANGE_EVENT = "mysalahkar-client";
 
 export type ClientSession = {
   name: string;
+  /** Empty when the client signed in with phone + OTP. */
   email: string;
+  phone?: string;
 };
 
 export function readClientSession(): ClientSession | null {
@@ -16,21 +18,25 @@ export function readClientSession(): ClientSession | null {
   try {
     const parsed: unknown = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? "null");
     if (!parsed || typeof parsed !== "object") return null;
-    const record = parsed as { name?: unknown; email?: unknown };
-    if (typeof record.email !== "string" || !record.email.includes("@")) return null;
+    const record = parsed as { name?: unknown; email?: unknown; phone?: unknown };
+    const email = typeof record.email === "string" && record.email.includes("@") ? record.email.trim() : "";
+    const phone = typeof record.phone === "string" && /^[6-9]\d{9}$/.test(record.phone) ? record.phone : undefined;
+    if (!email && !phone) return null;
     return {
       name: typeof record.name === "string" && record.name.trim() ? record.name.trim() : "Client",
-      email: record.email.trim(),
+      email,
+      ...(phone ? { phone } : {}),
     };
   } catch {
     return null;
   }
 }
 
-export function signInClient(input: { name?: string; email: string }) {
+export function signInClient(input: { name?: string; email?: string; phone?: string }) {
   const session: ClientSession = {
     name: input.name?.trim() || "Client",
-    email: input.email.trim(),
+    email: input.email?.trim() ?? "",
+    ...(input.phone ? { phone: input.phone } : {}),
   };
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   window.dispatchEvent(new Event(CHANGE_EVENT));
