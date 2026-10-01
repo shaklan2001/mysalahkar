@@ -240,7 +240,7 @@ export default function ProAgentPage() {
             </div>
           </article>
           <p className="text-xs text-muted-foreground">
-            Updates as you type. Clients see this card in Find experts.
+            Updates as you type. Clients see this card in Find professionals.
           </p>
         </aside>
       </div>

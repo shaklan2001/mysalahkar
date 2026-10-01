@@ -50,7 +50,7 @@ const platformLinks: MenuLink[] = [
   {
     href: "/how-it-works",
     label: "How it works",
-    description: "From first question to expert sign-off",
+    description: "From first question to professional sign-off",
     icon: Workflow,
   },
   {
@@ -108,7 +108,7 @@ const signInLinks: MenuLink[] = [
 const navTriggerClass =
   "bg-transparent text-[13px] text-muted-foreground hover:text-foreground";
 
-const directLinks = [{ href: "/agents", label: "Find Experts" }];
+const directLinks = [{ href: "/agents", label: "Find Professionals" }];
 
 const mobileSections = [
   { title: "Platform", links: platformLinks },

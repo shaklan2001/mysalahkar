@@ -57,7 +57,7 @@ export default function ClientSignupPage() {
       audience="client"
       mode="signup"
       title="Create your client account"
-      description="Free to join. Consult AI Salahkars, book verified experts and track your compliance."
+      description="Free to join. Consult AI Salahkars, book verified professionals and track your compliance."
       switchHrefs={{ client: href("/client/signup") }}
       footer={
         <p>
@@ -77,7 +77,7 @@ export default function ClientSignupPage() {
           name="name"
           label="Full name"
           icon={UserRound}
-          placeholder="Riya Sharma"
+          placeholder="Nishant"
           autoComplete="name"
           required
         />

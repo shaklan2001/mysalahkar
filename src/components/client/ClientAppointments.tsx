@@ -46,7 +46,7 @@ function cleanTitle(title: string) {
 
 type RowOptions = {
   past?: boolean;
-  /** Whose dashboard this is: clients see the expert, professionals see the client. */
+  /** Whose dashboard this is: clients see the professional, professionals see the client. */
   viewer?: "client" | "professional";
   /** Past rows get a "Book again" link when set. */
   rebookHref?: string;
@@ -144,10 +144,10 @@ export function AppointmentList({
 }
 
 export function EmptyAppointments({
-  message = "Book a verified expert and your Meet link will appear here.",
+  message = "Book a verified professional and your Meet link will appear here.",
   action = {
     href: "/client/dashboard/find?kind=human",
-    label: "Find an expert",
+    label: "Find a professional",
   },
 }: {
   message?: string;

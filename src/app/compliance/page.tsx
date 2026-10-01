@@ -284,7 +284,7 @@ export default function CompliancePage() {
               </div>
               <h3 className="mb-2 font-bold">Professional Match</h3>
               <p className="text-sm text-slate-300">
-                We connect you with the right licensed expert
+                We connect you with the right licensed professional
               </p>
             </div>
 

@@ -26,7 +26,7 @@ export default async function AgentsPage({ searchParams }: AgentsPageProps) {
         size="compact"
         title="Start with an AI Salahkar,"
         highlight="book a human when it matters."
-        description="AI Salahkars answer instantly, 24/7. Human experts are verified professionals you book by appointment. Every card tells you which one you're choosing."
+        description="AI Salahkars answer instantly, 24/7. Human professionals are verified professionals you book by appointment. Every card tells you which one you're choosing."
       />
       <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
         <AgentsDirectory

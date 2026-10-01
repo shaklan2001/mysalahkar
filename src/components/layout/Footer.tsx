@@ -24,7 +24,7 @@ const columns = [
   {
     title: "Clients",
     links: [
-      ["/agents", "Find experts"],
+      ["/agents", "Find professionals"],
       ["/client/signup", "Create account"],
       ["/client/login", "Client login"],
       ["/daily-digest", "Daily Digest"],
@@ -100,7 +100,7 @@ export function Footer({ showCta = true }: { showCta?: boolean }) {
             <MySalahkarLogo height={48} variant="white" withTagline />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-slate-400">
               Professional advisory for India. AI Salahkars for tax, corporate,
-              legal, FEMA and wealth, backed by verified human experts.
+              legal, FEMA and wealth, backed by verified human professionals.
             </p>
             <ul className="mt-6 space-y-2.5 text-sm">
               <li>

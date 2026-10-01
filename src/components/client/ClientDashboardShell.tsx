@@ -25,7 +25,7 @@ const groups: DashboardNavGroup[] = [
     label: "Workspace",
     items: [
       { href: "/client/dashboard", label: "Home", icon: Home, exact: true },
-      { href: "/client/dashboard/find", label: "Find experts", icon: Search },
+      { href: "/client/dashboard/find", label: "Find professionals", icon: Search },
       {
         href: "/client/dashboard/calendar",
         label: "Calendar",

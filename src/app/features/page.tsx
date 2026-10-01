@@ -28,7 +28,7 @@ import { FinalCTA } from "@/components/home/FinalCTA";
 export const metadata: Metadata = {
   title: "Features",
   description:
-    "AI Salahkars, verified experts, WhatsApp, chat and call, metered billing, a daily regulatory digest and tools for professionals, all in one platform.",
+    "AI Salahkars, verified professionals, WhatsApp, chat and call, metered billing, a daily regulatory digest and tools for professionals, all in one platform.",
 };
 
 type Feature = { icon: LucideIcon; title: string; body: string };
@@ -41,7 +41,7 @@ const clientFeatures: Feature[] = [
   },
   {
     icon: BadgeCheck,
-    title: "Verified human experts",
+    title: "Verified human professionals",
     body: "Book a CA, CS or lawyer in half-hour slots when a matter needs a professional.",
   },
   {
@@ -208,7 +208,7 @@ export default function FeaturesPage() {
       <PageHero
         title="Everything a professional consultation needs,"
         highlight="in one place."
-        description="AI Salahkars that answer in seconds, verified experts when it matters, and the scheduling, billing and compliance tools that tie it all together."
+        description="AI Salahkars that answer in seconds, verified professionals when it matters, and the scheduling, billing and compliance tools that tie it all together."
       >
         <ConsultButton className="w-full sm:w-auto" />
         <Button

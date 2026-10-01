@@ -10,7 +10,7 @@ const steps = [
   },
   {
     num: "02",
-    title: "Book a verified expert",
+    title: "Book a verified professional",
     body: "When it needs a signature or a second opinion, book a CA, CS or lawyer. They see your full conversation.",
   },
   {
@@ -27,7 +27,7 @@ export function ClientsSection() {
         <div>
           <p className="eyebrow">For clients</p>
           <h2 className="mt-3 text-balance font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Answers in minutes. Experts when it matters.
+            Answers in minutes. Professionals when it matters.
           </h2>
           <p className="mt-4 max-w-lg text-muted-foreground">
             Whether you&apos;re incorporating a startup, filing returns or
@@ -81,7 +81,7 @@ function ClientDashboardPreview() {
         <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
           <div>
             <p className="text-xs text-muted-foreground">Client dashboard</p>
-            <p className="font-display text-base font-semibold text-foreground">Good morning, Riya</p>
+            <p className="font-display text-base font-semibold text-foreground">Good morning, Nishant</p>
           </div>
           <span className="rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
             All filings on track

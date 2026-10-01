@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Plus_Jakarta_Sans, Poppins, Sora } from "next/font/google";
 import { ConsultProvider } from "@/components/consult/ConsultProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { AppToaster } from "@/components/layout/AppToaster";
@@ -10,6 +10,13 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+// Logo wordmark only — closest open match to the brand artwork's rounded geometric type.
+const poppins = Poppins({
+  variable: "--font-logo",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 const sora = Sora({
@@ -53,7 +60,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${plusJakarta.variable} ${sora.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${sora.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="site-shell flex min-h-full flex-col">
         <ConsultProvider>

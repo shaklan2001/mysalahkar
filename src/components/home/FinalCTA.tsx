@@ -21,7 +21,7 @@ export function FinalCTA() {
               Need professional advice?
             </h2>
             <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Ask an AI Salahkar now, or create an account to book verified experts
+              Ask an AI Salahkar now, or create an account to book verified professionals
               and track your compliance.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

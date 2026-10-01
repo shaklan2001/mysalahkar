@@ -44,7 +44,7 @@ export default function ClientLoginPage() {
     const email = String(new FormData(e.currentTarget).get("email") ?? "");
     setLoading(true);
     await new Promise((r) => setTimeout(r, 600));
-    signInClient({ name: "Demo Client", email });
+    signInClient({ name: "Nishant", email });
     toast.success("Signed in");
     router.replace(next);
   }
@@ -117,7 +117,7 @@ export default function ClientLoginPage() {
             consent={privacyConsent}
             consentSlot={consent}
             onVerified={(phone) => {
-              signInClient({ name: "Client", phone });
+              signInClient({ name: "Nishant", phone });
               toast.success("Signed in");
               router.replace(next);
             }}

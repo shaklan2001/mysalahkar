@@ -21,13 +21,13 @@ export function ExpertsShowcase() {
               </h2>
               <p className="mt-3 text-muted-foreground">
                 AI Salahkars are available 24/7 and are clearly labelled. They are
-                never a live human on the line. Human experts are verified and work
+                never a live human on the line. Human professionals are verified and work
                 by appointment.
               </p>
             </div>
             <TabsList className="self-start md:self-auto">
               <TabsTrigger value="ai" className="px-4">AI Salahkars</TabsTrigger>
-              <TabsTrigger value="human" className="px-4">Human experts</TabsTrigger>
+              <TabsTrigger value="human" className="px-4">Human professionals</TabsTrigger>
             </TabsList>
           </div>
 

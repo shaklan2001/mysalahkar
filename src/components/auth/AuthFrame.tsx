@@ -134,7 +134,7 @@ const panel: Record<
       },
       {
         icon: BadgeCheck,
-        title: "Verified experts",
+        title: "Verified professionals",
         body: "Book practising CAs, CSs and lawyers in 30-minute slots.",
       },
       {

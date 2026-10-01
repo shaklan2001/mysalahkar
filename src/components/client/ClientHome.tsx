@@ -151,7 +151,7 @@ export function ClientHome() {
     },
     {
       icon: BadgeCheck,
-      title: "Book an expert",
+      title: "Book a professional",
       body: "Verified CA, CS & lawyers",
       href: "/client/dashboard/find?kind=human",
       tone: "bg-[#001450] text-white",
@@ -224,7 +224,7 @@ export function ClientHome() {
             ) : (
               <p className="mt-4 max-w-md text-sm text-slate-300">
                 No consultations booked yet. Ask an AI Salahkar a question, or
-                book a verified expert.
+                book a verified professional.
               </p>
             )}
           </div>

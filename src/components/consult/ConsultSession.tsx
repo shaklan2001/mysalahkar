@@ -491,7 +491,7 @@ export function ConsultSession({
               />
               <UserRound className="relative h-5 w-5 text-blue-200" />
               <p className="relative mt-3 font-display text-base font-semibold tracking-tight">
-                Need a human expert?
+                Need a human professional?
               </p>
               <p className="relative mt-1 text-sm text-slate-300">
                 For filings, notices or sign-off, book {agent.name} on Google
@@ -513,7 +513,7 @@ export function ConsultSession({
           <DialogContent className="max-w-lg">
             <DialogTitle>Book a human specialist</DialogTitle>
             <DialogDescription>
-              {agent.name} or their team will join you on Google Meet. We share
+              {agent.name}{" "}or their team will join you on Google Meet. We share
               this conversation so you don&apos;t have to repeat yourself.
             </DialogDescription>
             <form onSubmit={submitEscalation} className="mt-5 space-y-3">

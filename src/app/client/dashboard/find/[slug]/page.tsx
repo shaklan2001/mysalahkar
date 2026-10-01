@@ -31,7 +31,7 @@ export default async function ClientFindProfilePage({
     <AgentProfileView
       agent={agent}
       backHref="/client/dashboard/find?kind=human"
-      backLabel="Back to Find experts"
+      backLabel="Back to Find professionals"
       aiBase="/client/dashboard/find/ai"
       embedded
     />

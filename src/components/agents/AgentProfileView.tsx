@@ -40,7 +40,7 @@ type AgentProfileViewProps = {
 export function AgentProfileView({
   agent,
   backHref = "/agents?kind=human",
-  backLabel = "All human experts",
+  backLabel = "All human professionals",
   embedded = false,
   aiBase = "/ai-salahkars",
 }: AgentProfileViewProps) {
@@ -87,7 +87,7 @@ export function AgentProfileView({
                     <BadgeCheck className="h-3.5 w-3.5" /> Verified professional
                   </span>
                   <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-ink-soft">
-                    Human expert
+                    Human professional
                   </span>
                 </div>
                 <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-[2.1rem]">

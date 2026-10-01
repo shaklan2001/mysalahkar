@@ -1,7 +1,7 @@
 import { AgentsDirectory } from "@/components/agents/AgentsDirectory";
 import { getMarketplaceListings } from "@/lib/data/marketplace";
 
-/** Client dashboard "Find experts": the public directory, kept inside the dashboard shell. */
+/** Client dashboard "Find professionals": the public directory, kept inside the dashboard shell. */
 export function FindBoard({
   bookSlug,
   kind,
@@ -13,10 +13,10 @@ export function FindBoard({
     <div className="mx-auto max-w-6xl">
       <div className="mb-8">
         <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Find experts
+          Find professionals
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          AI Salahkars answer instantly, 24/7. Human experts are verified
+          AI Salahkars answer instantly, 24/7. Human professionals are verified
           professionals you book on Google Meet.
         </p>
       </div>

@@ -91,7 +91,7 @@ const generateFallbackResponse = (agent: Agent, userMessage: string): string => 
   const isEscalation = containsEscalationKeywords(userMessage);
 
   if (isEscalation) {
-    return `I understand you'd like to speak with a human expert. I've noted your request for escalation. You can also use the "Schedule a human call" option to book a consultation directly with one of our ${agent.name} specialists.`;
+    return `I understand you'd like to speak with a human professional. I've noted your request for escalation. You can also use the "Schedule a human call" option to book a consultation directly with one of our ${agent.name} specialists.`;
   }
 
   const specializations = agent.specializations?.join(", ") || "various topics";

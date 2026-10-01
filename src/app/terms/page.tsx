@@ -37,7 +37,7 @@ export default function TermsPage() {
             </p>
             <ul className="ml-6 list-disc space-y-1 text-slate-600">
               <li>AI-based query resolution and guidance</li>
-              <li>Human expert escalation for complex matters</li>
+              <li>Human professional escalation for complex matters</li>
               <li>Document templates and compliance checklists</li>
               <li>Educational resources and learning content</li>
               <li>Community forums and discussion platforms</li>

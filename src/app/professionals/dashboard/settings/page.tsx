@@ -94,7 +94,7 @@ export default function ProSettingsPage() {
             label="Payout account (UPI or bank)"
             icon={Landmark}
             placeholder="upi@bank or account ending ****4521"
-            defaultValue="ananya@okhdfcbank"
+            defaultValue="ankit.gupta@okhdfcbank"
           />
         </SettingsSection>
 

@@ -70,7 +70,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="mb-2 text-lg font-bold text-slate-900">Human Oversight</h3>
                 <p className="text-sm text-slate-600">
-                  Every AI Salahkar is supervised by domain experts. Complex cases escalate
+                  Every AI Salahkar is supervised by practising professionals. Complex cases escalate
                   seamlessly.
                 </p>
               </div>

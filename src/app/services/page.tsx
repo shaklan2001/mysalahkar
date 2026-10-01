@@ -35,7 +35,7 @@ export default function ServicesPage() {
       <PageHero
         title="Every professional service your business needs,"
         highlight="in one catalogue."
-        description="Business setup, income tax, GST, FEMA, secretarial and advisory. Ask an AI Salahkar for instant guidance, or book a verified expert to get it done."
+        description="Business setup, income tax, GST, FEMA, secretarial and advisory. Ask an AI Salahkar for instant guidance, or book a verified professional to get it done."
       >
         <ConsultButton className="w-full sm:w-auto">
           Not sure? Ask an AI Salahkar
@@ -46,7 +46,7 @@ export default function ServicesPage() {
           variant="outline"
           className="w-full sm:w-auto"
         >
-          <Link href="/agents">Browse experts</Link>
+          <Link href="/agents">Browse professionals</Link>
         </Button>
       </PageHero>
 

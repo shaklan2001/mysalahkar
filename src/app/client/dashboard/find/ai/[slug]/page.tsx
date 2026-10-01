@@ -25,7 +25,7 @@ export default async function ClientAiSalahkarPage({ params }: Props) {
       listing={listing}
       embedded
       backHref="/client/dashboard/find?kind=ai"
-      backLabel="Back to Find experts"
+      backLabel="Back to Find professionals"
       humanBase="/client/dashboard/find"
     />
   );

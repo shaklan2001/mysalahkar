@@ -60,12 +60,12 @@ export function GoogleAuthButton({
     setLoading(true);
     await new Promise((r) => setTimeout(r, 600));
     if (role === "client") {
-      signInClient({ name: "Google Client", email: "client@gmail.com" });
+      signInClient({ name: "Nishant", email: "nishant@example.com" });
     }
     if (role === "professional" && intent === "signup") {
       saveProAccount({
-        name: "Google Professional",
-        email: "pro@gmail.com",
+        name: "Ankit Gupta",
+        email: "ankit.gupta@example.com",
         phone: "",
         firm: "",
       });

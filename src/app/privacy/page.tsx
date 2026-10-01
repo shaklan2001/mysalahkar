@@ -82,7 +82,7 @@ export default function PrivacyPage() {
             <ul className="ml-6 list-disc space-y-2 text-slate-600">
               <li>
                 <strong>Service Delivery:</strong> To provide AI consultations, connect you
-                with human experts, and fulfill your service requests
+                with human professionals, and fulfill your service requests
               </li>
               <li>
                 <strong>Communication:</strong> To respond to inquiries, generate Google

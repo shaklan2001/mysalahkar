@@ -111,7 +111,7 @@ export function ServiceCategoryCard({
                 professionalName={agent?.name ?? "specialist"}
                 professionalSlug={category.agentSlug}
                 serviceName={service.name}
-                triggerLabel="Book expert"
+                triggerLabel="Book professional"
                 triggerVariant="outline"
                 triggerSize="sm"
                 triggerClassName="h-8 px-2.5 text-xs"

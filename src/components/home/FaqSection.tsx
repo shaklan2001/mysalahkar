@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: "What does a consultation cost?",
-    a: "Each profile shows its consultation fee. Human experts are booked in half-hour slots, and calls are metered per minute from your wallet, so you only pay for the time you use.",
+    a: "Each profile shows its consultation fee. Human professionals are booked in half-hour slots, and calls are metered per minute from your wallet, so you only pay for the time you use.",
   },
   {
     q: "Is my data secure?",

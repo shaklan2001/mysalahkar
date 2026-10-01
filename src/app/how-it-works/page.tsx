@@ -95,11 +95,11 @@ const channels: {
   {
     icon: Phone,
     name: "Voice call",
-    body: "Talk to an AI voice agent, or request a human expert for complex matters.",
+    body: "Talk to an AI voice agent, or request a human professional for complex matters.",
     points: [
       "Natural conversation flow",
       "Complex query resolution",
-      "Human expert fallback",
+      "Human professional fallback",
     ],
     tone: "bg-[#001450]/8 text-[#001450]",
   },
@@ -116,17 +116,17 @@ const safeguards: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: UserCheck,
     title: "Automatic escalation triggers",
-    body: "Court filings, litigation strategy, regulatory audits and M&A transactions route to human experts automatically.",
+    body: "Court filings, litigation strategy, regulatory audits and M&A transactions route to human professionals automatically.",
   },
   {
     icon: Clock,
     title: "Request human review anytime",
-    body: "Not satisfied with an AI answer? Choose “Escalate to Expert” and we’ll schedule a consultation within 24 hours.",
+    body: "Not satisfied with an AI answer? Choose “Escalate to a professional” and we’ll schedule a consultation within 24 hours.",
   },
   {
     icon: ShieldCheck,
     title: "All AI advice supervised",
-    body: "Every AI response is logged and periodically reviewed by domain experts for quality and compliance.",
+    body: "Every AI response is logged and periodically reviewed by practising professionals for quality and compliance.",
   },
 ];
 
@@ -171,7 +171,7 @@ export default function HowItWorksPage() {
     <>
       <PageHero
         title="From first question to"
-        highlight="expert sign-off."
+        highlight="professional sign-off."
         description="Consult an AI Salahkar on WhatsApp, chat or call, and bring in a verified professional the moment a matter needs one."
       >
         <ConsultButton className="w-full sm:w-auto" />
@@ -310,7 +310,7 @@ export default function HowItWorksPage() {
             </ul>
             <p className="mt-8 border-t border-border/70 pt-5 text-sm text-muted-foreground">
               Based on 10,000+ resolved queries in 2026. Complex cases are
-              escalated to human experts.
+              escalated to human professionals.
             </p>
           </div>
         </div>
@@ -356,7 +356,7 @@ export default function HowItWorksPage() {
 
             <div className="self-center rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm sm:p-8">
               <h3 className="font-display text-lg font-semibold tracking-tight">
-                When to escalate to a human expert
+                When to escalate to a human professional
               </h3>
               <ul className="mt-6 divide-y divide-white/10">
                 {escalateWhen.map((item) => (

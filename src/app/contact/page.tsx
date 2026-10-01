@@ -22,7 +22,7 @@ export default function ContactPage() {
               Get in touch
             </h1>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Have a complex query? Want to speak to a human expert? We&apos;re
+              Have a complex query? Want to speak to a human professional? We&apos;re
               here to help.
             </p>
           </div>
@@ -39,7 +39,7 @@ export default function ContactPage() {
                 Book a Human Consultation
               </h2>
               <p className="mb-8 text-slate-600">
-                Fill out the form below and we'll connect you with the right expert within
+                Fill out the form below and we'll connect you with the right professional within
                 24 hours. For urgent matters, call us directly.
               </p>
               <ContactForm />

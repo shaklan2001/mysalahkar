@@ -231,7 +231,7 @@ export function AgentsDirectory({
           onClick={() => setView(view === "human" ? "all" : "human")}
           tone="human"
           icon={<UserRound className="h-5 w-5" />}
-          title="Human experts"
+          title="Human professionals"
           count={totalHuman}
           subtitle="Verified professionals, by appointment"
           points={[
@@ -258,7 +258,7 @@ export function AgentsDirectory({
               [
                 ["all", "All", totalAi + totalHuman],
                 ["ai", "AI Salahkars", totalAi],
-                ["human", "Human experts", totalHuman],
+                ["human", "Human professionals", totalHuman],
               ] as const
             ).map(([value, label, count]) => (
               <button
@@ -398,8 +398,7 @@ export function AgentsDirectory({
             No consultants match these filters
           </p>
           <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-            Try a broader search, or switch between AI Salahkars and human
-            experts.
+            Try a broader search, or switch between AI Salahkars and human professionals.
           </p>
           <Button
             onClick={() => {
@@ -442,7 +441,7 @@ export function AgentsDirectory({
           <GroupHeading
             id="human-heading"
             tone="human"
-            title="Human experts"
+            title="Human professionals"
             count={humanEntries.length}
             note="Real, verified professionals. Consultations are booked in 30-minute slots."
           />

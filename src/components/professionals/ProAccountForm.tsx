@@ -85,7 +85,7 @@ export function ProAccountForm() {
             name="name"
             label="Full name"
             icon={UserRound}
-            placeholder="CA Ananya Mehta"
+            placeholder="CA Ankit Gupta"
             autoComplete="name"
             required
           />
@@ -94,7 +94,7 @@ export function ProAccountForm() {
             name="firm"
             label="Firm / practice"
             icon={Building2}
-            placeholder="Mehta & Associates"
+            placeholder="Gupta & Associates"
             autoComplete="organization"
             required
           />
