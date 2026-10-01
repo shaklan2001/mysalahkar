@@ -24,7 +24,6 @@ export default async function AgentsPage({ searchParams }: AgentsPageProps) {
     <>
       <PageHero
         size="compact"
-        badge={{ label: "Find experts" }}
         title="Start with an AI Salahkar,"
         highlight="book a human when it matters."
         description="AI Salahkars answer instantly, 24/7. Human experts are verified professionals you book by appointment. Every card tells you which one you're choosing."

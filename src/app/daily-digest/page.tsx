@@ -13,7 +13,6 @@ export default function DailyDigestPage() {
     <>
       <PageHero
         size="compact"
-        badge={{ label: "Updated every morning" }}
         title="Daily Digest:"
         highlight="what changed today."
         description="GST, Income Tax, ROC, SEBI, RBI and MCA updates in plain language, with markets, upcoming due dates and global headlines."

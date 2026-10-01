@@ -422,8 +422,7 @@ export const agents: Agent[] = [
     reviewCount: 98,
     consultationFee: STANDARD_HALF_HOUR_FEE,
     bio: "Avdhesh Varshney is a Risk & Advisory professional with 14+ years of experience across risk advisory, assurance, internal audit, financial controls, IT controls and forensic reviews. He has worked across sectors including financial services, manufacturing, retail and automotive.",
-    image:
-      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    image: "/consultants/avdhesh-varshney.png",
     location: "Ghaziabad, India",
     availability: "By appointment",
     languages: ["English", "Hindi"],
@@ -631,8 +630,7 @@ export const agents: Agent[] = [
     reviewCount: 110,
     consultationFee: STANDARD_HALF_HOUR_FEE,
     bio: "Taran Aggarwal is a Chartered Accountant (ICAI) with a Bachelor's degree in Commerce from the University of Delhi and has also completed the Executive Program – Future Ready Leaders from ISB Hyderabad. He brings 15+ years of experience in external audit and advisory, with extensive experience serving U.S. clients, including Hedge Funds, Mutual Funds and Private Equity firms.",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    image: "/consultants/taran-aggarwal.png",
     location: "Delhi, Noida and Dubai",
     availability: "By appointment",
     languages: ["English", "Hindi"],
@@ -1169,8 +1167,7 @@ export const agents: Agent[] = [
     reviewCount: 0,
     consultationFee: STANDARD_HALF_HOUR_FEE,
     bio: "Adv. Anita Sinha is a legal and corporate lawyer practicing before the Delhi High Court, with 15+ years of professional experience. Qualifications: B.A. (Hons.) Economics, M.Com, CS, LL.B. She specializes in civil, criminal, matrimonial, family, real estate, cyber crime, arbitration, securities and other dispute-resolution matters, along with legal documentation and advisory services.",
-    image:
-      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
+    image: "/consultants/anita-sinha.jpg",
     location: "Delhi, India",
     availability: "By appointment",
     languages: ["English", "Hindi"],
@@ -1334,6 +1331,231 @@ export const agents: Agent[] = [
       "Signed secretarial certifications and formal IBC appointments are handled through CS Isha Madaan’s practice.",
     liveTag: "Verified professional",
   },
+  {
+    slug: "prasun-kr-sinha-lawyer",
+    name: "Adv. Prasun Kr. Sinha",
+    type: "Lawyer",
+    typeLabel: "Advocate & Legal Consultant · Delhi High Court",
+    specializations: [
+      "Civil & Criminal Matters",
+      "Matrimonial & Family Disputes",
+      "Bail Matters",
+      "Cheque Bounce Matters",
+      "Securities & Share Disputes",
+      "Real Estate Matters",
+      "Cyber Crime Matters",
+      "Arbitration & Dispute Resolution",
+      "SAT Matters",
+      "Legal Documentation",
+    ],
+    services: [
+      "Representation and Legal Assistance in Civil & Criminal Matters",
+      "Matrimonial and Family Dispute Resolution",
+      "Bail Applications and Related Legal Proceedings",
+      "Cheque Bounce Litigation",
+      "Real Estate Dispute & Legal Advisory",
+      "Cyber Crime Legal Matters",
+      "Arbitration Proceedings and Dispute Resolution",
+      "Legal Documentation and Drafting",
+      "Matters relating to Shares and Securities",
+      "Representation before the Securities Appellate Tribunal (SAT)",
+    ],
+    experience: 15,
+    rating: 4.8,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "Adv. Prasun Kr. Sinha is an Advocate and Legal Consultant practicing before the Delhi High Court, with 15 years of professional experience. Qualifications: M.Com, MBA (Finance), NISM, LL.B. He specializes in civil, criminal, matrimonial, family, real estate, cyber crime, arbitration, securities and other dispute-resolution matters, along with legal documentation and advisory services.",
+    image: "/consultants/prasun-kr-sinha.jpg",
+    location: "Delhi, India",
+    availability: "By appointment",
+    languages: ["English", "Hindi"],
+    channels: ["call"],
+    accent: "#1d4ed8",
+    tagline: "Delhi High Court advocate for disputes, bail, securities & documentation",
+    personality:
+      "Court-focused and practical. Clear on forum, documents, and the next step in a dispute.",
+    kpis: [
+      { value: "15+", label: "Years Experience" },
+      { value: "DHC", label: "Delhi High Court" },
+      { value: "MBA · LL.B.", label: "Qualifications" },
+      { value: "Delhi", label: "Location" },
+    ],
+    capabilities: [
+      {
+        title: "Civil, Criminal & Family",
+        description:
+          "Civil and criminal matters, matrimonial and family disputes, and bail applications.",
+      },
+      {
+        title: "Commercial Disputes",
+        description:
+          "Cheque bounce, real estate, shares and securities, and representation before the SAT.",
+      },
+      {
+        title: "Arbitration & Drafting",
+        description:
+          "Arbitration and dispute resolution, cyber crime matters, and legal documentation.",
+      },
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share the Matter",
+        desc: "Describe the dispute, forum, and documents you already have.",
+      },
+      {
+        num: "2",
+        title: "Legal Assessment",
+        desc: "Prasun outlines the forum, risks, and a practical next step.",
+      },
+      {
+        num: "3",
+        title: "Draft or Appear",
+        desc: "Documentation, filings, or representation before the Delhi High Court and SAT.",
+      },
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "I need a bail application in a matter pending before the Delhi High Court. What do you need from me?",
+      },
+      {
+        role: "agent",
+        text: "Share the FIR or complaint, the sections invoked, custody status, and any earlier bail orders. I practise before the Delhi High Court and can assess whether a regular or anticipatory bail application is the right next step.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Which court do you practice before?",
+        a: "Delhi High Court, including civil, criminal, bail, and related dispute work.",
+      },
+      {
+        q: "Do you handle SAT and securities disputes?",
+        a: "Yes—share and securities disputes, and representation before the Securities Appellate Tribunal.",
+      },
+      {
+        q: "What are your qualifications?",
+        a: "M.Com, MBA (Finance), NISM, and LL.B.",
+      },
+    ],
+    escalationNote:
+      "Court appearances, signed pleadings, and formal legal opinions are handled through Adv. Prasun Kr. Sinha’s Delhi High Court practice.",
+    liveTag: "Verified professional",
+  },
+  {
+    slug: "manoj-kumar-ca",
+    name: "CA Manoj Kumar",
+    type: "CA",
+    typeLabel: "Chartered Accountant",
+    specializations: [
+      "Income Tax & Tax Planning",
+      "GST & Indirect Taxes",
+      "Audit & Assurance",
+      "TDS & TCS Compliance",
+      "Accounting & Financial Reporting",
+      "Business & Regulatory Compliance",
+      "Financial & Business Advisory",
+      "Tax Audit & Statutory Audit",
+      "Financial Statement Preparation & Review",
+    ],
+    services: [
+      "Income Tax Return Filing and Tax Advisory",
+      "Tax Planning and Capital Gains Taxation",
+      "Tax Audit",
+      "GST Registration, Return Filing & Compliance",
+      "GST Reconciliation and Input Tax Credit Advisory",
+      "Statutory Audit and LLP Audit",
+      "Accounting and Bookkeeping",
+      "Financial Statement Preparation and Reporting",
+      "TDS/TCS Return Filing and Compliance",
+      "SFT Reporting",
+      "Business Registration and Compliance",
+      "Financial & Business Advisory",
+      "Business Planning and Compliance Advisory",
+      "Business Support Services",
+    ],
+    experience: 15,
+    rating: 4.8,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "CA Manoj Kumar is a Chartered Accountant in practice since 2011, with over 15 years of professional experience across taxation, GST, audit, accounting, financial reporting, and business compliance. He provides practical and timely professional solutions to individuals, businesses, firms, LLPs, companies, trusts, and other organizations, with a focus on accuracy, compliance, confidentiality, and personalized advisory support.",
+    image: "/consultants/manoj-kumar.png",
+    location: "New Delhi, India",
+    availability: "By appointment",
+    languages: ["English", "Hindi"],
+    channels: ["call"],
+    accent: "#047857",
+    tagline: "Income tax, GST, audit and business compliance",
+    personality:
+      "Practical and precise. Focused on filings, deadlines, and compliance that holds up.",
+    kpis: [
+      { value: "15+", label: "Years Experience" },
+      { value: "2011", label: "In Practice Since" },
+      { value: "CA", label: "Chartered Accountant" },
+      { value: "Delhi", label: "Location" },
+    ],
+    capabilities: [
+      {
+        title: "Income Tax & GST",
+        description:
+          "Return filing, tax planning, capital gains, GST registration, returns, reconciliation, and input tax credit.",
+      },
+      {
+        title: "Audit & Reporting",
+        description:
+          "Tax audit, statutory and LLP audit, accounting, bookkeeping, and financial statement preparation.",
+      },
+      {
+        title: "TDS & Business Compliance",
+        description:
+          "TDS/TCS returns, SFT reporting, business registration, and ongoing compliance advisory.",
+      },
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share the Filing",
+        desc: "Describe the return, audit, or compliance item and the due date.",
+      },
+      {
+        num: "2",
+        title: "Review & Plan",
+        desc: "Manoj checks what is pending and the practical way to close it.",
+      },
+      {
+        num: "3",
+        title: "File & Comply",
+        desc: "Returns, audit, or advisory through his practice.",
+      },
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "I sold property this year. What do I need for capital gains in my income tax return?",
+      },
+      {
+        role: "agent",
+        text: "Share the sale deed, purchase cost, improvement bills, and whether you reinvested under section 54 or 54F. I can map the capital-gains computation and what has to go into the return.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Since when have you been in practice?",
+        a: "In practice since 2011, with over 15 years across tax, GST, audit, and compliance.",
+      },
+      {
+        q: "Do you handle GST and TDS as well as income tax?",
+        a: "Yes—GST registration, returns, reconciliation and input tax credit, plus TDS/TCS returns and SFT reporting.",
+      },
+      {
+        q: "Who do you work with?",
+        a: "Individuals, businesses, firms, LLPs, companies, trusts, and other organizations.",
+      },
+    ],
+    escalationNote:
+      "Signed audit reports, tax filings, and formal certifications are handled through CA Manoj Kumar’s practice.",
+    liveTag: "Verified professional",
+  },
 ];
 
 export const SPECIALIZATIONS: Record<AgentType, string[]> = {
@@ -1356,6 +1578,15 @@ export const SPECIALIZATIONS: Record<AgentType, string[]> = {
     "Hedge Funds & Mutual Funds",
     "Private Equity",
     "Cross-border / International Client Services",
+    "Income Tax & Tax Planning",
+    "GST & Indirect Taxes",
+    "Audit & Assurance",
+    "TDS & TCS Compliance",
+    "Accounting & Financial Reporting",
+    "Business & Regulatory Compliance",
+    "Financial & Business Advisory",
+    "Tax Audit & Statutory Audit",
+    "Financial Statement Preparation & Review",
   ],
   CS: [
     "Corporate & Commercial Advisory",

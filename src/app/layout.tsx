@@ -52,6 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${plusJakarta.variable} ${sora.variable} h-full antialiased`}
     >
       <body className="site-shell flex min-h-full flex-col">

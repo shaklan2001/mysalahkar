@@ -251,3 +251,74 @@ Professional Summary
 Soniya Gupta, FCS, LL.B., IP is a seasoned Company Secretary in Practice and Insolvency Professional with 18+ years of experience, specialising in Corporate & Commercial Advisory, IPO Due Diligence, Corporate Law, SEBI & Listing Compliances, Insolvency & Bankruptcy, Regulatory Approvals, Secretarial Audits, FEMA/RBI Compliance and POSH Advisory & Training. She provides end-to-end advisory and compliance support to companies, promoters and businesses, including representation and matters before NCLT/NCLAT, MCA, Regional Director, ROC and other regulatory authorities.
 
 
+9) Adv. Prasun Kr. Sinha
+Professional Type :- Lawyer
+Advocate & Legal Consultant | Delhi High Court
+Year of Experience: 15+ Years
+Location: Delhi
+Qualifications: M.Com, MBA (Finance), NISM, LL.B.
+
+Area of Expertise:
+Civil & Criminal Matters
+Matrimonial & Family Disputes
+Bail Matters
+Cheque Bounce Matters
+Securities & Share Disputes
+Real Estate Matters
+Cyber Crime Matters
+Arbitration & Dispute Resolution
+SAT Matters
+Legal Documentation
+
+Key Services Offered:
+Representation and Legal Assistance in Civil & Criminal Matters
+Matrimonial and Family Dispute Resolution
+Bail Applications and Related Legal Proceedings
+Cheque Bounce Litigation
+Real Estate Dispute & Legal Advisory
+Cyber Crime Legal Matters
+Arbitration Proceedings and Dispute Resolution
+Legal Documentation and Drafting
+Matters relating to Shares and Securities
+Representation before the Securities Appellate Tribunal (SAT)
+
+Professional Summary:
+Adv. Prasun Kr. Sinha is an Advocate and Legal Consultant practicing before the Delhi High Court, with 15 years of professional experience. He specializes in civil, criminal, matrimonial, family, real estate, cyber crime, arbitration, securities and other dispute-resolution matters, along with legal documentation and advisory services.
+
+
+10) CA Manoj Kumar
+Professional Type :- Chartered Accountant
+Year of Experience: 15+ Years of Professional Experience
+Location: New Delhi, India
+
+Area of Expertise:
+Income Tax & Tax Planning
+GST & Indirect Taxes
+Audit & Assurance
+TDS & TCS Compliance
+Accounting & Financial Reporting
+Business & Regulatory Compliance
+Financial & Business Advisory
+Tax Audit & Statutory Audit
+Financial Statement Preparation & Review
+
+Key Services Offered:
+Income Tax Return Filing and Tax Advisory
+Tax Planning and Capital Gains Taxation
+Tax Audit
+GST Registration, Return Filing & Compliance
+GST Reconciliation and Input Tax Credit Advisory
+Statutory Audit and LLP Audit
+Accounting and Bookkeeping
+Financial Statement Preparation and Reporting
+TDS/TCS Return Filing and Compliance
+SFT Reporting
+Business Registration and Compliance
+Financial & Business Advisory
+Business Planning and Compliance Advisory
+Business Support Services
+
+Professional Summary:
+CA Manoj Kumar is a Chartered Accountant in practice since 2011, with over 15 years of professional experience across taxation, GST, audit, accounting, financial reporting, and business compliance. He provides practical and timely professional solutions to individuals, businesses, firms, LLPs, companies, trusts, and other organizations, with a focus on accuracy, compliance, confidentiality, and personalized advisory support.
+
+

@@ -13,7 +13,6 @@ export default function CommunityPage() {
     <>
       <PageHero
         size="compact"
-        badge={{ label: "Open to read, members post" }}
         title="Community:"
         highlight="where practitioners compare notes."
         description="Rulings, circulars and real-world questions discussed by CAs, CSs, lawyers and the clients they advise."

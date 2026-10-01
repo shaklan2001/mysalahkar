@@ -32,7 +32,13 @@ export function ConsultantPhoto({
           roundedClass[rounded],
         )}
       >
-        <Image src={src} alt={alt} fill className="object-cover" sizes={sizes} />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover object-top"
+          sizes={sizes}
+        />
       </div>
       {showAiBadge ? (
         <span className="absolute -bottom-0.5 -right-0.5 rounded-full bg-[#003cf8] px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wide text-white ring-2 ring-white">

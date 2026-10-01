@@ -75,7 +75,10 @@ export function PageHero({
 
           <h1
             className={cn(
-              "mt-6 text-balance font-display leading-[1.08] font-semibold tracking-tight text-foreground",
+              "text-balance font-display leading-[1.08] font-semibold tracking-tight text-foreground",
+              // Without a chip, keep the title where it sat with one (chip + gap = 66px)
+              // so heroes line up across pages.
+              badge || eyebrow ? "mt-6" : "mt-[66px]",
               size === "compact"
                 ? "text-3xl sm:text-4xl lg:text-[2.75rem]"
                 : "text-4xl sm:text-5xl lg:text-[3.4rem]",

@@ -170,7 +170,6 @@ export default function HowItWorksPage() {
   return (
     <>
       <PageHero
-        badge={{ label: "How it works" }}
         title="From first question to"
         highlight="expert sign-off."
         description="Consult an AI Salahkar on WhatsApp, chat or call, and bring in a verified professional the moment a matter needs one."

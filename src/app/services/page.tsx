@@ -33,7 +33,6 @@ export default function ServicesPage() {
   return (
     <>
       <PageHero
-        badge={{ label: "Service catalogue" }}
         title="Every professional service your business needs,"
         highlight="in one catalogue."
         description="Business setup, income tax, GST, FEMA, secretarial and advisory. Ask an AI Salahkar for instant guidance, or book a verified expert to get it done."

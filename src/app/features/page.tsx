@@ -206,7 +206,6 @@ export default function FeaturesPage() {
   return (
     <>
       <PageHero
-        badge={{ label: "Platform features" }}
         title="Everything a professional consultation needs,"
         highlight="in one place."
         description="AI Salahkars that answer in seconds, verified experts when it matters, and the scheduling, billing and compliance tools that tie it all together."

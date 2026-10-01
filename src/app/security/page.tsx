@@ -144,7 +144,6 @@ export default function SecurityPage() {
   return (
     <>
       <PageHero
-        badge={{ label: "Security & data privacy" }}
         title="Your trust is"
         highlight="our foundation."
         description="How we protect your data, keep your conversations private, and align with India's data protection law."
