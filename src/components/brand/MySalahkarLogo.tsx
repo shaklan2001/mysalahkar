@@ -40,7 +40,12 @@ export function MySalahkarLogo({
     >
       <MySalahkarMark size={markSize} navy={navy} blue={BLUE} />
       {!markOnly && (
-        <span className="flex flex-col justify-center leading-none">
+        <span
+          className="flex flex-col justify-center leading-none"
+          // Optical centring: the M's solid body sits low in the mark, so a
+          // box-centred wordmark reads as floating high. Nudge it onto the M.
+          style={{ transform: `translateY(${Math.round(markSize * 0.08)}px)` }}
+        >
           <span
             className="font-semibold"
             style={{

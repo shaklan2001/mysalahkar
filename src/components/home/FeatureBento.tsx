@@ -259,10 +259,10 @@ export function FeatureBento({
               </h2>
             </div>
             <Link
-              href="/how-it-works"
+              href="/features"
               className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-foreground hover:text-accent"
             >
-              How it works
+              All features
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>

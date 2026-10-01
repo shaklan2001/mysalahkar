@@ -217,7 +217,7 @@ export default function FeaturesPage() {
           variant="outline"
           className="w-full sm:w-auto"
         >
-          <Link href="/how-it-works">See how it works</Link>
+          <Link href="/services">Browse services</Link>
         </Button>
       </PageHero>
 

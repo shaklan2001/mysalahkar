@@ -21,8 +21,8 @@ const sides = [
     title: "My Salahkar connects both sides",
     body: "AI triage, matching, scheduling, metered calls, reviews and payouts in one workspace, so nobody has to chase anybody.",
     points: ["AI to human handoff with context", "Calendar, calls & billing built in", "Daily regulatory digest"],
-    href: "/how-it-works",
-    cta: "See how it works",
+    href: "/features",
+    cta: "Explore features",
     dark: true,
   },
   {

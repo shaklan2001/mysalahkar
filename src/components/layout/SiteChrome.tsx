@@ -5,7 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
 /** Pages that already end with FinalCTA — the footer skips its own CTA strip there. */
-const pagesWithOwnCta = new Set(["/", "/features", "/how-it-works", "/services"]);
+const pagesWithOwnCta = new Set(["/", "/features", "/services"]);
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

@@ -6,14 +6,9 @@ import { useEffect, useState } from "react";
 import {
   BookOpen,
   Briefcase,
-  LayoutGrid,
-  Lock,
   Menu,
-  Newspaper,
-  Sparkles,
   UserRound,
   Users,
-  Workflow,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -40,40 +35,7 @@ type MenuLink = {
   soon?: boolean;
 };
 
-const platformLinks: MenuLink[] = [
-  {
-    href: "/features",
-    label: "Features",
-    description: "AI Salahkars, channels, billing and more",
-    icon: Sparkles,
-  },
-  {
-    href: "/how-it-works",
-    label: "How it works",
-    description: "From first question to professional sign-off",
-    icon: Workflow,
-  },
-  {
-    href: "/services",
-    label: "Services",
-    description: "Tax, GST, company law, FEMA and advisory",
-    icon: LayoutGrid,
-  },
-  {
-    href: "/security",
-    label: "Security",
-    description: "Confidentiality and data protection",
-    icon: Lock,
-  },
-];
-
 const resourceLinks: MenuLink[] = [
-  {
-    href: "/daily-digest",
-    label: "Daily Digest",
-    description: "Compliance updates, markets & due dates",
-    icon: Newspaper,
-  },
   {
     href: "/community",
     label: "Community",
@@ -108,12 +70,14 @@ const signInLinks: MenuLink[] = [
 const navTriggerClass =
   "bg-transparent text-[13px] text-muted-foreground hover:text-foreground";
 
-const directLinks = [{ href: "/agents", label: "Find Professionals" }];
-
-const mobileSections = [
-  { title: "Platform", links: platformLinks },
-  { title: "Resources", links: resourceLinks },
+const directLinks = [
+  { href: "/features", label: "Features" },
+  { href: "/services", label: "Services" },
+  { href: "/agents", label: "Find Professionals" },
+  { href: "/daily-digest", label: "Daily Digest" },
 ];
+
+const mobileSections = [{ title: "Resources", links: resourceLinks }];
 
 function SoonBadge() {
   return (
@@ -202,19 +166,6 @@ export function Header() {
 
           <NavigationMenu className="relative z-20 hidden lg:flex" viewport={false}>
             <NavigationMenuList className="gap-0.5">
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className={navTriggerClass}>
-                  Platform
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid w-[520px] grid-cols-2 gap-1 p-2">
-                    {platformLinks.map((link) => (
-                      <MegaLink key={link.href} link={link} />
-                    ))}
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
               {directLinks.map((link) => (
                 <NavigationMenuItem key={link.href}>
                   <NavigationMenuLink asChild>

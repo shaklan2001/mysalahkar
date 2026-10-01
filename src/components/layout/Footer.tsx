@@ -16,7 +16,6 @@ const columns = [
     title: "Platform",
     links: [
       ["/features", "Features"],
-      ["/how-it-works", "How it works"],
       ["/services", "Services"],
       ["/security", "Security"],
     ],
