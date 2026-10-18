@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans, Poppins, Sora } from "next/font/google";
 import { ConsultProvider } from "@/components/consult/ConsultProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { AppToaster } from "@/components/layout/AppToaster";
+import { SessionBootstrap } from "@/components/auth/SessionBootstrap";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -63,6 +64,7 @@ export default function RootLayout({
       className={`${plusJakarta.variable} ${sora.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="site-shell flex min-h-full flex-col">
+        <SessionBootstrap />
         <ConsultProvider>
           <SiteChrome>
             <Suspense fallback={null}>{children}</Suspense>
