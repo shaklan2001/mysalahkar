@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RoleGate } from "@/components/auth/RoleGate";
 import { ProDashboardShell } from "@/components/professionals/ProDashboardShell";
 
 export const metadata: Metadata = {
@@ -12,5 +13,9 @@ export default function ProDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ProDashboardShell>{children}</ProDashboardShell>;
+  return (
+    <RoleGate role="professional">
+      <ProDashboardShell>{children}</ProDashboardShell>
+    </RoleGate>
+  );
 }

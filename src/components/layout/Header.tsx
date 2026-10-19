@@ -15,6 +15,7 @@ import {
 import { MySalahkarLogo } from "@/components/brand/MySalahkarLogo";
 import { HeadlineTicker } from "@/components/layout/HeadlineTicker";
 import { Button } from "@/components/ui/button";
+import { ROLE_HOME, useSession } from "@/lib/auth";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -120,6 +121,7 @@ const authRoutes = new Set([
 ]);
 
 export function Header() {
+  const { user } = useSession();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -201,6 +203,14 @@ export function Header() {
           </NavigationMenu>
 
           <div className="hidden items-center gap-2 lg:flex">
+            {user ? (
+              <Button asChild size="sm" variant="outline">
+                <Link href={ROLE_HOME[user.role]}>
+                  <UserRound className="h-4 w-4" />
+                  {user.role === "admin" ? "Admin" : "My dashboard"}
+                </Link>
+              </Button>
+            ) : (
             <NavigationMenu className="relative z-20" viewport={false}>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -227,6 +237,7 @@ export function Header() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            )}
             <Button size="sm" variant="accent" onClick={() => openConsult()}>
               Consult now
             </Button>
@@ -287,19 +298,29 @@ export function Header() {
               </div>
             ))}
             <div className="mt-5 grid grid-cols-2 gap-2">
-              <Button asChild variant="outline">
-                <Link href="/client/login" onClick={() => setMobileOpen(false)}>
-                  Client login
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link
-                  href="/professionals/login"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Professional login
-                </Link>
-              </Button>
+              {user ? (
+                <Button asChild variant="outline" className="col-span-2">
+                  <Link href={ROLE_HOME[user.role]} onClick={() => setMobileOpen(false)}>
+                    {user.role === "admin" ? "Admin" : "My dashboard"}
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button asChild variant="outline">
+                    <Link href="/client/login" onClick={() => setMobileOpen(false)}>
+                      Client login
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline">
+                    <Link
+                      href="/professionals/login"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Professional login
+                    </Link>
+                  </Button>
+                </>
+              )}
               <Button
                 variant="accent"
                 className="col-span-2"

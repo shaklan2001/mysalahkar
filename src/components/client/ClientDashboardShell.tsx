@@ -90,8 +90,8 @@ export function ClientDashboardShell({
         name: session?.name ?? "Client",
         detail: session?.email || (session?.phone ? `+91 ${session.phone}` : undefined),
       }}
-      onSignOut={() => {
-        signOutClient();
+      onSignOut={async () => {
+        await signOutClient();
         router.push("/");
       }}
       mobileRight={<ClientWallet />}

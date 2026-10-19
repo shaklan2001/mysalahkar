@@ -14,7 +14,13 @@ import {
   AuthOr,
   PasswordField,
 } from "@/components/auth/AuthFrame";
-import { signInClient, useAuthNext } from "@/lib/client-session";
+import { useAuthNext } from "@/lib/client-session";
+import { errorMessage } from "@/lib/api";
+import { signUpWithPassword } from "@/lib/auth";
+import {
+  useOAuthErrorToast,
+  useRedirectIfSignedIn,
+} from "@/components/auth/useAuthRedirects";
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -23,6 +29,8 @@ export default function ClientSignupPage() {
   const { next, href } = useAuthNext();
   const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  useRedirectIfSignedIn("client", next);
+  useOAuthErrorToast();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,10 +54,14 @@ export default function ClientSignupPage() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    signInClient({ name, email });
-    toast.success("Client account created (demo)");
-    router.replace(next);
+    try {
+      await signUpWithPassword({ role: "client", name, email, password });
+      toast.success("Account created");
+      router.replace(next);
+    } catch (error) {
+      toast.error(errorMessage(error));
+      setLoading(false);
+    }
   }
 
   return (

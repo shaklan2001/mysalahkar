@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -17,17 +17,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { professionalDomains } from "@/lib/data/professional";
-import {
-  slugifyName,
-  type ListingDocument,
-  type ListingKind,
-} from "@/lib/data/marketplace";
-import { saveApplication } from "@/lib/applications-store";
+import { type ListingDocument, type ListingKind } from "@/lib/data/marketplace";
+import { api, errorMessage } from "@/lib/api";
+import { getSessionUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import { readProAccount } from "@/lib/pro-account";
+import { readProDraft } from "@/lib/pro-account";
 
 const steps = [
   "You",
@@ -74,6 +71,47 @@ const initial: FormState = {
   privacyConsent: false,
 };
 
+/** The API's professional types, keyed by the labels shown in the domain picker. */
+const DOMAIN_TYPES: Record<string, string> = {
+  "CA — Chartered Accountant": "CA",
+  "CS — Company Secretary": "CS",
+  "Lawyer / Advocate": "Lawyer",
+  "FEMA / Cross-border": "FEMA",
+  "Wealth / RIA": "Wealth Management",
+  Insurance: "Insurance",
+  "Real Estate": "Real Estate",
+  "Insolvency (IRP/RP)": "IRP",
+  "Lending / Credit": "Lending",
+};
+
+const UPLOAD_TYPES: Record<string, "application/pdf" | "image/jpeg" | "image/png"> = {
+  pdf: "application/pdf",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+};
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+function contentTypeFor(file: File) {
+  return UPLOAD_TYPES[file.name.split(".").pop()?.toLowerCase() ?? ""] ?? null;
+}
+
+/** Presigned upload (S3 in production, the API's local store in dev). Returns the stored key. */
+async function uploadDocument(kind: ListingDocument["kind"], file: File): Promise<string> {
+  const contentType = contentTypeFor(file);
+  if (!contentType) throw new Error(`${file.name}: upload a PDF, JPG or PNG.`);
+  const presigned = await api<{ url: string; fields: Record<string, string>; key: string }>(
+    "/applications/documents/upload-url",
+    { method: "POST", body: { kind, fileName: file.name, contentType } },
+  );
+  const body = new FormData();
+  Object.entries(presigned.fields).forEach(([name, value]) => body.append(name, value));
+  body.append("file", file);
+  const res = await fetch(presigned.url, { method: "POST", body });
+  if (!res.ok) throw new Error(`${file.name} didn't upload. Please try again.`);
+  return presigned.key;
+}
+
 const listingOptions: {
   id: ListingKind;
   title: string;
@@ -107,20 +145,20 @@ export function SignupWizard({
 }) {
   const router = useRouter();
   const [step, setStep] = useState(phase === "consultant" ? 1 : 0);
-  const [form, setForm] = useState<FormState>(initial);
+  // Rendered behind the professional RoleGate, so the session is already loaded on first render.
+  const [form, setForm] = useState<FormState>(() => {
+    const user = getSessionUser();
+    const draft = readProDraft();
+    return {
+      ...initial,
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+      phone: draft?.phone || user?.phone || "",
+      firm: draft?.firm ?? "",
+    };
+  });
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    const account = readProAccount();
-    if (!account) return;
-    setForm((current) => ({
-      ...current,
-      name: account.name,
-      email: account.email,
-      phone: account.phone,
-      firm: account.firm,
-    }));
-  }, []);
+  const [files, setFiles] = useState<Partial<Record<ListingDocument["kind"], File>>>({});
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -128,8 +166,17 @@ export function SignupWizard({
 
   function addDocument(kind: ListingDocument["kind"], file: File | null) {
     if (!file) return;
+    if (!contentTypeFor(file)) {
+      toast.error("Upload a PDF, JPG or PNG.");
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast.error("Each file must be 10 MB or smaller.");
+      return;
+    }
+    setFiles((current) => ({ ...current, [kind]: file }));
     const doc: ListingDocument = {
-      id: `doc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: `doc-${kind}`,
       name: file.name,
       kind,
       fileName: file.name,
@@ -145,7 +192,8 @@ export function SignupWizard({
       return form.name && form.email && form.phone && form.firm;
     }
     if (step === 1) {
-      return form.domain && form.credentials && form.city && form.membershipId;
+      const phoneOk = /^[6-9]\d{9}$/.test(form.phone.replace(/\D/g, "").slice(-10));
+      return phoneOk && form.domain && form.credentials && form.city && form.membershipId;
     }
     if (step === 2) {
       return Boolean(form.listingKind);
@@ -168,35 +216,40 @@ export function SignupWizard({
       return;
     }
     setSubmitting(true);
-    const slugBase = slugifyName(form.displayName || form.name);
-    const app = {
-      id: `app-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      status: "pending_review" as const,
-      listingKind: form.listingKind,
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      firm: form.firm,
-      domain: form.domain,
-      credentials: form.credentials,
-      membershipId: form.membershipId,
-      city: form.city,
-      displayName: form.displayName,
-      tagline: form.tagline,
-      bio: form.bio,
-      fee: Number(form.fee) || 1000,
-      documents: form.documents,
-      slug: `${slugBase}-${Date.now().toString(36).slice(-4)}`,
-    };
-    saveApplication(app);
-    await new Promise((r) => setTimeout(r, 600));
-    toast.success(
-      "Application submitted for review. You’ll appear in Find Professionals after approval.",
-    );
-    setSubmitting(false);
-    router.push("/professionals/dashboard?welcome=1&status=pending_review");
+    try {
+      const documents = [];
+      for (const doc of form.documents) {
+        const file = files[doc.kind];
+        if (!file) continue;
+        documents.push({ kind: doc.kind, key: await uploadDocument(doc.kind, file), fileName: file.name });
+      }
+      await api("/applications", {
+        method: "POST",
+        body: {
+          listingKind: form.listingKind,
+          phone: form.phone,
+          email: form.email || undefined,
+          firm: form.firm,
+          domain: DOMAIN_TYPES[form.domain] ?? "CA",
+          credentials: form.credentials,
+          membershipId: form.membershipId,
+          city: form.city,
+          displayName: form.displayName,
+          tagline: form.tagline,
+          bio: form.bio,
+          fee: Number(form.fee) || 1000,
+          documents,
+          privacyConsent: true,
+        },
+      });
+      toast.success("Application submitted for review. You'll appear in Find Professionals after approval.");
+      router.push("/professionals/dashboard?welcome=1&status=pending_review");
+    } catch (error) {
+      toast.error(errorMessage(error, "Couldn't submit your application. Please try again."));
+      setSubmitting(false);
+    }
   }
+
 
   return (
     <div className={phase === "consultant" ? "mx-auto max-w-3xl" : "mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16"}>
@@ -339,6 +392,32 @@ export function SignupWizard({
 
         {step === 1 && (
           <div className="space-y-5">
+            {phase === "consultant" ? (
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="phone">Mobile</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    className="mt-1.5"
+                    value={form.phone}
+                    onChange={(e) => update("phone", e.target.value)}
+                    placeholder="98xxx xxxxx"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="firm">Firm / practice name</Label>
+                  <Input
+                    id="firm"
+                    className="mt-1.5"
+                    value={form.firm}
+                    onChange={(e) => update("firm", e.target.value)}
+                    placeholder="Optional"
+                  />
+                </div>
+              </div>
+            ) : null}
             <div>
               <Label htmlFor="domain">Professional domain</Label>
               <select
@@ -427,13 +506,13 @@ export function SignupWizard({
         {step === 3 && (
           <div className="space-y-5">
             <p className="text-sm text-muted-foreground">
-              Upload proof for verification. Files stay in this browser demo
-              (name only) until a real document store is connected.
+              Upload proof for verification (PDF, JPG or PNG, up to 10 MB each).
+              Only the My Salahkar review team can open these files.
             </p>
             {(
               [
                 ["credential", "Professional certificate / membership card"],
-                ["id_proof", "Government ID (PAN / Aadhaar — demo only)"],
+                ["id_proof", "Government ID (PAN / Aadhaar)"],
                 [
                   "practice_proof",
                   "Firm letterhead or practice proof (optional)",

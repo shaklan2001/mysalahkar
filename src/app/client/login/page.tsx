@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Lock, Mail } from "lucide-react";
@@ -18,11 +18,13 @@ import {
   AuthOr,
   PasswordField,
 } from "@/components/auth/AuthFrame";
+import { useAuthNext } from "@/lib/client-session";
+import { errorMessage } from "@/lib/api";
+import { signInWithPassword } from "@/lib/auth";
 import {
-  readClientSession,
-  signInClient,
-  useAuthNext,
-} from "@/lib/client-session";
+  useOAuthErrorToast,
+  useRedirectIfSignedIn,
+} from "@/components/auth/useAuthRedirects";
 
 export default function ClientLoginPage() {
   const router = useRouter();
@@ -31,9 +33,8 @@ export default function ClientLoginPage() {
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [method, setMethod] = useState<"email" | "phone">("email");
 
-  useEffect(() => {
-    if (readClientSession()) router.replace(next);
-  }, [next, router]);
+  useRedirectIfSignedIn("client", next);
+  useOAuthErrorToast();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -41,12 +42,20 @@ export default function ClientLoginPage() {
       toast.error("Please accept the Terms and DPDP consent to continue.");
       return;
     }
-    const email = String(new FormData(e.currentTarget).get("email") ?? "");
+    const data = new FormData(e.currentTarget);
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    signInClient({ name: "Nishant", email });
-    toast.success("Signed in");
-    router.replace(next);
+    try {
+      await signInWithPassword({
+        email: String(data.get("email") ?? ""),
+        password: String(data.get("password") ?? ""),
+        role: "client",
+      });
+      toast.success("Signed in");
+      router.replace(next);
+    } catch (error) {
+      toast.error(errorMessage(error));
+      setLoading(false);
+    }
   }
 
   const consent = (
@@ -116,8 +125,7 @@ export default function ClientLoginPage() {
             role="client"
             consent={privacyConsent}
             consentSlot={consent}
-            onVerified={(phone) => {
-              signInClient({ name: "Nishant", phone });
+            onVerified={() => {
               toast.success("Signed in");
               router.replace(next);
             }}

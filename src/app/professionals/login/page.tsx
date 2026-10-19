@@ -9,6 +9,13 @@ import { Button } from "@/components/ui/button";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import {
+  useOAuthErrorToast,
+  useRedirectIfSignedIn,
+} from "@/components/auth/useAuthRedirects";
+import { errorMessage } from "@/lib/api";
+import { signInWithPassword } from "@/lib/auth";
+import { useAuthNext } from "@/lib/client-session";
+import {
   PhoneOtpForm,
   SignInMethodSwitch,
 } from "@/components/auth/PhoneOtpForm";
@@ -24,17 +31,30 @@ export default function ProfessionalLoginPage() {
   const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [method, setMethod] = useState<"email" | "phone">("email");
+  const { next } = useAuthNext("/professionals/dashboard");
+  useRedirectIfSignedIn("professional", next);
+  useOAuthErrorToast();
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!privacyConsent) {
       toast.error("Please accept the Terms and DPDP consent to continue.");
       return;
     }
+    const data = new FormData(e.currentTarget);
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    toast.success("Signed in (demo)");
-    router.push("/professionals/dashboard");
+    try {
+      await signInWithPassword({
+        email: String(data.get("email") ?? ""),
+        password: String(data.get("password") ?? ""),
+        role: "professional",
+      });
+      toast.success("Signed in");
+      router.replace(next);
+    } catch (error) {
+      toast.error(errorMessage(error));
+      setLoading(false);
+    }
   }
 
   const consent = (
@@ -105,7 +125,7 @@ export default function ProfessionalLoginPage() {
             verifyLabel="Verify & open dashboard"
             onVerified={() => {
               toast.success("Signed in");
-              router.push("/professionals/dashboard");
+              router.replace(next);
             }}
           />
         )}

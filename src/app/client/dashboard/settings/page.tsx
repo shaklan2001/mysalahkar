@@ -16,11 +16,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AuthField } from "@/components/auth/AuthFrame";
 import { useWalletBalance } from "@/components/client/ClientHome";
-import {
-  readClientSession,
-  signInClient,
-  signOutClient,
-} from "@/lib/client-session";
+import { readClientSession, signOutClient } from "@/lib/client-session";
+import { api, errorMessage } from "@/lib/api";
+import { setSessionUser, signOutEverywhere, type SessionUser } from "@/lib/auth";
 import { formatRupees } from "@/lib/wallet";
 import { SettingsSection as Section, SettingsToggle as Toggle } from "@/components/dashboard/SettingsSection";
 
@@ -30,21 +28,29 @@ export default function ClientSettingsPage() {
   // ClientGate only renders the dashboard in the browser once a session exists,
   // so reading it directly here is safe (the hook would start as null).
   const [name, setName] = useState(() => readClientSession()?.name ?? "");
-  const [email, setEmail] = useState(() => readClientSession()?.email ?? "");
+  const [email] = useState(() => readClientSession()?.email ?? "");
+  const [saving, setSaving] = useState(false);
   const [phone] = useState(() => readClientSession()?.phone);
   const [reminders, setReminders] = useState(true);
   const [digestEmail, setDigestEmail] = useState(false);
   const [productNews, setProductNews] = useState(false);
 
-  function saveProfile(e: React.FormEvent) {
+  async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
-    // Phone-OTP accounts may have no email yet; only validate one if given.
-    if ((email || !phone) && !email.includes("@")) {
-      toast.error("Enter a valid email.");
+    if (!name.trim()) {
+      toast.error("Enter your name.");
       return;
     }
-    signInClient({ name, email, phone });
-    toast.success("Profile saved");
+    setSaving(true);
+    try {
+      const { user } = await api<{ user: SessionUser }>("/me", { method: "PATCH", body: { name } });
+      setSessionUser(user);
+      toast.success("Profile saved");
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setSaving(false);
+    }
   }
 
   function saveNotifications() {
@@ -88,19 +94,25 @@ export default function ClientSettingsPage() {
               type="email"
               icon={Mail}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              required={!phone}
-              placeholder={phone ? "Add an email for receipts" : undefined}
+              readOnly
+              aria-readonly="true"
+              className="cursor-not-allowed text-muted-foreground"
+              placeholder={phone ? "Signed in with phone" : undefined}
             />
           </div>
-          {phone ? (
-            <p className="text-xs text-muted-foreground">
-              Signed in with <span className="font-medium text-foreground">+91 {phone}</span> (verified by OTP).
-            </p>
-          ) : null}
+          <p className="text-xs text-muted-foreground">
+            {phone ? (
+              <>
+                Signed in with <span className="font-medium text-foreground">+91 {phone}</span> (verified by OTP).
+              </>
+            ) : (
+              "Your email is your sign-in, so it can't be changed here. Contact support to move your account."
+            )}
+          </p>
           <div className="flex justify-end">
-            <Button type="submit">Save profile</Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? "Saving…" : "Save profile"}
+            </Button>
           </div>
         </form>
       </Section>
@@ -196,12 +208,35 @@ export default function ClientSettingsPage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => {
-              signOutClient();
+            onClick={async () => {
+              await signOutClient();
               router.push("/");
             }}
           >
             <LogOut className="h-4 w-4" /> Sign out
+          </Button>
+        </div>
+        <div className="mt-4 flex items-center justify-between gap-4 border-t border-border/70 pt-5">
+          <div>
+            <p className="text-sm font-medium text-foreground">Sign out of all devices</p>
+            <p className="text-sm text-muted-foreground">
+              Use this if you signed in on a shared or lost device.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={async () => {
+              try {
+                await signOutEverywhere();
+                toast.success("Signed out on every device");
+                router.push("/");
+              } catch (error) {
+                toast.error(errorMessage(error));
+              }
+            }}
+          >
+            <LogOut className="h-4 w-4" /> Sign out everywhere
           </Button>
         </div>
       </Section>

@@ -2,193 +2,203 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  listApplications,
-  updateApplicationStatus,
-} from "@/lib/applications-store";
-import type { ListingApplication } from "@/lib/data/marketplace";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { ExternalLink, FileText, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { RoleGate } from "@/components/auth/RoleGate";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { api, errorMessage } from "@/lib/api";
+import { signOut, useSession } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
-const ADMIN_SESSION_KEY = "salahkar-admin-ok";
-/** Demo gate only — replace with real auth later */
-const DEMO_PASS = "salahkar-admin";
+type Status = "pending_review" | "approved" | "rejected";
+
+type AdminApplication = {
+  id: string;
+  status: Status;
+  createdAt: string;
+  reviewedAt: string | null;
+  reviewNote: string | null;
+  listingKind: "ai" | "human" | "both";
+  name: string;
+  email: string;
+  phone: string;
+  firm: string;
+  domain: string;
+  credentials: string;
+  membershipId: string;
+  city: string;
+  displayName: string;
+  tagline: string;
+  bio: string;
+  fee: number;
+  slug: string;
+  documents: { kind: string; fileName: string; url?: string }[];
+};
+
+const TABS: { id: Status; label: string }[] = [
+  { id: "pending_review", label: "Pending" },
+  { id: "approved", label: "Approved" },
+  { id: "rejected", label: "Rejected" },
+];
 
 export function AdminApplicationsPanel() {
-  const [authed, setAuthed] = useState(false);
-  const [pass, setPass] = useState("");
-  const [apps, setApps] = useState<ListingApplication[]>([]);
+  return (
+    <RoleGate role="admin">
+      <ApplicationsReview />
+    </RoleGate>
+  );
+}
 
-  function refresh() {
-    setApps(listApplications());
-  }
+function ApplicationsReview() {
+  const router = useRouter();
+  const { user } = useSession();
+  const [tab, setTab] = useState<Status>("pending_review");
+  const [version, setVersion] = useState(0);
+  const [result, setResult] = useState<{ key: string; items: AdminApplication[] } | null>(null);
+  const key = `${tab}:${version}`;
+  const apps = result?.key === key ? result.items : null;
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "1") {
-      setAuthed(true);
+    let cancelled = false;
+    api<{ items: AdminApplication[] }>(`/admin/applications?status=${tab}`)
+      .then(({ items }) => {
+        if (!cancelled) setResult({ key: `${tab}:${version}`, items });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        toast.error(errorMessage(error));
+        setResult({ key: `${tab}:${version}`, items: [] });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tab, version]);
+
+  async function review(id: string, action: "approve" | "reject", note: string) {
+    try {
+      await api(`/admin/applications/${id}/${action}`, { method: "POST", body: { note: note || null } });
+      toast.success(action === "approve" ? "Approved. The listing is live." : "Application rejected.");
+      setVersion((v) => v + 1);
+    } catch (error) {
+      toast.error(errorMessage(error));
     }
-  }, []);
-
-  useEffect(() => {
-    if (authed) refresh();
-  }, [authed]);
-
-  function login(e: React.FormEvent) {
-    e.preventDefault();
-    if (pass === DEMO_PASS) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
-      setAuthed(true);
-      toast.success("Admin access granted (demo)");
-    } else {
-      toast.error("Incorrect passcode");
-    }
   }
-
-  function setStatus(
-    id: string,
-    status: "approved" | "rejected" | "pending_review",
-  ) {
-    updateApplicationStatus(id, status);
-    refresh();
-    toast.success(
-      status === "approved"
-        ? "Approved — listing can appear on Find Professionals"
-        : status === "rejected"
-          ? "Application rejected"
-          : "Moved back to pending",
-    );
-  }
-
-  if (!authed) {
-    return (
-      <div className="mx-auto max-w-md px-4 py-16">
-        <h1 className="font-display text-2xl font-semibold">Superadmin review</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Demo gate for approving professional listings. Use passcode{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
-            salahkar-admin
-          </code>
-          .
-        </p>
-        <form onSubmit={login} className="mt-6 space-y-3">
-          <Input
-            type="password"
-            placeholder="Passcode"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-          />
-          <Button type="submit" className="w-full">
-            Enter
-          </Button>
-        </form>
-      </div>
-    );
-  }
-
-  const pending = apps.filter((a) => a.status === "pending_review");
-  const others = apps.filter((a) => a.status !== "pending_review");
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-            Superadmin
-          </p>
-          <h1 className="mt-2 font-display text-3xl font-semibold">
-            Listing applications
-          </h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">Admin</p>
+          <h1 className="mt-2 font-display text-3xl font-semibold">Listing applications</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Approve professionals after document review. Approved listings show
-            on Find Professionals (this browser).
+            Check documents, then approve. Approved professionals go live on Find Professionals and get an email.
           </p>
         </div>
-        <Button asChild variant="outline" size="sm">
-          <Link href="/agents">View marketplace</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/agents">View marketplace</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            title={user?.email}
+            onClick={async () => {
+              await signOut();
+              router.replace("/admin/login");
+            }}
+          >
+            <LogOut className="h-4 w-4" /> Sign out
+          </Button>
+        </div>
       </div>
 
-      <section className="mt-10">
-        <h2 className="text-lg font-semibold">
-          Pending review ({pending.length})
-        </h2>
-        {pending.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            No pending applications. Submit one via{" "}
-            <Link href="/professionals/signup" className="underline">
-              professional signup
-            </Link>
-            .
+      <div className="mt-8 inline-grid grid-cols-3 rounded-lg bg-muted p-1" role="tablist" aria-label="Status">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.id}
+            onClick={() => setTab(t.id)}
+            className={cn(
+              "h-8 rounded-md px-4 text-xs font-semibold transition-colors",
+              tab === t.id ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <section className="mt-6 space-y-4">
+        {apps === null ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : apps.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Nothing here.{" "}
+            {tab === "pending_review" ? (
+              <>
+                New applications arrive from{" "}
+                <Link href="/professionals/signup" className="underline">
+                  professional signup
+                </Link>
+                .
+              </>
+            ) : null}
           </p>
         ) : (
-          <div className="mt-4 space-y-4">
-            {pending.map((app) => (
-              <ApplicationCard
-                key={app.id}
-                app={app}
-                onApprove={() => setStatus(app.id, "approved")}
-                onReject={() => setStatus(app.id, "rejected")}
-              />
-            ))}
-          </div>
+          apps.map((app) => (
+            <ApplicationCard key={app.id} app={app} onReview={(action, note) => review(app.id, action, note)} />
+          ))
         )}
       </section>
-
-      {others.length > 0 && (
-        <section className="mt-12">
-          <h2 className="text-lg font-semibold">Processed ({others.length})</h2>
-          <div className="mt-4 space-y-4">
-            {others.map((app) => (
-              <ApplicationCard
-                key={app.id}
-                app={app}
-                onApprove={() => setStatus(app.id, "approved")}
-                onReject={() => setStatus(app.id, "rejected")}
-                onPending={() => setStatus(app.id, "pending_review")}
-              />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
 
 function ApplicationCard({
   app,
-  onApprove,
-  onReject,
-  onPending,
+  onReview,
 }: {
-  app: ListingApplication;
-  onApprove: () => void;
-  onReject: () => void;
-  onPending?: () => void;
+  app: AdminApplication;
+  onReview: (action: "approve" | "reject", note: string) => Promise<void>;
 }) {
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [docs, setDocs] = useState<AdminApplication["documents"] | null>(null);
+
+  async function openDocuments() {
+    try {
+      const { application } = await api<{ application: AdminApplication }>(`/admin/applications/${app.id}`);
+      setDocs(application.documents);
+    } catch (error) {
+      toast.error(errorMessage(error));
+    }
+  }
+
+  async function act(action: "approve" | "reject") {
+    setBusy(true);
+    await onReview(action, note);
+    setBusy(false);
+  }
+
   return (
     <Card>
       <CardContent className="space-y-3 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="font-semibold text-foreground">
-              {app.displayName || app.name}
-            </p>
+            <p className="font-semibold text-foreground">{app.displayName || app.name}</p>
             <p className="text-sm text-muted-foreground">
-              {app.name} · {app.email} · {app.firm}
+              {app.name} · {app.email} · +91 {app.phone}
+              {app.firm ? ` · ${app.firm}` : ""}
             </p>
           </div>
           <Badge
-            variant={
-              app.status === "approved"
-                ? "success"
-                : app.status === "rejected"
-                  ? "outline"
-                  : "secondary"
-            }
+            variant={app.status === "approved" ? "success" : app.status === "rejected" ? "outline" : "secondary"}
           >
             {app.status.replace("_", " ")}
           </Badge>
@@ -203,38 +213,80 @@ function ApplicationCard({
             {app.domain} · {app.credentials}
           </div>
           <div>
-            <span className="text-muted-foreground">City: </span>
-            {app.city}
+            <span className="text-muted-foreground">Membership: </span>
+            {app.membershipId || "—"}
           </div>
           <div>
-            <span className="text-muted-foreground">Fee: </span>₹{app.fee}
+            <span className="text-muted-foreground">City / fee: </span>
+            {app.city} · ₹{app.fee}
           </div>
           <div className="sm:col-span-2">
-            <span className="text-muted-foreground">Docs: </span>
-            {app.documents.map((d) => d.fileName).join(", ") || "—"}
+            <span className="text-muted-foreground">Submitted: </span>
+            {new Date(app.createdAt).toLocaleString("en-IN")}
           </div>
           <div className="sm:col-span-2">
             <span className="text-muted-foreground">Bio: </span>
             {app.bio}
           </div>
+          {app.reviewNote ? (
+            <div className="sm:col-span-2">
+              <span className="text-muted-foreground">Review note: </span>
+              {app.reviewNote}
+            </div>
+          ) : null}
         </dl>
-        <div className="flex flex-wrap gap-2 pt-1">
-          {app.status !== "approved" && (
-            <Button size="sm" onClick={onApprove}>
-              Approve
-            </Button>
+
+        <div className="rounded-lg border border-border/70 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Documents</p>
+          {docs ? (
+            <ul className="mt-2 space-y-1 text-sm">
+              {docs.map((d) => (
+                <li key={`${d.kind}-${d.fileName}`}>
+                  <a
+                    href={d.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-accent hover:underline"
+                  >
+                    <FileText className="h-4 w-4" />
+                    {d.kind.replace("_", " ")}: {d.fileName}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
+              <span className="text-muted-foreground">
+                {app.documents.map((d) => d.fileName).join(", ") || "—"}
+              </span>
+              <Button size="sm" variant="outline" onClick={openDocuments}>
+                Open documents
+              </Button>
+            </div>
           )}
-          {app.status !== "rejected" && (
-            <Button size="sm" variant="outline" onClick={onReject}>
-              Reject
-            </Button>
-          )}
-          {onPending && app.status !== "pending_review" && (
-            <Button size="sm" variant="ghost" onClick={onPending}>
-              Reopen
-            </Button>
-          )}
+          {docs ? <p className="mt-2 text-xs text-muted-foreground">Links expire after 10 minutes.</p> : null}
         </div>
+
+        {app.status === "pending_review" ? (
+          <div className="space-y-2 pt-1">
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Note to the professional (optional, included in the email)"
+              maxLength={1000}
+              rows={2}
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" disabled={busy} onClick={() => act("approve")}>
+                Approve
+              </Button>
+              <Button size="sm" variant="outline" disabled={busy} onClick={() => act("reject")}>
+                Reject
+              </Button>
+            </div>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );

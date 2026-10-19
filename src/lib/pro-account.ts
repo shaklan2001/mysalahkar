@@ -1,26 +1,30 @@
-export type ProAccount = {
-  name: string;
-  email: string;
+/**
+ * Contact details typed on the professional sign-up form, kept for this browser tab only so the
+ * listing application can be pre-filled. Not a session: the account itself lives on the API.
+ */
+
+export type ProSignupDraft = {
   phone: string;
   firm: string;
 };
 
-const STORAGE_KEY = "mysalahkar.pro.account";
+const STORAGE_KEY = "mysalahkar.pro.draft";
 
-export function saveProAccount(account: ProAccount) {
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(account));
+export function saveProDraft(draft: ProSignupDraft) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+  } catch {
+    // Storage blocked: the application form just starts empty.
+  }
 }
 
-export function readProAccount(): ProAccount | null {
+export function readProDraft(): ProSignupDraft | null {
   if (typeof window === "undefined") return null;
   try {
     const parsed: unknown = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? "null");
     if (!parsed || typeof parsed !== "object") return null;
-    const record = parsed as Partial<ProAccount>;
-    if (typeof record.email !== "string" || !record.email.includes("@")) return null;
+    const record = parsed as Partial<ProSignupDraft>;
     return {
-      name: typeof record.name === "string" ? record.name : "",
-      email: record.email,
       phone: typeof record.phone === "string" ? record.phone : "",
       firm: typeof record.firm === "string" ? record.firm : "",
     };

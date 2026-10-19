@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bot,
@@ -15,11 +16,21 @@ import {
   DashboardShell,
   type DashboardNavGroup,
 } from "@/components/dashboard/DashboardShell";
-import {
-  mockProfessional,
-  type ProfessionalStatus,
-} from "@/lib/data/professional";
+import { type ProfessionalStatus } from "@/lib/data/professional";
+import { api } from "@/lib/api";
+import { signOut, useSession } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+
+type ProMe = {
+  professional: { status: "live" | "paused" } | null;
+  application: { status: "pending_review" | "approved" | "rejected" } | null;
+};
+
+function listingStatus(me: ProMe | null): ProfessionalStatus {
+  if (me?.professional) return me.professional.status;
+  if (me?.application?.status === "pending_review") return "pending_review";
+  return "draft";
+}
 
 const groups: DashboardNavGroup[] = [
   {
@@ -93,25 +104,35 @@ export const statusMeta: Record<
 
 export function ProDashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pro = mockProfessional;
+  const { user } = useSession();
+  const [me, setMe] = useState<ProMe | null>(null);
+  const status = listingStatus(me);
+
+  useEffect(() => {
+    if (user?.role !== "professional") return;
+    api<ProMe>("/pro/me").then(setMe).catch(() => setMe(null));
+  }, [user?.role]);
 
   return (
     <DashboardShell
       homeHref="/professionals/dashboard"
       ariaLabel="Partner dashboard"
       groups={groups}
-      user={{ name: pro.name, detail: pro.firm }}
-      onSignOut={() => router.push("/professionals/login")}
+      user={{ name: user?.name ?? "Professional", detail: user?.email || undefined }}
+      onSignOut={async () => {
+        await signOut();
+        router.push("/professionals/login");
+      }}
       signOutLabel="Sign out"
       mobileRight={
         <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-2.5 py-1 text-xs font-semibold text-foreground">
           <span
             className={cn(
               "h-1.5 w-1.5 rounded-full",
-              statusMeta[pro.status].dot,
+              statusMeta[status].dot,
             )}
           />
-          {statusMeta[pro.status].label}
+          {statusMeta[status].label}
         </span>
       }
     >

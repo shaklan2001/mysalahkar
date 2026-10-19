@@ -5,6 +5,8 @@ import { ArrowRight, KeyRound, Pencil, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { errorMessage, type ApiError } from "@/lib/api";
+import { sendOtp, verifyOtp, type SessionUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 type PhoneOtpFormProps = {
@@ -12,13 +14,14 @@ type PhoneOtpFormProps = {
   consent: boolean;
   /** The Terms / DPDP checkbox, rendered above the first button. */
   consentSlot: ReactNode;
-  onVerified: (phone: string) => void | Promise<void>;
+  /** Called with the signed-in user once the code is accepted (the session cookie is already set). */
+  onVerified: (user: SessionUser) => void | Promise<void>;
   verifyLabel?: string;
 };
 
 const RESEND_SECONDS = 30;
 
-/** Phone number → 6-digit OTP sign-in. Talks to /api/auth/otp/{send,verify}. */
+/** Phone number → 6-digit OTP sign-in against the API (/auth/otp/send, /auth/otp/verify). */
 export function PhoneOtpForm({
   role,
   consent,
@@ -54,19 +57,13 @@ export function PhoneOtpForm({
     }
     setBusy(true);
     try {
-      const res = await fetch("/api/auth/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: digits, role }),
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        error?: string;
-        devCode?: string;
-        retryAfter?: number;
-      };
-      if (!res.ok) {
-        if (data.retryAfter) setResendIn(data.retryAfter);
-        toast.error(data.error ?? "Couldn't send the code. Try again.");
+      let data: { devCode?: string };
+      try {
+        data = await sendOtp({ channel: "phone", target: digits, role });
+      } catch (error) {
+        const retryAfter = (error as ApiError).data?.retryAfter;
+        if (typeof retryAfter === "number") setResendIn(retryAfter);
+        toast.error(errorMessage(error, "Couldn't send the code. Try again."));
         return;
       }
       setDevCode(data.devCode ?? null);
@@ -85,19 +82,16 @@ export function PhoneOtpForm({
     if (code.length !== 6) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: digits, role, code }),
-      });
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
-      if (!res.ok) {
-        toast.error(data.error ?? "Couldn't verify the code.");
+      let user: SessionUser;
+      try {
+        user = await verifyOtp({ channel: "phone", target: digits, role, code });
+      } catch (error) {
+        toast.error(errorMessage(error, "Couldn't verify the code."));
         setCode("");
         codeRef.current?.focus();
         return;
       }
-      await onVerified(digits);
+      await onVerified(user);
     } finally {
       setBusy(false);
     }

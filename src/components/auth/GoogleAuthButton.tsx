@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { signInClient, useAuthNext } from "@/lib/client-session";
-import { saveProAccount } from "@/lib/pro-account";
+import { googleSignInUrl, type Role } from "@/lib/auth";
+import { useAuthNext } from "@/lib/client-session";
 
 type GoogleAuthButtonProps = {
-  role: "client" | "professional";
+  role: Role;
   consent: boolean;
   intent?: "signin" | "signup";
+  /** Where to land after Google. Defaults to ?next= (clients) or the role's dashboard. */
+  next?: string;
 };
-
 function GoogleMark() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">
@@ -36,46 +36,22 @@ function GoogleMark() {
   );
 }
 
-/** Demo only. Swap for OAuth authorization-code + PKCE when a Google client is configured. */
-export function GoogleAuthButton({
-  role,
-  consent,
-  intent = "signin",
-}: GoogleAuthButtonProps) {
-  const router = useRouter();
-  const { next } = useAuthNext();
+/** Google OAuth 2.0: hands the browser to the API, which runs the code + PKCE flow and redirects back. */
+export function GoogleAuthButton({ role, consent, intent = "signin", next }: GoogleAuthButtonProps) {
+  const { next: nextParam } = useAuthNext(
+    role === "professional" ? "/professionals/dashboard" : role === "admin" ? "/admin/applications" : undefined,
+  );
   const [loading, setLoading] = useState(false);
   const destination =
-    role === "client"
-      ? next
-      : intent === "signup"
-        ? "/professionals/dashboard?new=1"
-        : "/professionals/dashboard";
+    next ?? (role === "professional" && intent === "signup" ? "/professionals/dashboard?new=1" : nextParam);
 
-  async function onClick() {
+  function onClick() {
     if (!consent) {
       toast.error("Please accept the Terms and DPDP consent to continue.");
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    if (role === "client") {
-      signInClient({ name: "Nishant", email: "nishant@example.com" });
-    }
-    if (role === "professional" && intent === "signup") {
-      saveProAccount({
-        name: "Ankit Gupta",
-        email: "ankit.gupta@example.com",
-        phone: "",
-        firm: "",
-      });
-    }
-    toast.success(
-      intent === "signup"
-        ? "Account created with Google (demo)"
-        : "Signed in with Google (demo)",
-    );
-    router.replace(destination);
+    window.location.assign(googleSignInUrl(role, destination));
   }
 
   return (
@@ -87,7 +63,7 @@ export function GoogleAuthButton({
       onClick={onClick}
     >
       <GoogleMark />
-      {loading ? "Connecting…" : "Continue with Google"}
+      {loading ? "Redirecting to Google…" : "Continue with Google"}
     </Button>
   );
 }

@@ -21,7 +21,13 @@ import {
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { Button } from "@/components/ui/button";
-import { saveProAccount } from "@/lib/pro-account";
+import {
+  useOAuthErrorToast,
+  useRedirectIfSignedIn,
+} from "@/components/auth/useAuthRedirects";
+import { errorMessage } from "@/lib/api";
+import { signUpWithPassword } from "@/lib/auth";
+import { saveProDraft } from "@/lib/pro-account";
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -29,6 +35,8 @@ export function ProAccountForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  useRedirectIfSignedIn("professional", "/professionals/dashboard");
+  useOAuthErrorToast();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -54,10 +62,15 @@ export function ProAccountForm() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    saveProAccount({ name, email, phone, firm });
-    toast.success("Account created");
-    router.push("/professionals/dashboard?new=1");
+    try {
+      await signUpWithPassword({ role: "professional", name, email, password });
+      saveProDraft({ phone, firm });
+      toast.success("Account created");
+      router.push("/professionals/dashboard?new=1");
+    } catch (error) {
+      toast.error(errorMessage(error));
+      setLoading(false);
+    }
   }
 
   return (

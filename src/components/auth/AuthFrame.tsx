@@ -10,7 +10,6 @@ import {
   EyeOff,
   IndianRupee,
   Inbox,
-  Info,
   ShieldCheck,
   Sparkles,
   UserRound,
@@ -101,8 +100,8 @@ export function AuthFrame({
           ) : null}
 
           <p className="mt-6 inline-flex w-full items-center justify-center gap-1.5 text-xs text-muted-foreground">
-            <Info className="h-3.5 w-3.5" /> Demo environment. Any credentials
-            work and passwords aren&apos;t stored.
+            <ShieldCheck className="h-3.5 w-3.5" /> Passwords are stored hashed.
+            Your session stays in secure, httpOnly cookies.
           </p>
         </div>
       </div>
