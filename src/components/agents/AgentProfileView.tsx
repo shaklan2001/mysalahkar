@@ -259,7 +259,7 @@ export function AgentProfileView({
               <ScheduleCallDialog
                 professionalName={agent.name}
                 professionalSlug={agent.slug}
-                triggerLabel={`Book ${agent.name.split(" ")[0]}`}
+                triggerLabel="Book consultation"
                 triggerVariant="default"
                 triggerSize="lg"
                 triggerClassName="w-full"

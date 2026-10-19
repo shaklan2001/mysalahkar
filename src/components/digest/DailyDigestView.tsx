@@ -6,11 +6,12 @@ import { Bookmark, ExternalLink, Newspaper, Search } from "lucide-react";
 import {
   digestUpdates,
   getDigestForDate,
-  globalNewsTop5,
   type DigestSource,
   type DigestUpdate,
-  type GlobalNewsItem,
+  type FinanceNewsItem,
+  type FinanceNewsTopic,
 } from "@/lib/data/digest";
+import { useFinanceNews } from "@/lib/use-finance-news";
 import { cn } from "@/lib/utils";
 
 const sources: DigestSource[] = ["GST", "Income Tax", "ROC", "SEBI", "RBI", "MCA"];
@@ -24,19 +25,21 @@ const cover: Record<DigestSource, string> = {
   MCA: "from-[#0e2f4d] to-[#2b6cb0]",
 };
 
-const regionCover: Record<string, string> = {
-  Global: "from-[#001450] to-[#003cf8]",
-  US: "from-[#1c3148] to-[#3d5a80]",
-  EU: "from-[#16323c] to-[#2a6f7f]",
-  Asia: "from-[#0e3332] to-[#1a7a6d]",
+const topicCover: Record<FinanceNewsTopic, string> = {
+  Markets: "from-[#001450] to-[#003cf8]",
+  Tax: "from-[#0c3b2e] to-[#1a9b6c]",
+  "RBI & Policy": "from-[#10233a] to-[#3d5a73]",
+  "Rupee & FX": "from-[#16323c] to-[#2a6f7f]",
+  Earnings: "from-[#0e3332] to-[#1a7a6d]",
+  Banking: "from-[#1c3148] to-[#3d5a80]",
 };
 
-type Tab = "foryou" | "trending" | "global";
+type Tab = "foryou" | "trending" | "finance";
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "foryou", label: "For you" },
   { id: "trending", label: "Trending" },
-  { id: "global", label: "Global" },
+  { id: "finance", label: "Finance" },
 ];
 
 const dateFmt = new Intl.DateTimeFormat("en-IN", {
@@ -54,6 +57,13 @@ function readMins(text: string) {
   return Math.max(1, Math.ceil(text.trim().split(/\s+/).length / 35));
 }
 
+function ago(iso: string) {
+  const mins = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 60000));
+  if (mins < 60) return `${Math.max(1, mins)}m ago`;
+  if (mins < 60 * 24) return `${Math.floor(mins / 60)}h ago`;
+  return labelDate(iso.slice(0, 10));
+}
+
 function hit(text: string, query: string) {
   const q = query.trim().toLowerCase();
   return !q || text.toLowerCase().includes(q);
@@ -67,6 +77,7 @@ export function DailyDigestView({
   compact?: boolean;
 }) {
   const today = getDigestForDate();
+  const { news: financeNews } = useFinanceNews();
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<DigestSource | null>(null);
   const [tab, setTab] = useState<Tab>("foryou");
@@ -94,16 +105,16 @@ export function DailyDigestView({
     return hit(`${item.title} ${item.summary} ${item.source}`, query);
   });
 
-  const globalVisible = globalNewsTop5.filter((item) => {
+  const financeVisible = financeNews.filter((item) => {
     if (savedOnly && !saved.includes(item.id)) return false;
-    return hit(`${item.title} ${item.source} ${item.region}`, query);
+    return hit(`${item.title} ${item.summary} ${item.source} ${item.topic}`, query);
   });
 
-  const lead = tab === "global" ? globalVisible.slice(0, 2) : indiaVisible.filter((item) => !item.quiet).slice(0, 2);
+  const lead = tab === "finance" ? financeVisible.slice(0, 2) : indiaVisible.filter((item) => !item.quiet).slice(0, 2);
   const leadIds = new Set(lead.map((item) => item.id));
   const rest =
-    tab === "global"
-      ? globalVisible.filter((item) => !leadIds.has(item.id))
+    tab === "finance"
+      ? financeVisible.filter((item) => !leadIds.has(item.id))
       : indiaVisible.filter((item) => !leadIds.has(item.id));
 
   return (
@@ -114,7 +125,7 @@ export function DailyDigestView({
             Daily Digest
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            GST, Income Tax, ROC, SEBI, RBI, and MCA. Quiet days show &ldquo;No Updates for Day.&rdquo;
+            GST, Income Tax, ROC, SEBI, RBI, and MCA, plus India finance news from Yahoo Finance. Quiet days show &ldquo;No Updates for Day.&rdquo;
           </p>
         </div>
 
@@ -216,9 +227,9 @@ export function DailyDigestView({
                 <>
                   {lead.length > 0 ? (
                     <div className={cn("mt-5 grid gap-4", lead.length > 1 && "sm:grid-cols-2")}>
-                      {tab === "global"
-                        ? (lead as GlobalNewsItem[]).map((item, i) => (
-                            <FeatureGlobal
+                      {tab === "finance"
+                        ? (lead as FinanceNewsItem[]).map((item, i) => (
+                            <FeatureFinance
                               key={item.id}
                               item={item}
                               index={i}
@@ -239,10 +250,10 @@ export function DailyDigestView({
                   ) : null}
 
                   <ul className="mt-2">
-                    {tab === "global"
-                      ? (rest as GlobalNewsItem[]).map((item) => (
+                    {tab === "finance"
+                      ? (rest as FinanceNewsItem[]).map((item) => (
                           <li key={item.id}>
-                            <GlobalRow
+                            <FinanceRow
                               item={item}
                               saved={saved.includes(item.id)}
                               onSave={() => toggleSaved(item.id)}
@@ -267,12 +278,12 @@ export function DailyDigestView({
               <section>
                 <h2 className="font-display text-base font-semibold tracking-tight">Curated picks</h2>
                 <ul className="mt-4 space-y-4">
-                  {(tab === "global" ? india.filter((item) => !item.quiet).slice(0, 4) : globalNewsTop5.slice(0, 4)).map(
+                  {(tab === "finance" ? india.filter((item) => !item.quiet).slice(0, 4) : financeNews.slice(0, 4)).map(
                     (item) =>
                       "officialUrl" in item ? (
                         <PickIndia key={item.id} item={item} />
                       ) : (
-                        <PickGlobal key={item.id} item={item} />
+                        <PickFinance key={item.id} item={item} />
                       ),
                   )}
                 </ul>
@@ -394,13 +405,13 @@ function FeatureIndia({
   );
 }
 
-function FeatureGlobal({
+function FeatureFinance({
   item,
   index,
   saved,
   onSave,
 }: {
-  item: GlobalNewsItem;
+  item: FinanceNewsItem;
   index: number;
   saved: boolean;
   onSave: () => void;
@@ -413,19 +424,19 @@ function FeatureGlobal({
         rel="noreferrer"
         className={cn(
           "relative flex min-h-72 flex-col justify-end overflow-hidden rounded-2xl bg-gradient-to-br p-5 text-white",
-          regionCover[item.region] ?? regionCover.Global,
+          topicCover[item.topic],
         )}
       >
         <span className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
         <span className="relative inline-flex w-fit items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-[#001450]">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          Top {index + 1} · {item.region}
+          Top {index + 1} · {item.topic}
         </span>
         <span className="relative mt-3 font-display text-lg font-semibold leading-snug tracking-tight">
           {item.title}
         </span>
         <span className="relative mt-3 text-[11px] text-white/70">
-          {item.source}
+          {item.source} · {ago(item.publishedAt)}
           <ExternalLink className="ml-1 inline h-3 w-3" />
         </span>
       </a>
@@ -469,19 +480,19 @@ function IndiaRow({ item, saved, onSave }: { item: DigestUpdate; saved: boolean;
   );
 }
 
-function GlobalRow({ item, saved, onSave }: { item: GlobalNewsItem; saved: boolean; onSave: () => void }) {
+function FinanceRow({ item, saved, onSave }: { item: FinanceNewsItem; saved: boolean; onSave: () => void }) {
   return (
     <article className="flex gap-3 border-b border-border/80 py-4 last:border-0">
       <div
         className={cn(
           "h-16 w-20 shrink-0 rounded-xl bg-gradient-to-br",
-          regionCover[item.region] ?? regionCover.Global,
+          topicCover[item.topic],
         )}
         aria-hidden
       />
       <div className="min-w-0 flex-1">
         <p className="text-[11px] text-muted-foreground">
-          {item.source} · {item.region}
+          {item.topic} · {item.source} · {ago(item.publishedAt)}
         </p>
         <a href={item.url} target="_blank" rel="noreferrer" className="group block">
           <h3 className="mt-1 text-sm font-semibold leading-snug text-foreground group-hover:text-accent">
@@ -511,20 +522,20 @@ function PickIndia({ item }: { item: DigestUpdate }) {
   );
 }
 
-function PickGlobal({ item }: { item: GlobalNewsItem }) {
+function PickFinance({ item }: { item: FinanceNewsItem }) {
   return (
     <li>
       <a href={item.url} target="_blank" rel="noreferrer" className="group flex gap-3">
         <div className="min-w-0 flex-1">
           <p className="text-[11px] text-muted-foreground">
-            {item.source} · {item.region}
+            {item.topic} · {item.source} · {ago(item.publishedAt)}
           </p>
           <p className="mt-0.5 line-clamp-2 text-sm font-medium leading-snug text-foreground group-hover:text-accent">
             {item.title}
           </p>
         </div>
         <div
-          className={cn("h-12 w-12 shrink-0 rounded-lg bg-gradient-to-br", regionCover[item.region] ?? regionCover.Global)}
+          className={cn("h-12 w-12 shrink-0 rounded-lg bg-gradient-to-br", topicCover[item.topic])}
           aria-hidden
         />
       </a>

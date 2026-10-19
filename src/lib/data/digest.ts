@@ -10,12 +10,19 @@ export type DigestUpdate = {
   quiet?: boolean;
 };
 
-export type GlobalNewsItem = {
+export type FinanceNewsTopic = "Markets" | "Tax" | "RBI & Policy" | "Rupee & FX" | "Earnings" | "Banking";
+
+/** Indian finance headline from Yahoo Finance or an Indian publisher feed (see lib/finance-news.ts). */
+export type FinanceNewsItem = {
   id: string;
   title: string;
-  source: string;
-  region: string;
+  summary: string;
   url: string;
+  /** Publisher, e.g. "Economic Times" or "Reuters via Yahoo Finance". */
+  source: string;
+  /** ISO timestamp */
+  publishedAt: string;
+  topic: FinanceNewsTopic;
 };
 
 /** Mock AI-pulled compliance updates — one entry per day. Quiet days use quiet: true. */
@@ -85,44 +92,6 @@ export const digestUpdates: DigestUpdate[] = [
   },
 ];
 
-export const globalNewsTop5: GlobalNewsItem[] = [
-  {
-    id: "g1",
-    title: "OECD updates Pillar Two administrative guidance for MNEs",
-    source: "OECD",
-    region: "Global",
-    url: "https://www.oecd.org/",
-  },
-  {
-    id: "g2",
-    title: "US Fed signals cautious path on rate cuts amid inflation data",
-    source: "Federal Reserve",
-    region: "US",
-    url: "https://www.federalreserve.gov/",
-  },
-  {
-    id: "g3",
-    title: "EU CSRD reporting: first-wave companies face assurance deadlines",
-    source: "European Commission",
-    region: "EU",
-    url: "https://commission.europa.eu/",
-  },
-  {
-    id: "g4",
-    title: "IMF flags elevated sovereign debt risks in emerging markets",
-    source: "IMF",
-    region: "Global",
-    url: "https://www.imf.org/",
-  },
-  {
-    id: "g5",
-    title: "Singapore MAS updates guidelines on digital asset custody",
-    source: "MAS",
-    region: "Asia",
-    url: "https://www.mas.gov.sg/",
-  },
-];
-
 function todayKey(d = new Date()) {
   return d.toISOString().slice(0, 10);
 }
@@ -155,8 +124,8 @@ export type MarketQuote = {
 };
 
 /**
- * Sample market snapshot for the public digest. Not a live feed — the UI
- * labels it as indicative until a market-data provider is connected.
+ * Offline fallback for the markets strip, shown only while Yahoo Finance is unreachable
+ * (see /api/finance-news). The UI labels it as indicative.
  */
 export const marketSnapshot: { asOf: string; isSample: boolean; quotes: MarketQuote[] } = {
   asOf: "2026-09-30",

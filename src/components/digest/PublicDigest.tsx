@@ -7,8 +7,6 @@ import {
   ArrowUpRight,
   CalendarClock,
   ExternalLink,
-  Globe2,
-  Info,
   Newspaper,
   Search,
   TrendingUp,
@@ -16,22 +14,12 @@ import {
 import {
   digestUpdates,
   getDigestForDate,
-  globalNewsTop5,
-  marketSnapshot,
   upcomingDeadlines,
   type DigestSource,
 } from "@/lib/data/digest";
 import { Button } from "@/components/ui/button";
+import { useFinanceNews } from "@/lib/use-finance-news";
 import { cn } from "@/lib/utils";
-
-const SOURCES: DigestSource[] = [
-  "GST",
-  "Income Tax",
-  "ROC",
-  "MCA",
-  "SEBI",
-  "RBI",
-];
 
 const sourceTone: Record<DigestSource, string> = {
   GST: "bg-emerald-50 text-emerald-700 ring-emerald-600/15",
@@ -56,6 +44,14 @@ function parse(iso: string) {
   return new Date(`${iso}T00:00:00`);
 }
 
+function timeAgo(iso: string) {
+  const mins = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 60000));
+  if (mins < 60) return `${Math.max(1, mins)}m ago`;
+  if (mins < 60 * 24) return `${Math.floor(mins / 60)}h ago`;
+  const days = Math.floor(mins / (60 * 24));
+  return days < 7 ? `${days}d ago` : shortDate.format(new Date(iso));
+}
+
 function SourcePill({ source }: { source: DigestSource }) {
   return (
     <span
@@ -70,15 +66,19 @@ function SourcePill({ source }: { source: DigestSource }) {
 }
 
 export function MarketStrip() {
+  const { quotes, live } = useFinanceNews();
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-white">
       <div className="flex items-center justify-between gap-3 border-b border-border/70 px-5 py-2.5">
         <p className="inline-flex items-center gap-2 text-xs font-semibold text-foreground">
           <TrendingUp className="h-3.5 w-3.5 text-accent" /> Markets
         </p>
+        <p className="text-[11px] text-muted-foreground">
+          {live ? "Delayed quotes · Yahoo Finance" : "Indicative snapshot, not a live feed"}
+        </p>
       </div>
       <ul className="flex divide-x divide-border/70 overflow-x-auto [scrollbar-width:none]">
-        {marketSnapshot.quotes.map((quote) => {
+        {quotes.map((quote) => {
           const up = quote.change >= 0;
           return (
             <li key={quote.id} className="min-w-[9.5rem] flex-1 px-5 py-3.5">
@@ -112,8 +112,8 @@ export function MarketStrip() {
 
 export function PublicDigest() {
   const today = getDigestForDate();
-  const [tab, setTab] = useState<"india" | "global">("india");
-  const [source, setSource] = useState<DigestSource | null>(null);
+  const [tab, setTab] = useState<"compliance" | "finance">("compliance");
+  const { news: financeNews, loading: financeLoading } = useFinanceNews();
   const [query, setQuery] = useState("");
 
   const updates = useMemo(
@@ -125,16 +125,15 @@ export function PublicDigest() {
   const q = query.trim().toLowerCase();
   const visible = updates.filter((item) => {
     if (item.id === lead?.id) return false;
-    if (source && item.source !== source) return false;
     return (
       !q ||
       `${item.title} ${item.summary} ${item.source}`.toLowerCase().includes(q)
     );
   });
-  const globalVisible = globalNewsTop5.filter(
+  const financeVisible = financeNews.filter(
     (item) =>
       !q ||
-      `${item.title} ${item.source} ${item.region}`.toLowerCase().includes(q),
+      `${item.title} ${item.summary} ${item.source} ${item.topic}`.toLowerCase().includes(q),
   );
 
   return (
@@ -187,8 +186,8 @@ export function PublicDigest() {
           >
             {(
               [
-                ["india", "India compliance"],
-                ["global", "Global"],
+                ["compliance", "India compliance"],
+                ["finance", "India finance news"],
               ] as const
             ).map(([value, label]) => (
               <button
@@ -221,40 +220,8 @@ export function PublicDigest() {
           </label>
         </div>
 
-        {tab === "india" ? (
+        {tab === "compliance" ? (
           <>
-            <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-              <button
-                type="button"
-                onClick={() => setSource(null)}
-                aria-pressed={source === null}
-                className={cn(
-                  "h-8 shrink-0 rounded-full border px-3 text-xs font-medium",
-                  source === null
-                    ? "border-[#001450] bg-[#001450] text-white"
-                    : "border-border bg-white text-ink-soft hover:border-accent/40",
-                )}
-              >
-                All sources
-              </button>
-              {SOURCES.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => setSource(source === item ? null : item)}
-                  aria-pressed={source === item}
-                  className={cn(
-                    "h-8 shrink-0 rounded-full border px-3 text-xs font-medium",
-                    source === item
-                      ? "border-[#001450] bg-[#001450] text-white"
-                      : "border-border bg-white text-ink-soft hover:border-accent/40",
-                  )}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-
             {visible.length ? (
               <ol className="mt-5 space-y-3">
                 {visible.map((item) => (
@@ -315,37 +282,44 @@ export function PublicDigest() {
               <EmptyState
                 onReset={() => {
                   setQuery("");
-                  setSource(null);
                 }}
               />
             )}
           </>
-        ) : globalVisible.length ? (
-          <ol className="mt-5 divide-y divide-border/70 overflow-hidden rounded-2xl border border-border bg-white">
-            {globalVisible.map((item, index) => (
-              <li key={item.id}>
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[#f8f9fc] sm:px-6"
-                >
-                  <span className="font-display text-lg font-semibold text-border">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-foreground group-hover:text-accent">
-                      {item.title}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {item.source} · {item.region}
-                    </p>
-                  </div>
-                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                </a>
-              </li>
-            ))}
-          </ol>
+        ) : financeVisible.length ? (
+          <>
+            <ol className="mt-5 divide-y divide-border/70 overflow-hidden rounded-2xl border border-border bg-white">
+              {financeVisible.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[#f8f9fc] sm:px-6"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-foreground group-hover:text-accent">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {item.topic} · {item.source} · {timeAgo(item.publishedAt)}
+                      </p>
+                    </div>
+                    <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-3 text-[11px] text-muted-foreground">
+              Headlines from Yahoo Finance, Economic Times, Business Standard, Mint and BusinessLine, refreshed every 15 minutes. Links open the original publisher.
+            </p>
+          </>
+        ) : financeNews.length === 0 && !query.trim() ? (
+          <p className="mt-5 rounded-2xl border border-dashed border-border bg-white px-6 py-14 text-center text-sm text-muted-foreground">
+            {financeLoading
+              ? "Loading India finance news…"
+              : "Finance news is temporarily unavailable. Please try again in a few minutes."}
+          </p>
         ) : (
           <EmptyState onReset={() => setQuery("")} />
         )}
@@ -389,13 +363,13 @@ export function PublicDigest() {
           </p>
         </div>
 
-        {tab === "india" ? (
+        {tab === "compliance" && financeNews.length > 0 ? (
           <div className="rounded-2xl border border-border bg-white p-5">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Globe2 className="h-4 w-4 text-accent" /> Global headlines
+              <TrendingUp className="h-4 w-4 text-accent" /> India finance headlines
             </h3>
             <ul className="mt-3 divide-y divide-border/70">
-              {globalNewsTop5.slice(0, 3).map((item) => (
+              {financeNews.slice(0, 3).map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.url}
@@ -405,7 +379,7 @@ export function PublicDigest() {
                   >
                     {item.title}
                     <span className="mt-1 block text-[11px] text-muted-foreground">
-                      {item.source}
+                      {item.source} · {timeAgo(item.publishedAt)}
                     </span>
                   </a>
                 </li>
@@ -413,10 +387,10 @@ export function PublicDigest() {
             </ul>
             <button
               type="button"
-              onClick={() => setTab("global")}
+              onClick={() => setTab("finance")}
               className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-foreground hover:text-accent"
             >
-              All global news <ArrowRight className="h-3 w-3" />
+              All finance news <ArrowRight className="h-3 w-3" />
             </button>
           </div>
         ) : null}

@@ -1,43 +1,21 @@
-import type { Agent, AgentType } from "./agents";
+import type { Agent } from "./agents";
 import { agents, aiConsultantName, STANDARD_HALF_HOUR_FEE } from "./agents";
 
 export type ListingKind = "ai" | "human" | "both";
-
-export type ListingApplicationStatus =
-  | "pending_review"
-  | "approved"
-  | "rejected";
 
 export type ListingDocument = {
   id: string;
   name: string;
   kind: "credential" | "id_proof" | "practice_proof" | "other";
-  /** File name only — demo store; no binary upload backend yet */
   fileName: string;
 };
 
-export type ListingApplication = {
-  id: string;
-  createdAt: string;
-  status: ListingApplicationStatus;
-  reviewedAt?: string;
-  reviewNote?: string;
-  listingKind: ListingKind;
-  name: string;
-  email: string;
-  phone: string;
-  firm: string;
-  domain: string;
-  credentials: string;
-  membershipId: string;
-  city: string;
-  displayName: string;
-  tagline: string;
-  bio: string;
-  fee: number;
-  documents: ListingDocument[];
-  slug: string;
-};
+/** A live professional from GET /professionals (the API's public card). */
+export type ApiProfessionalCard = Pick<
+  Agent,
+  "slug" | "name" | "type" | "typeLabel" | "specializations" | "experience" | "consultationFee" | "location"
+  | "availability" | "languages" | "channels" | "accent" | "tagline" | "rating" | "reviewCount"
+> & { image?: string; aiName?: string; liveDemo?: boolean; listingKind: ListingKind };
 
 export type MarketplaceListing = Agent & {
   listingKind: ListingKind;
@@ -60,50 +38,27 @@ export function getSeedHumanProfessionals(): MarketplaceListing[] {
     }));
 }
 
-export function listingToAgentShape(app: ListingApplication): MarketplaceListing {
-  const type = (app.domain as AgentType) || "CA";
+/** Shapes an approved professional (not in the static seed) like a seed agent for the directory. */
+export function cardToListing(card: ApiProfessionalCard): MarketplaceListing {
   return {
-    slug: app.slug,
-    name: app.displayName || app.name,
-    type,
-    typeLabel: app.domain,
-    specializations: [app.credentials || app.domain],
+    ...card,
     services: [],
-    experience: 5,
-    rating: 5,
-    reviewCount: 0,
-    consultationFee: app.fee || STANDARD_HALF_HOUR_FEE,
-    bio: app.bio,
+    bio: card.tagline,
     image:
+      card.image ||
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
-    location: `${app.city}, India`,
-    availability:
-      app.listingKind === "ai" ? "Online 24/7" : "By appointment",
-    languages: ["English", "Hindi"],
-    channels:
-      app.listingKind === "human"
-        ? ["call"]
-        : app.listingKind === "ai"
-          ? ["chat", "call"]
-          : ["chat", "call"],
-    accent: "#0d9488",
-    tagline: app.tagline,
+    consultationFee: card.consultationFee || STANDARD_HALF_HOUR_FEE,
     personality: "",
     kpis: [],
     capabilities: [],
     workflows: [],
     sampleChat: [],
     faqs: [],
-    escalationNote: "Partner listing pending full profile enrichment.",
-    liveTag:
-      app.listingKind === "human"
-        ? "Verified professional"
-        : app.listingKind === "both"
-          ? "AI + human"
-          : "AI Salahkar",
-    listingKind: app.listingKind,
-    isHumanProfessional: app.listingKind !== "ai",
-    liveDemo: app.listingKind === "ai" || app.listingKind === "both",
+    escalationNote: "",
+    liveTag: "Verified professional",
+    listingKind: card.listingKind,
+    isHumanProfessional: card.listingKind !== "ai",
+    liveDemo: false,
   };
 }
 
@@ -148,8 +103,6 @@ export function canScheduleHuman(listing: MarketplaceListing): boolean {
     Boolean(listing.isHumanProfessional)
   );
 }
-
-export const APPLICATIONS_STORAGE_KEY = "salahkar-listing-applications";
 
 export function slugifyName(name: string): string {
   return (

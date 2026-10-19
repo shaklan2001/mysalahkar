@@ -27,10 +27,11 @@ import {
 import {
   aiSalahkarSlug,
   canScheduleHuman,
-  listingToAgentShape,
+  cardToListing,
+  type ApiProfessionalCard,
   type MarketplaceListing,
 } from "@/lib/data/marketplace";
-import { listApprovedApplications } from "@/lib/applications-store";
+import { api } from "@/lib/api";
 import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
 import { ScheduleCallDialog } from "@/components/agents/ScheduleCallDialog";
 import { useConsult } from "@/components/consult/ConsultProvider";
@@ -128,10 +129,12 @@ export function AgentsDirectory({
   const [minRating, setMinRating] = useState("0");
   const [minExperience, setMinExperience] = useState("0");
 
+  // Professionals approved by admins after the static seed was built.
   useEffect(() => {
-    const approved = listApprovedApplications().map(listingToAgentShape);
     const existing = new Set(agents.map((a) => a.slug));
-    setExtraListings(approved.filter((a) => !existing.has(a.slug)));
+    api<{ items: ApiProfessionalCard[] }>("/professionals")
+      .then(({ items }) => setExtraListings(items.filter((c) => !existing.has(c.slug)).map(cardToListing)))
+      .catch(() => setExtraListings([]));
   }, [agents]);
 
   // Keep ?kind= in the URL so the tab survives refresh and can be linked to.
