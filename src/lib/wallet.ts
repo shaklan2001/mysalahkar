@@ -1,16 +1,94 @@
-/** Preset top-ups. Anything else is rejected on the server and in the browser. */
+"use client";
+
+/**
+ * Account wallet. The balance lives on the API (`GET /wallet`). This module only
+ * caches that response so the header, home, and call screen stay in sync.
+ */
+
+import { useEffect, useSyncExternalStore } from "react";
+import { api } from "@/lib/api";
+
+/** Fallback until the API answers. The server list is what checkout actually allows. */
 export const WALLET_TOP_UPS_RUPEES = [100, 500, 1000, 2000] as const;
 
-const ALLOWED_RUPEES = new Set<number>(WALLET_TOP_UPS_RUPEES);
-const BALANCE_KEY = "salahkar.wallet.paise";
-const CREDITS_KEY = "salahkar.wallet.credits";
-const WALLET_CHANGED = "salahkar-wallet";
-/** ponytail: ₹50,000 browser cap. Replace localStorage with a server ledger if balances must persist across devices. */
-const MAX_BALANCE_PAISE = 5_000_000;
+export type WalletSnapshot = {
+  balancePaise: number;
+  topUpsRupees: number[];
+  freeMinutes: number;
+  rupeesPerMinute: number;
+  loaded: boolean;
+};
 
-export function paiseForTopUp(rupees: number): number | null {
-  if (!Number.isInteger(rupees) || !ALLOWED_RUPEES.has(rupees)) return null;
-  return rupees * 100;
+type WalletResponse = {
+  balancePaise: number;
+  topUpsRupees: number[];
+  freeMinutes: number;
+  rupeesPerMinute: number;
+};
+
+const EMPTY: WalletSnapshot = {
+  balancePaise: 0,
+  topUpsRupees: [...WALLET_TOP_UPS_RUPEES],
+  freeMinutes: 5,
+  rupeesPerMinute: 10,
+  loaded: false,
+};
+
+let snapshot: WalletSnapshot = EMPTY;
+const listeners = new Set<() => void>();
+let inflight: Promise<WalletSnapshot> | null = null;
+
+function emit(next: WalletSnapshot) {
+  snapshot = next;
+  listeners.forEach((listener) => listener());
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+export function getWalletSnapshot(): WalletSnapshot {
+  return snapshot;
+}
+
+export function readBalancePaise(): number {
+  return snapshot.balancePaise;
+}
+
+/** Writes a balance the API just confirmed (after a top-up or a call tick). */
+export function applyWalletBalance(balancePaise: number) {
+  if (!Number.isInteger(balancePaise) || balancePaise < 0) return;
+  emit({ ...snapshot, balancePaise, loaded: true });
+}
+
+export function onWalletChange(listener: () => void): () => void {
+  return subscribe(listener);
+}
+
+/** Loads the signed-in user's wallet. Signed-out callers keep a zero balance. */
+export function refreshWallet(): Promise<WalletSnapshot> {
+  inflight ??= api<WalletResponse>("/wallet")
+    .then((data) => {
+      const topUps = data.topUpsRupees.filter((rupees) => Number.isInteger(rupees) && rupees > 0);
+      const next: WalletSnapshot = {
+        balancePaise: data.balancePaise,
+        topUpsRupees: topUps.length > 0 ? topUps : [...WALLET_TOP_UPS_RUPEES],
+        freeMinutes: data.freeMinutes,
+        rupeesPerMinute: data.rupeesPerMinute,
+        loaded: true,
+      };
+      emit(next);
+      return next;
+    })
+    .catch(() => {
+      emit({ ...snapshot, loaded: true });
+      return snapshot;
+    })
+    .finally(() => {
+      inflight = null;
+    });
+  return inflight;
 }
 
 export function formatRupees(paise: number): string {
@@ -22,66 +100,19 @@ export function formatRupees(paise: number): string {
   }).format(paise / 100);
 }
 
-function readCredits(): string[] {
-  try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(CREDITS_KEY) ?? "[]");
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((id): id is string => typeof id === "string");
-  } catch {
-    return [];
-  }
+/** Balance in paise. Loads from the API once per page. */
+export function useWalletBalance(): number {
+  const balance = useSyncExternalStore(subscribe, readBalancePaise, () => 0);
+  useEffect(() => {
+    if (!snapshot.loaded) void refreshWallet();
+  }, []);
+  return balance;
 }
 
-export function readBalancePaise(): number {
-  const raw = Number(localStorage.getItem(BALANCE_KEY));
-  if (!Number.isInteger(raw) || raw < 0 || raw > MAX_BALANCE_PAISE) return 0;
-  return raw;
+export function useWalletSnapshot(): WalletSnapshot {
+  const current = useSyncExternalStore(subscribe, getWalletSnapshot, () => EMPTY);
+  useEffect(() => {
+    if (!snapshot.loaded) void refreshWallet();
+  }, []);
+  return current;
 }
-
-function writeBalance(next: number): number {
-  localStorage.setItem(BALANCE_KEY, String(next));
-  window.dispatchEvent(new Event(WALLET_CHANGED));
-  return next;
-}
-
-export function onWalletChange(listener: () => void): () => void {
-  window.addEventListener(WALLET_CHANGED, listener);
-  return () => window.removeEventListener(WALLET_CHANGED, listener);
-}
-
-/** Debits a whole-minute call charge. Returns the new balance, or null if it cannot be covered. */
-export function debitWallet(amountPaise: number): number | null {
-  if (!Number.isInteger(amountPaise) || amountPaise <= 0 || amountPaise > MAX_BALANCE_PAISE) return null;
-  const balance = readBalancePaise();
-  if (balance < amountPaise) return null;
-  return writeBalance(balance - amountPaise);
-}
-
-/** Credits a verified Razorpay payment once. Returns the new balance in paise. */
-export function creditWallet(paymentId: string, amountPaise: number): number {
-  if (!/^pay_[A-Za-z0-9]+$/.test(paymentId)) {
-    throw new Error("Invalid payment");
-  }
-  if (!WALLET_TOP_UPS_RUPEES.some((rupees) => rupees * 100 === amountPaise)) {
-    throw new Error("Invalid amount");
-  }
-
-  const credits = readCredits();
-  if (credits.includes(paymentId)) return readBalancePaise();
-
-  const next = readBalancePaise() + amountPaise;
-  if (next > MAX_BALANCE_PAISE) {
-    throw new Error("Wallet limit reached");
-  }
-
-  writeBalance(next);
-  localStorage.setItem(CREDITS_KEY, JSON.stringify([...credits, paymentId].slice(-40)));
-  return next;
-}
-
-function selfCheck(): void {
-  if (paiseForTopUp(100) !== 10_000) throw new Error("wallet top-up paise mismatch");
-  if (paiseForTopUp(50) !== null) throw new Error("wallet top-up allowlist mismatch");
-}
-
-selfCheck();

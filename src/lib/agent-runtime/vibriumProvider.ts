@@ -1,61 +1,44 @@
+import { API_URL } from "@/lib/api";
 import { consumeAgentStream } from "@/lib/chat-stream";
 import { isLiveDemoAgent } from "@/lib/data/agents";
 import type { AgentProvider } from "./types";
 
-function createContactId(agentSlug: string) {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return `salahkar-${agentSlug}-${crypto.randomUUID()}`;
-  }
-  return `salahkar-${agentSlug}-${Date.now()}`;
-}
+const started = new Set<string>();
 
-const contactIds = new Map<string, string>();
-const startedSessions = new Set<string>();
-
-function getContactId(agentSlug: string): string {
-  const existing = contactIds.get(agentSlug);
-  if (existing) return existing;
-  const next = createContactId(agentSlug);
-  contactIds.set(agentSlug, next);
-  return next;
-}
-
-async function ensureSession(agentSlug: string, contactId: string) {
-  const key = `${agentSlug}:${contactId}`;
-  if (startedSessions.has(key)) return;
-
-  const res = await fetch("/api/agent/chat/start", {
+async function ensureSession(agentSlug: string) {
+  if (started.has(agentSlug)) return;
+  const res = await fetch(`${API_URL}/chat/start`, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ agentSlug, contactId }),
+    body: JSON.stringify({ agentSlug }),
   });
-
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
+    const data = (await res.json().catch(() => ({}))) as { error?: string };
     throw new Error(data.error || "Failed to start chat session");
   }
-
-  startedSessions.add(key);
+  started.add(agentSlug);
 }
 
+/** Live agents bill and talk through the API. The API derives the contact from the session. */
 export const vibriumAgentProvider: AgentProvider = {
   async streamReply(agentSlug, userMessage, onChunk, signal) {
     if (!isLiveDemoAgent(agentSlug)) {
       throw new Error("Agent is not available for live demo");
     }
 
-    const contactId = getContactId(agentSlug);
-    await ensureSession(agentSlug, contactId);
+    await ensureSession(agentSlug);
 
-    const res = await fetch("/api/agent/chat", {
+    const res = await fetch(`${API_URL}/chat/message`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ agentSlug, contactId, message: userMessage }),
+      body: JSON.stringify({ agentSlug, message: userMessage }),
       signal,
     });
 
     if (!res.ok || !res.body) {
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
       throw new Error(data.error || "Chat request failed");
     }
 

@@ -38,7 +38,34 @@ export function getSeedHumanProfessionals(): MarketplaceListing[] {
     }));
 }
 
-/** Shapes an approved professional (not in the static seed) like a seed agent for the directory. */
+/** Live card from the API, filled in with seed copy (bio, sample chat) when the slug matches. */
+export function mergeApiCard(
+  card: ApiProfessionalCard & { bio?: string },
+  seed?: MarketplaceListing,
+): MarketplaceListing {
+  const base = seed ?? cardToListing(card);
+  const kind = card.listingKind || base.listingKind;
+  return {
+    ...base,
+    name: card.name || base.name,
+    type: card.type || base.type,
+    typeLabel: card.typeLabel || base.typeLabel,
+    specializations: card.specializations?.length ? card.specializations : base.specializations,
+    experience: card.experience || base.experience,
+    consultationFee: card.consultationFee || base.consultationFee,
+    location: card.location || base.location,
+    availability: card.availability || base.availability,
+    languages: card.languages?.length ? card.languages : base.languages,
+    tagline: card.tagline || base.tagline,
+    rating: typeof card.rating === "number" ? card.rating : base.rating,
+    reviewCount: typeof card.reviewCount === "number" ? card.reviewCount : base.reviewCount,
+    bio: card.bio || base.bio,
+    image: card.image || base.image,
+    listingKind: kind,
+    isHumanProfessional: kind !== "ai",
+    liveDemo: seed?.liveDemo ?? Boolean(card.liveDemo),
+  };
+}
 export function cardToListing(card: ApiProfessionalCard): MarketplaceListing {
   return {
     ...card,

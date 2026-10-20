@@ -1,6 +1,8 @@
 "use client";
 
-import { creditWallet } from "@/lib/wallet";
+import { api, errorMessage } from "@/lib/api";
+import { getSessionUser } from "@/lib/auth";
+import { applyWalletBalance, refreshWallet } from "@/lib/wallet";
 
 type CheckoutResponse = {
   razorpay_order_id: string;
@@ -9,6 +11,19 @@ type CheckoutResponse = {
 };
 
 type RazorpayCheckout = { open: () => void };
+
+type OrderResponse = {
+  orderId: string;
+  amountPaise: number;
+  currency: string;
+  keyId: string;
+};
+
+type VerifyResponse = {
+  ok: boolean;
+  amountPaise: number;
+  balancePaise: number;
+};
 
 declare global {
   interface Window {
@@ -48,37 +63,23 @@ async function loadCheckout(): Promise<NonNullable<Window["Razorpay"]>> {
   return window.Razorpay;
 }
 
-async function errorMessage(response: Response, fallback: string): Promise<string> {
-  try {
-    const data = (await response.json()) as { error?: string };
-    return data.error ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-/** Opens Razorpay, verifies the payment, and credits the wallet. Resolves with the new balance in paise. */
+/**
+ * Opens Razorpay for a signed-in user, then asks the API to credit the wallet.
+ * Resolves with the new balance in paise. The browser does not store the balance.
+ */
 export function startWalletTopUp(amountRupees: number): Promise<number> {
   return new Promise((resolve, reject) => {
     void (async () => {
       try {
-        const orderRes = await fetch("/api/wallet/order", {
+        const order = await api<OrderResponse>("/wallet/order", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amountRupees }),
+          body: { amountRupees },
         });
-        if (!orderRes.ok) {
-          throw new Error(await errorMessage(orderRes, "Could not start the payment."));
-        }
-        const order = (await orderRes.json()) as {
-          orderId?: string;
-          amountPaise?: number;
-          keyId?: string;
-        };
         if (!order.orderId || !order.amountPaise || !order.keyId) {
           throw new Error("Could not start the payment.");
         }
 
+        const email = getSessionUser()?.email;
         const Razorpay = await loadCheckout();
         const checkout = new Razorpay({
           key: order.keyId,
@@ -87,31 +88,27 @@ export function startWalletTopUp(amountRupees: number): Promise<number> {
           name: "My Salahkar",
           description: "Add money to wallet",
           order_id: order.orderId,
-          prefill: { email: "client@example.com" },
+          prefill: email ? { email } : undefined,
           theme: { color: "#001450" },
           modal: { ondismiss: () => reject(new WalletPaymentCancelled()) },
           handler: (response) => {
             void (async () => {
               try {
-                const verifyRes = await fetch("/api/wallet/verify", {
+                const verified = await api<VerifyResponse>("/wallet/verify", {
                   method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
+                  body: {
                     orderId: response.razorpay_order_id,
                     paymentId: response.razorpay_payment_id,
                     signature: response.razorpay_signature,
-                  }),
+                  },
                 });
-                if (!verifyRes.ok) {
-                  throw new Error(await errorMessage(verifyRes, "Payment could not be verified."));
+                if (!Number.isInteger(verified.balancePaise)) {
+                  throw new Error("Payment could not be verified.");
                 }
-                const verified = (await verifyRes.json()) as { amountPaise?: number };
-                if (typeof verified.amountPaise !== "number") {
-                  throw new TypeError("Payment could not be verified.");
-                }
-                resolve(creditWallet(response.razorpay_payment_id, verified.amountPaise));
+                applyWalletBalance(verified.balancePaise);
+                resolve(verified.balancePaise);
               } catch (error) {
-                reject(error instanceof Error ? error : new Error("Payment could not be added."));
+                reject(error instanceof Error ? error : new Error(errorMessage(error, "Payment could not be added.")));
               }
             })();
           },
@@ -122,4 +119,10 @@ export function startWalletTopUp(amountRupees: number): Promise<number> {
       }
     })();
   });
+}
+
+/** Reloads the wallet after a call is billed, so open panels show the server balance. */
+export function syncWalletAfterCall(balancePaise: number | null) {
+  if (balancePaise !== null) applyWalletBalance(balancePaise);
+  else void refreshWallet();
 }
