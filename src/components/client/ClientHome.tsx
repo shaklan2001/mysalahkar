@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   BadgeCheck,
   CalendarClock,
+  Landmark,
   MessageSquare,
   Newspaper,
   Sparkles,
@@ -177,6 +178,13 @@ export function ClientHome() {
       href: "/client/dashboard/community",
       tone: "bg-violet-50 text-violet-700",
     },
+    {
+      icon: Landmark,
+      title: "Smart Loan",
+      body: "See personal-loan offers",
+      href: "/smart-loan",
+      tone: "bg-amber-50 text-amber-700",
+    },
   ];
 
   return (
@@ -266,7 +274,7 @@ export function ClientHome() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
         {actions.map(({ icon: Icon, title, body, onClick, href, tone }) => {
           const inner = (
             <>

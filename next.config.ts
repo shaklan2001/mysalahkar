@@ -13,7 +13,10 @@ const nextConfig: NextConfig = {
   },
   // "How it works" was retired; keep old links working.
   async redirects() {
-    return [{ source: "/how-it-works", destination: "/features", permanent: true }];
+    return [
+      { source: "/how-it-works", destination: "/features", permanent: true },
+      { source: "/loan-comparison", destination: "/smart-loan", permanent: false },
+    ];
   },
   turbopack: {
     root: path.join(__dirname),

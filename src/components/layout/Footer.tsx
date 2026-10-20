@@ -27,6 +27,7 @@ const columns = [
       ["/client/signup", "Create account"],
       ["/client/login", "Client login"],
       ["/daily-digest", "Daily Digest"],
+      ["/smart-loan", "Smart Loan"],
     ],
   },
   {

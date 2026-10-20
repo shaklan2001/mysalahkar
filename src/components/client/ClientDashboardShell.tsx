@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import {
   CalendarDays,
   Home,
+  Landmark,
   Newspaper,
   Search,
   Settings,
@@ -25,6 +26,7 @@ const groups: DashboardNavGroup[] = [
     label: "Workspace",
     items: [
       { href: "/client/dashboard", label: "Home", icon: Home, exact: true },
+      { href: "/smart-loan", label: "Smart Loan", icon: Landmark },
       { href: "/client/dashboard/find", label: "Find professionals", icon: Search },
       {
         href: "/client/dashboard/calendar",

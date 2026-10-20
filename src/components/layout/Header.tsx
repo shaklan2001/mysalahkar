@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   BookOpen,
   Briefcase,
+  Landmark,
   Menu,
   UserRound,
   Users,
@@ -42,6 +43,12 @@ const resourceLinks: MenuLink[] = [
     label: "Community",
     description: "Discussions from practitioners",
     icon: Users,
+  },
+  {
+    href: "/smart-loan",
+    label: "Smart Loan",
+    description: "Personal-loan offers you qualify for",
+    icon: Landmark,
   },
   {
     href: "/learning",
