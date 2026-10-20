@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -25,16 +25,15 @@ import {
 } from "@/components/client/ClientAppointments";
 import { statusMeta } from "@/components/professionals/ProDashboardShell";
 import { Button } from "@/components/ui/button";
+import { api, ApiError } from "@/lib/api";
+import { loadBookings } from "@/lib/bookings";
 import { formatINR, cn } from "@/lib/utils";
 import {
-  mockEarnings,
-  mockMetrics,
-  mockProfessional,
+  type DashboardMetrics,
+  type LeadRow,
+  type ProfessionalStatus,
 } from "@/lib/data/professional";
-import {
-  appointmentsForViewer,
-  splitAppointments,
-} from "@/lib/data/appointments";
+import { splitAppointments, type Appointment } from "@/lib/data/appointments";
 
 function greeting() {
   const hour = Number(
@@ -49,25 +48,147 @@ function greeting() {
   return "Good evening";
 }
 
+const EMPTY_METRICS: DashboardMetrics = {
+  consultations: 0,
+  consultationsDelta: 0,
+  conversionRate: 0,
+  conversionDelta: 0,
+  grossGmv: 0,
+  yourShare: 0,
+  shareDelta: 0,
+  escalations: 0,
+  rating: 0,
+  reviewCount: 0,
+};
+
+type ProDashboardResponse = {
+  metrics: {
+    consultations: number;
+    consultationsDelta: number;
+    bookings: number;
+    escalations: number;
+    grossPaise: number;
+    sharePaise: number;
+    shareDelta: number;
+    rating: number;
+    reviewCount: number;
+  };
+  daily: { date: string; earningsPaise: number }[];
+};
+
+type EarningItem = { sharePaise: number; status: string };
+type LeadItem = {
+  id: string;
+  status: LeadRow["status"];
+  name: string;
+  topic: string;
+  source: string;
+  createdAt: string;
+};
+
+function toMetrics(metrics: ProDashboardResponse["metrics"]): DashboardMetrics {
+  const conversion = metrics.consultations
+    ? Math.round((metrics.bookings / metrics.consultations) * 1000) / 10
+    : 0;
+  return {
+    consultations: metrics.consultations,
+    consultationsDelta: metrics.consultationsDelta,
+    conversionRate: conversion,
+    conversionDelta: 0,
+    grossGmv: metrics.grossPaise / 100,
+    yourShare: metrics.sharePaise / 100,
+    shareDelta: metrics.shareDelta,
+    escalations: metrics.escalations,
+    rating: metrics.rating,
+    reviewCount: metrics.reviewCount,
+  };
+}
+
+function toLead(item: LeadItem): LeadRow {
+  const channel: LeadRow["channel"] = item.source === "call" ? "Call" : "Chat";
+  return {
+    id: item.id,
+    client: item.name,
+    channel,
+    topic: item.topic,
+    status: item.status,
+    value: 0,
+    at: item.createdAt,
+  };
+}
+
 export function DashboardHome() {
   const searchParams = useSearchParams();
-  const pro = mockProfessional;
-  const status = statusMeta[pro.status];
-  const { upcoming } = splitAppointments(appointmentsForViewer("professional"));
+  const [name, setName] = useState("Your practice");
+  const [statusKey, setStatusKey] = useState<ProfessionalStatus>("draft");
+  const [shareBps, setShareBps] = useState(5500);
+  const [metrics, setMetrics] = useState(EMPTY_METRICS);
+  const [daily, setDaily] = useState<{ date: string; earnings: number }[]>([]);
+  const [paid, setPaid] = useState(0);
+  const [pending, setPending] = useState(0);
+  const [leads, setLeads] = useState<LeadRow[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
+  const status = statusMeta[statusKey];
+  const { upcoming } = splitAppointments(appointments);
   const next = upcoming[0];
   const nextSlot = next ? formatSlot(next) : null;
-  const paid = mockEarnings
-    .filter((e) => e.status === "Paid")
-    .reduce((sum, e) => sum + e.share, 0);
-  const pending = mockEarnings
-    .filter((e) => e.status !== "Paid")
-    .reduce((sum, e) => sum + e.share, 0);
 
   useEffect(() => {
     if (searchParams.get("welcome") === "1") {
-      toast.success("Welcome — your partner dashboard is ready (demo data).");
+      toast.success("Welcome — your partner dashboard is ready.");
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    let cancelled = false;
+    api<{ professional: { name?: string; status?: ProfessionalStatus; shareBps?: number } | null; application: { status?: string } | null }>("/pro/me")
+      .then(({ professional, application }) => {
+        if (cancelled) return;
+        if (professional?.name) setName(professional.name);
+        if (professional?.status) setStatusKey(professional.status);
+        else if (application?.status === "pending_review") setStatusKey("pending_review");
+        if (professional?.shareBps) setShareBps(professional.shareBps);
+      })
+      .catch(() => undefined);
+
+    api<ProDashboardResponse>("/pro/dashboard")
+      .then((data) => {
+        if (cancelled) return;
+        setMetrics(toMetrics(data.metrics));
+        setDaily(data.daily.map((point) => ({ date: point.date, earnings: point.earningsPaise / 100 })));
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        if (error instanceof ApiError && error.status === 403) {
+          setNotice("Your listing isn't live yet. Metrics appear after an admin approves you.");
+        }
+      });
+
+    api<{ items: EarningItem[] }>("/pro/earnings")
+      .then(({ items }) => {
+        if (cancelled) return;
+        setPaid(items.filter((row) => row.status === "Paid").reduce((sum, row) => sum + row.sharePaise, 0) / 100);
+        setPending(items.filter((row) => row.status !== "Paid").reduce((sum, row) => sum + row.sharePaise, 0) / 100);
+      })
+      .catch(() => undefined);
+
+    api<{ items: LeadItem[] }>("/pro/leads")
+      .then(({ items }) => {
+        if (!cancelled) setLeads(items.map(toLead));
+      })
+      .catch(() => undefined);
+
+    loadBookings("professional")
+      .then((items) => {
+        if (!cancelled) setAppointments(items);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -107,17 +228,17 @@ export function DashboardHome() {
           <div className="relative">
             <p className="text-sm text-blue-200">{greeting()},</p>
             <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight sm:text-[2.1rem]">
-              {pro.agentName}
+              {name}
             </h1>
             <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/[0.08] px-3 py-1 text-xs font-medium text-slate-200 ring-1 ring-white/10">
               <Bot className="h-3.5 w-3.5 text-blue-200" />
-              {pro.agentName} AI is
+              {name} is
               <span className="inline-flex items-center gap-1 font-semibold text-white">
                 <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />{" "}
                 {status.label.toLowerCase()}
               </span>
               <span className="hidden sm:inline">
-                · {mockMetrics.consultations} consultations in 30 days
+                · {metrics.consultations} consultations in 30 days
               </span>
             </p>
 
@@ -161,14 +282,14 @@ export function DashboardHome() {
             <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
               <Wallet className="h-4 w-4 text-accent" /> Your share · 30 days
             </p>
-            <Delta value={mockMetrics.shareDelta} />
+            <Delta value={metrics.shareDelta} />
           </div>
           <p className="mt-4 font-display text-4xl font-semibold tracking-tight text-foreground">
-            {formatINR(mockMetrics.yourShare)}
+            {formatINR(metrics.yourShare)}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {Math.round(pro.shareRate * 100)}% consultation share · gross{" "}
-            {formatINR(mockMetrics.grossGmv)}
+            {Math.round(shareBps / 100)}% consultation share · gross{" "}
+            {formatINR(metrics.grossGmv)}
           </p>
           <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-border/70 pt-4 text-sm">
             <div>
@@ -193,7 +314,9 @@ export function DashboardHome() {
         </section>
       </div>
 
-      <MetricCards metrics={mockMetrics} />
+      {notice ? <p className="text-sm text-muted-foreground">{notice}</p> : null}
+
+      <MetricCards metrics={metrics} />
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section className="rounded-2xl border border-border bg-white p-5 sm:p-6">
@@ -223,10 +346,10 @@ export function DashboardHome() {
             )}
           </div>
         </section>
-        <RecentLeadsPreview />
+        <RecentLeadsPreview leads={leads} />
       </div>
 
-      <PerformanceChart />
+      <PerformanceChart points={daily} grossRupees={metrics.grossGmv} />
     </div>
   );
 }

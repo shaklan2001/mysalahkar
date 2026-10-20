@@ -1,11 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Banknote, Clock, IndianRupee } from "lucide-react";
-import {
-  mockEarnings,
-  mockMetrics,
-  mockProfessional,
-  shareTiers,
-} from "@/lib/data/professional";
+import { shareTiers } from "@/lib/data/professional";
+import { api } from "@/lib/api";
 import {
   Delta,
   PerformanceChart,
@@ -20,21 +19,53 @@ const dateFmt = new Intl.DateTimeFormat("en-IN", {
   timeZone: "Asia/Kolkata",
 });
 
+type Earning = {
+  id: string;
+  date: string;
+  type: string;
+  client: string;
+  grossPaise: number;
+  sharePaise: number;
+  status: string;
+};
+
 export default function ProEarningsPage() {
-  const pro = mockProfessional;
-  const paid = mockEarnings
-    .filter((e) => e.status === "Paid")
-    .reduce((s, e) => s + e.share, 0);
-  const pending = mockEarnings
-    .filter((e) => e.status !== "Paid")
-    .reduce((s, e) => s + e.share, 0);
+  const [shareBps, setShareBps] = useState(5500);
+  const [shareDelta, setShareDelta] = useState(0);
+  const [yourShare, setYourShare] = useState(0);
+  const [gross, setGross] = useState(0);
+  const [daily, setDaily] = useState<{ date: string; earnings: number }[]>([]);
+  const [rows, setRows] = useState<Earning[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    api<{ professional: { shareBps?: number } | null }>("/pro/me")
+      .then(({ professional }) => {
+        if (professional?.shareBps) setShareBps(professional.shareBps);
+      })
+      .catch(() => undefined);
+    api<{ metrics: { sharePaise: number; shareDelta: number; grossPaise: number }; daily: { date: string; earningsPaise: number }[] }>("/pro/dashboard")
+      .then((data) => {
+        setYourShare(data.metrics.sharePaise / 100);
+        setShareDelta(data.metrics.shareDelta);
+        setGross(data.metrics.grossPaise / 100);
+        setDaily(data.daily.map((point) => ({ date: point.date, earnings: point.earningsPaise / 100 })));
+      })
+      .catch(() => setNotice("Earnings appear after your listing is live."));
+    api<{ items: Earning[] }>("/pro/earnings")
+      .then(({ items }) => setRows(items))
+      .catch(() => undefined);
+  }, []);
+
+  const paid = rows.filter((row) => row.status === "Paid").reduce((sum, row) => sum + row.sharePaise, 0) / 100;
+  const pending = rows.filter((row) => row.status !== "Paid").reduce((sum, row) => sum + row.sharePaise, 0) / 100;
 
   const summary = [
     {
       icon: IndianRupee,
       label: "Your share (30d)",
-      value: formatINR(mockMetrics.yourShare),
-      extra: <Delta value={mockMetrics.shareDelta} />,
+      value: formatINR(yourShare),
+      extra: <Delta value={shareDelta} />,
     },
     { icon: Banknote, label: "Paid out", value: formatINR(paid), extra: null },
     {
@@ -87,14 +118,16 @@ export default function ProEarningsPage() {
         ))}
       </div>
 
+      {notice ? <p className="text-sm text-muted-foreground">{notice}</p> : null}
+
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <PerformanceChart />
+        <PerformanceChart points={daily} grossRupees={gross} />
         <section className="rounded-2xl border border-border bg-white p-5 sm:p-6">
           <h2 className="font-display text-base font-semibold tracking-tight text-foreground">
             Your share rates
           </h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Active agreement · {Math.round(pro.shareRate * 100)}% on
+            Active agreement · {Math.round(shareBps / 100)}% on
             consultations
           </p>
           <ul className="mt-5 divide-y divide-border/70">
@@ -123,7 +156,7 @@ export default function ProEarningsPage() {
             Payout ledger
           </h2>
           <p className="text-xs text-muted-foreground">
-            {mockEarnings.length} transactions
+            {rows.length} transactions
           </p>
         </div>
         <div className="overflow-x-auto">
@@ -141,23 +174,23 @@ export default function ProEarningsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/70">
-              {mockEarnings.map((row) => (
+              {rows.map((row) => (
                 <tr
                   key={row.id}
                   className="transition-colors hover:bg-[#f8f9fc]"
                 >
                   <td className="px-5 py-3.5 whitespace-nowrap text-muted-foreground sm:px-6">
-                    {dateFmt.format(new Date(`${row.date}T00:00:00+05:30`))}
+                    {dateFmt.format(new Date(row.date))}
                   </td>
                   <td className="px-5 py-3.5 text-ink-soft">{row.type}</td>
                   <td className="px-5 py-3.5 font-semibold text-foreground">
                     {row.client}
                   </td>
                   <td className="px-5 py-3.5 text-right text-ink-soft tabular-nums">
-                    {formatINR(row.gross)}
+                    {formatINR(row.grossPaise / 100)}
                   </td>
                   <td className="px-5 py-3.5 text-right font-semibold text-foreground tabular-nums">
-                    {formatINR(row.share)}
+                    {formatINR(row.sharePaise / 100)}
                   </td>
                   <td className="px-5 py-3.5">
                     <StatusBadge status={row.status} />

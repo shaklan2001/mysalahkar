@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { mockLeads, type LeadRow } from "@/lib/data/professional";
+import { api, errorMessage } from "@/lib/api";
+import { type LeadRow } from "@/lib/data/professional";
+import { toast } from "sonner";
 import {
-  StatusBadge,
   channelIcon,
   formatLeadTime,
 } from "@/components/professionals/DashboardWidgets";
@@ -18,21 +19,61 @@ const FILTERS: ("All" | LeadRow["status"])[] = [
   "Closed",
 ];
 
+type LeadItem = {
+  id: string;
+  status: LeadRow["status"];
+  name: string;
+  topic: string;
+  source: string;
+  createdAt: string;
+};
+
+function toLead(item: LeadItem): LeadRow {
+  return {
+    id: item.id,
+    client: item.name,
+    channel: item.source === "call" ? "Call" : "Chat",
+    topic: item.topic,
+    status: item.status,
+    value: 0,
+    at: item.createdAt,
+  };
+}
+
 export function LeadsBoard() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const [query, setQuery] = useState("");
+  const [leads, setLeads] = useState<LeadRow[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    api<{ items: LeadItem[] }>("/pro/leads")
+      .then(({ items }) => setLeads(items.map(toLead)))
+      .catch(() => setNotice("Leads appear after your listing is live."));
+  }, []);
+
+  async function setStatus(id: string, status: LeadRow["status"]) {
+    const previous = leads;
+    setLeads((current) => current.map((lead) => (lead.id === id ? { ...lead, status } : lead)));
+    try {
+      await api(`/pro/leads/${id}`, { method: "PATCH", body: { status } });
+    } catch (error) {
+      setLeads(previous);
+      toast.error(errorMessage(error, "Could not update the lead."));
+    }
+  }
 
   const counts = useMemo(() => {
-    const map: Record<string, number> = { All: mockLeads.length };
-    mockLeads.forEach(
+    const map: Record<string, number> = { All: leads.length };
+    leads.forEach(
       (lead) => (map[lead.status] = (map[lead.status] ?? 0) + 1),
     );
     return map;
-  }, []);
+  }, [leads]);
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return [...mockLeads]
+    return [...leads]
       .sort((a, b) => b.at.localeCompare(a.at))
       .filter((lead) => filter === "All" || lead.status === filter)
       .filter(
@@ -42,12 +83,12 @@ export function LeadsBoard() {
             .toLowerCase()
             .includes(q),
       );
-  }, [filter, query]);
+  }, [filter, query, leads]);
 
-  const pipeline = mockLeads.filter(
+  const pipeline = leads.filter(
     (l) => l.status === "Open" || l.status === "Escalated",
   ).length;
-  const converted = mockLeads
+  const converted = leads
     .filter((l) => l.status === "Converted")
     .reduce((sum, l) => sum + l.value, 0);
 
@@ -80,6 +121,8 @@ export function LeadsBoard() {
           </div>
         </dl>
       </div>
+
+      {notice ? <p className="text-sm text-muted-foreground">{notice}</p> : null}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div
@@ -159,7 +202,17 @@ export function LeadsBoard() {
                         </span>
                       </td>
                       <td className="px-5 py-3.5">
-                        <StatusBadge status={lead.status} />
+                        <label className="sr-only" htmlFor={`lead-${lead.id}`}>Status</label>
+                        <select
+                          id={`lead-${lead.id}`}
+                          className="rounded-md border border-border bg-white px-2 py-1 text-xs"
+                          value={lead.status}
+                          onChange={(event) => void setStatus(lead.id, event.target.value as LeadRow["status"])}
+                        >
+                          {FILTERS.filter((item) => item !== "All").map((status) => (
+                            <option key={status} value={status}>{status}</option>
+                          ))}
+                        </select>
                       </td>
                       <td className="px-5 py-3.5 text-right font-medium text-foreground tabular-nums">
                         {lead.value ? formatINR(lead.value) : "—"}

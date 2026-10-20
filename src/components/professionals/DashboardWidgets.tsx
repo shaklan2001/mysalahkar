@@ -14,9 +14,6 @@ import {
 } from "lucide-react";
 import { formatINR, cn } from "@/lib/utils";
 import {
-  mockDailySeries,
-  mockLeads,
-  mockMetrics,
   type DashboardMetrics,
   type EarningRow,
   type LeadRow,
@@ -105,9 +102,18 @@ export function MetricCards({ metrics }: { metrics: DashboardMetrics }) {
   );
 }
 
-export function PerformanceChart({ className }: { className?: string }) {
-  const max = Math.max(...mockDailySeries.map((d) => d.earnings));
-  const total = mockDailySeries.reduce((sum, d) => sum + d.earnings, 0);
+export function PerformanceChart({
+  points,
+  grossRupees,
+  className,
+}: {
+  points: { date: string; earnings: number }[];
+  grossRupees: number;
+  className?: string;
+}) {
+  const series = points.length > 0 ? points : [{ date: "—", earnings: 0 }];
+  const max = Math.max(...series.map((d) => d.earnings), 1);
+  const total = series.reduce((sum, d) => sum + d.earnings, 0);
 
   return (
     <section
@@ -130,13 +136,13 @@ export function PerformanceChart({ className }: { className?: string }) {
             {formatINR(total)}
           </p>
           <p className="text-xs text-muted-foreground">
-            Gross GMV {formatINR(mockMetrics.grossGmv)} (30d)
+            Gross GMV {formatINR(grossRupees)} (30d)
           </p>
         </div>
       </div>
       <div className="mt-8 flex h-44 items-end gap-1.5 sm:gap-2">
-        {mockDailySeries.map((point, index) => {
-          const latest = index === mockDailySeries.length - 1;
+        {series.map((point, index) => {
+          const latest = index === series.length - 1;
           return (
             <div
               key={point.date}
@@ -190,7 +196,7 @@ const payoutTone: Record<EarningRow["status"], string> = {
 export function StatusBadge({
   status,
 }: {
-  status: LeadRow["status"] | EarningRow["status"];
+  status: string;
 }) {
   const tone =
     (leadTone as Record<string, string>)[status] ??
@@ -216,13 +222,20 @@ const leadTime = new Intl.DateTimeFormat("en-IN", {
 });
 
 export function formatLeadTime(iso: string) {
-  return leadTime.format(new Date(`${iso}+05:30`));
+  const value = /[zZ]|[+-]\d{2}:?\d{2}$/.test(iso) ? iso : `${iso}+05:30`;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return iso;
+  return leadTime.format(date);
 }
 
-export function RecentLeadsPreview({ className }: { className?: string }) {
-  const rows = [...mockLeads]
-    .sort((a, b) => b.at.localeCompare(a.at))
-    .slice(0, 5);
+export function RecentLeadsPreview({
+  leads,
+  className,
+}: {
+  leads: LeadRow[];
+  className?: string;
+}) {
+  const rows = [...leads].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 5);
 
   return (
     <section
