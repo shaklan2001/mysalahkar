@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -18,9 +18,9 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { api, errorMessage } from "@/lib/api";
 import {
   communityGuidelines,
-  communityPosts,
   communityStats,
   topContributors,
   trendingTopics,
@@ -90,30 +90,48 @@ type Member = { name: string; role: string };
  * `member` unlocks posting, likes and replies (dashboards). Without it the
  * feed is read-only and every write action opens the sign-in gate.
  */
+type ApiPost = CommunityPost & { likedByMe?: boolean };
+type Reply = { id: string; authorName: string; content: string };
+
 export function PublicCommunity({ member }: { member?: Member } = {}) {
   const { session } = useClientSession();
   const [gate, setGate] = useState<string | null>(null);
-  const [myPosts, setMyPosts] = useState<CommunityPost[]>([]);
+  const [feed, setFeed] = useState<ApiPost[]>([]);
+  const [feedError, setFeedError] = useState<string | null>(null);
   const [liked, setLiked] = useState<Set<string>>(() => new Set());
-  const [replies, setReplies] = useState<Record<string, string[]>>({});
+  const [replies, setReplies] = useState<Record<string, Reply[]>>({});
   const [sort, setSort] = useState<Sort>("latest");
   const [tag, setTag] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
+  useEffect(() => {
+    let cancelled = false;
+    api<{ items: ApiPost[] }>("/community/posts")
+      .then(({ items }) => {
+        if (cancelled) return;
+        setFeed(items);
+        setLiked(new Set(items.filter((post) => post.likedByMe).map((post) => post.id)));
+      })
+      .catch((error) => {
+        if (!cancelled) setFeedError(errorMessage(error, "Could not load the community."));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const tags = useMemo(() => {
     const counts = new Map<string, number>();
-    communityPosts.forEach((post) =>
-      post.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)),
-    );
+    feed.forEach((post) => post.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
     return [...counts.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
       .map(([t]) => t);
-  }, []);
+  }, [feed]);
 
   const posts = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return [...myPosts, ...communityPosts]
+    return feed
       .filter((post) => !tag || post.tags.includes(tag))
       .filter(
         (post) =>
@@ -127,46 +145,71 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
           ? b.likes + b.comments * 2 - (a.likes + a.comments * 2)
           : b.date.localeCompare(a.date),
       );
-  }, [myPosts, query, sort, tag]);
+  }, [feed, query, sort, tag]);
 
   /** Every write action lands here for guests. */
   function requireSignIn(action: string) {
     setGate(action);
   }
 
-  function toggleLike(id: string) {
-    setLiked((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  async function toggleLike(id: string) {
+    const already = liked.has(id);
+    try {
+      const data = await api<{ likes: number; likedByMe: boolean }>(`/community/posts/${id}/like`, {
+        method: already ? "DELETE" : "POST",
+      });
+      setLiked((prev) => {
+        const next = new Set(prev);
+        if (data.likedByMe) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setFeed((prev) => prev.map((post) => (post.id === id ? { ...post, likes: data.likes } : post)));
+    } catch (error) {
+      toast.error(errorMessage(error, "Could not update the like."));
+    }
   }
 
-  function addReply(id: string, text: string) {
-    setReplies((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), text] }));
+  async function loadReplies(id: string) {
+    if (replies[id]) return;
+    try {
+      const data = await api<{ replies: Reply[] }>(`/community/posts/${id}`);
+      setReplies((prev) => ({ ...prev, [id]: data.replies }));
+    } catch (error) {
+      toast.error(errorMessage(error, "Could not load replies."));
+    }
   }
 
-  function publish(post: { title: string; content: string; tag: string }) {
+  async function addReply(id: string, text: string) {
+    try {
+      const data = await api<{ reply: Reply }>(`/community/posts/${id}/replies`, {
+        method: "POST",
+        body: { content: text },
+      });
+      setReplies((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), data.reply] }));
+      setFeed((prev) =>
+        prev.map((post) => (post.id === id ? { ...post, comments: post.comments + 1 } : post)),
+      );
+    } catch (error) {
+      toast.error(errorMessage(error, "Could not post the reply."));
+    }
+  }
+
+  async function publish(post: { title: string; content: string; tag: string }) {
     if (!member) return;
-    setMyPosts((prev) => [
-      {
-        id: `mine-${Date.now()}`,
-        authorName: member.name,
-        authorType: member.role,
-        title: post.title,
-        content: post.content,
-        date: new Date().toISOString().slice(0, 10),
-        likes: 0,
-        comments: 0,
-        tags: [post.tag],
-      },
-      ...prev,
-    ]);
-    setSort("latest");
-    setTag(null);
-    setQuery("");
-    toast.success("Posted to the community");
+    try {
+      const data = await api<{ post: ApiPost }>("/community/posts", {
+        method: "POST",
+        body: { title: post.title, content: post.content, tags: post.tag ? [post.tag] : [] },
+      });
+      setFeed((prev) => [data.post, ...prev]);
+      setSort("latest");
+      setTag(null);
+      setQuery("");
+      toast.success("Posted to the community");
+    } catch (error) {
+      toast.error(errorMessage(error, "Could not publish the post."));
+    }
   }
 
   return (
@@ -255,7 +298,9 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
             ))}
           </div>
 
-          {posts.length ? (
+          {feedError ? (
+            <p className="mt-5 text-sm text-muted-foreground" role="alert">{feedError}</p>
+          ) : posts.length ? (
             <ul className="mt-5 space-y-4">
               {posts.map((post) => (
                 <li key={post.id}>
@@ -265,9 +310,10 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
                     onTag={setTag}
                     member={Boolean(member)}
                     liked={liked.has(post.id)}
-                    onLike={() => toggleLike(post.id)}
+                    onLike={() => void toggleLike(post.id)}
                     replies={replies[post.id] ?? []}
-                    onReply={(text) => addReply(post.id, text)}
+                    onOpenReplies={() => void loadReplies(post.id)}
+                    onReply={(text) => void addReply(post.id, text)}
                     memberName={member?.name}
                   />
                 </li>
@@ -403,6 +449,7 @@ function PostItem({
   liked = false,
   onLike,
   replies = [],
+  onOpenReplies,
   onReply,
   memberName,
 }: {
@@ -412,7 +459,8 @@ function PostItem({
   member?: boolean;
   liked?: boolean;
   onLike?: () => void;
-  replies?: string[];
+  replies?: Reply[];
+  onOpenReplies?: () => void;
   onReply?: (text: string) => void;
   memberName?: string;
 }) {
@@ -508,21 +556,24 @@ function PostItem({
           onClick={() => (member ? onLike?.() : onRequireSignIn("like posts"))}
         >
           <Heart className={cn("h-3.5 w-3.5", liked && "fill-current")} />{" "}
-          {formatNumber(post.likes + (liked ? 1 : 0))}
+          {formatNumber(post.likes)}
         </Button>
         <Button
           variant="ghost"
           size="sm"
           className="h-8 px-2.5 text-xs text-muted-foreground"
           aria-expanded={member ? replying : undefined}
-          onClick={() =>
-            member
-              ? setReplying((v) => !v)
-              : onRequireSignIn("reply to discussions")
-          }
+          onClick={() => {
+            if (!member) {
+              onRequireSignIn("reply to discussions");
+              return;
+            }
+            setReplying((v) => !v);
+            onOpenReplies?.();
+          }}
         >
           <MessageCircle className="h-3.5 w-3.5" />{" "}
-          {post.comments + replies.length} replies
+          {post.comments} replies
         </Button>
         <Button
           variant="ghost"
@@ -536,21 +587,19 @@ function PostItem({
 
       {member && (replies.length > 0 || replying) ? (
         <div className="mt-3 space-y-3 rounded-xl bg-[#f8f9fc] p-3">
-          {replies.map((reply, index) => (
-            <div key={index} className="flex gap-2.5">
+          {replies.map((reply) => (
+            <div key={reply.id} className="flex gap-2.5">
               <span
                 className={cn(
                   "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white",
-                  toneFor(memberName ?? "You"),
+                  toneFor(reply.authorName),
                 )}
               >
-                {initials(memberName ?? "You")}
+                {initials(reply.authorName)}
               </span>
               <div className="min-w-0 rounded-lg bg-white px-3 py-2 ring-1 ring-border">
-                <p className="text-xs font-semibold text-foreground">
-                  {memberName ?? "You"}
-                </p>
-                <p className="mt-0.5 text-sm text-ink-soft">{reply}</p>
+                <p className="text-xs font-semibold text-foreground">{reply.authorName}</p>
+                <p className="mt-0.5 text-sm text-foreground">{reply.content}</p>
               </div>
             </div>
           ))}

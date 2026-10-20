@@ -27,7 +27,7 @@ import {
 import {
   aiSalahkarSlug,
   canScheduleHuman,
-  cardToListing,
+  mergeApiCard,
   type ApiProfessionalCard,
   type MarketplaceListing,
 } from "@/lib/data/marketplace";
@@ -119,7 +119,7 @@ export function AgentsDirectory({
   aiBase = "/ai-salahkars",
   stickyTop = "top-[6.25rem]",
 }: AgentsDirectoryProps) {
-  const [extraListings, setExtraListings] = useState<MarketplaceListing[]>([]);
+  const [liveListings, setLiveListings] = useState<MarketplaceListing[] | null>(null);
   const [view, setView] = useState<View>(initialView(searchParams?.kind));
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<AgentType | "all">(
@@ -129,12 +129,20 @@ export function AgentsDirectory({
   const [minRating, setMinRating] = useState("0");
   const [minExperience, setMinExperience] = useState("0");
 
-  // Professionals approved by admins after the static seed was built.
+  // The API is the live directory. Seed agents fill in bios the card does not carry.
   useEffect(() => {
-    const existing = new Set(agents.map((a) => a.slug));
+    let cancelled = false;
+    const seeds = new Map(agents.map((agent) => [agent.slug, agent]));
     api<{ items: ApiProfessionalCard[] }>("/professionals")
-      .then(({ items }) => setExtraListings(items.filter((c) => !existing.has(c.slug)).map(cardToListing)))
-      .catch(() => setExtraListings([]));
+      .then(({ items }) => {
+        if (!cancelled) setLiveListings(items.map((card) => mergeApiCard(card, seeds.get(card.slug))));
+      })
+      .catch(() => {
+        if (!cancelled) setLiveListings(null);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [agents]);
 
   // Keep ?kind= in the URL so the tab survives refresh and can be linked to.
@@ -146,8 +154,8 @@ export function AgentsDirectory({
   }, [view]);
 
   const entries = useMemo(
-    () => toEntries([...agents, ...extraListings]),
-    [agents, extraListings],
+    () => toEntries(liveListings ?? agents),
+    [liveListings, agents],
   );
 
   const availableSpecializations = useMemo(

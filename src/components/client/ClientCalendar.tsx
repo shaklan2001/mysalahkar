@@ -1,11 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarPlus } from "lucide-react";
-import {
-  appointmentsForViewer,
-  splitAppointments,
-} from "@/lib/data/appointments";
+import { loadBookings } from "@/lib/bookings";
+import { splitAppointments, type Appointment } from "@/lib/data/appointments";
 import {
   AppointmentList,
   EmptyAppointments,
@@ -30,7 +29,29 @@ export function ScheduleView({
   rebookHref,
   emptyMessage,
 }: ScheduleViewProps) {
-  const { upcoming, past } = splitAppointments(appointmentsForViewer(viewer));
+  const [items, setItems] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    loadBookings(viewer)
+      .then((next) => {
+        if (!cancelled) setItems(next);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [viewer]);
+
+  const { upcoming, past } = splitAppointments(items);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -66,7 +87,11 @@ export function ScheduleView({
 
         <TabsContent value="upcoming" className="mt-5">
           <section className="rounded-2xl border border-border bg-white p-5 sm:p-6">
-            {upcoming.length ? (
+            {loading ? (
+              <p className="text-sm text-muted-foreground">Loading consultations…</p>
+            ) : failed ? (
+              <p className="text-sm text-muted-foreground">Could not load your consultations.</p>
+            ) : upcoming.length ? (
               <AppointmentList appointments={upcoming} viewer={viewer} />
             ) : (
               <EmptyAppointments
@@ -95,7 +120,7 @@ export function ScheduleView({
       </Tabs>
 
       <p className="mt-4 text-xs text-muted-foreground">
-        Demo data. Meet links open Google Meet in a new tab. Times are in IST.
+        Times are in IST. Meet links open Google Meet in a new tab.
       </p>
     </div>
   );

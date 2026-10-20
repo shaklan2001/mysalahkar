@@ -37,6 +37,9 @@ import { aiSalahkarHref } from "@/lib/data/marketplace";
 import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
+import { errorMessage } from "@/lib/api";
+import { createBooking, createLead, isBookableSlot } from "@/lib/bookings";
+import { getSessionUser } from "@/lib/auth";
 import { AiConsultGate } from "./AiConsultGate";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { readClientSession } from "@/lib/client-session";
@@ -194,23 +197,30 @@ export function ConsultSession({
       return;
     }
     try {
-      const res = await fetch("/api/consultation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...escalateForm,
-          agentSlug: agent.slug,
+      const user = getSessionUser();
+      const slot = escalateForm.preferredTime;
+      if (user?.role === "client" && isBookableSlot(slot)) {
+        const booked = await createBooking({
+          proSlug: agent.slug,
+          startsAt: slot,
+          phone: escalateForm.phone,
+          email: escalateForm.email,
+          note: escalateForm.note,
           type: "human-escalation",
-          privacyConsent: true,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error("Failed");
-      toast.success(
-        data.meetUrl
-          ? `Call booked. Meet: ${data.meetUrl}`
-          : "Human consultation requested.",
-      );
+        });
+        toast.success(booked.meetUrl ? `Call booked. Meet: ${booked.meetUrl}` : "Call booked.");
+      } else {
+        await createLead({
+          name: escalateForm.name,
+          email: escalateForm.email,
+          phone: escalateForm.phone,
+          message: escalateForm.note,
+          source: "escalation",
+          proSlug: agent.slug,
+          preferredTime: slot || undefined,
+        });
+        toast.success("Human consultation requested.");
+      }
       setShowEscalate(false);
       setEscalateConsent(false);
       setEscalateForm({
@@ -220,8 +230,8 @@ export function ConsultSession({
         preferredTime: "",
         note: "",
       });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error) {
+      toast.error(errorMessage(error, "Something went wrong. Please try again."));
     }
   }
 
@@ -430,7 +440,6 @@ export function ConsultSession({
               <VoiceCallPanel
                 agentSlug={agent.slug}
                 agentName={displayName}
-                contactId={contactId}
                 active={callActive}
                 onEnded={() => setCallActive(false)}
                 fullScreen
@@ -547,7 +556,7 @@ export function ConsultSession({
                   }
                 />
                 <Input
-                  placeholder="Preferred time"
+                  type="datetime-local"
                   aria-label="Preferred time"
                   value={escalateForm.preferredTime}
                   onChange={(e) =>

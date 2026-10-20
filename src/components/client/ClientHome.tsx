@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -16,14 +16,12 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  appointmentsForViewer,
-  splitAppointments,
-} from "@/lib/data/appointments";
+import { splitAppointments, type Appointment } from "@/lib/data/appointments";
 import { getDigestForDate, upcomingDeadlines } from "@/lib/data/digest";
 import { aiConsultantName } from "@/lib/data/agents";
 import { getAiSalahkars } from "@/lib/data/marketplace";
-import { formatRupees, onWalletChange, readBalancePaise } from "@/lib/wallet";
+import { loadBookings } from "@/lib/bookings";
+import { formatRupees, readBalancePaise, useWalletBalance } from "@/lib/wallet";
 import {
   startWalletTopUp,
   WalletPaymentCancelled,
@@ -51,10 +49,6 @@ function greeting() {
   if (hour < 12) return "Good morning";
   if (hour < 17) return "Good afternoon";
   return "Good evening";
-}
-
-export function useWalletBalance() {
-  return useSyncExternalStore(onWalletChange, readBalancePaise, () => 0);
 }
 
 function Card({
@@ -104,8 +98,21 @@ export function ClientHome() {
   const { openConsult } = useConsult();
   const balance = useWalletBalance();
   const [topping, setTopping] = useState(false);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const { upcoming } = splitAppointments(appointmentsForViewer("client"));
+  useEffect(() => {
+    let cancelled = false;
+    loadBookings("client")
+      .then((items) => {
+        if (!cancelled) setAppointments(items);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const { upcoming } = splitAppointments(appointments);
   const next = upcoming[0];
   const nextSlot = next ? formatSlot(next) : null;
   const firstName = (session?.name ?? "").split(" ")[0] || "there";

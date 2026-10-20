@@ -14,8 +14,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CallLowBalanceDialog } from "@/components/consult/CallLowBalanceDialog";
 import { CallReviewDialog } from "@/components/consult/CallReviewDialog";
-import { formatClock, meterTick, readCallRates } from "@/lib/call-meter";
-import { debitWallet, formatRupees, readBalancePaise } from "@/lib/wallet";
+import { api, errorMessage as apiErrorMessage } from "@/lib/api";
+import { formatClock } from "@/lib/call-meter";
+import { formatRupees } from "@/lib/wallet";
+import { syncWalletAfterCall } from "@/lib/wallet-checkout";
 
 const TRANSCRIPT_TOPIC = "vibrium.voice.transcript";
 
@@ -34,10 +36,27 @@ type TranscriptLine = {
   content: string;
 };
 
+type CallMeter = {
+  callId: string;
+  status: string;
+  elapsedSeconds: number;
+  secondsRemaining: number | null;
+  warn: boolean;
+  cut: boolean;
+  balancePaise: number;
+  freeMinutes: number;
+  rupeesPerMinute: number;
+};
+
+type VoiceSession = {
+  token: string;
+  url: string;
+  roomName: string;
+};
+
 type VoiceCallPanelProps = {
   agentSlug: string;
   agentName: string;
-  contactId: string;
   active: boolean;
   onEnded: () => void;
   fullScreen?: boolean;
@@ -46,7 +65,6 @@ type VoiceCallPanelProps = {
 export function VoiceCallPanel({
   agentSlug,
   agentName,
-  contactId,
   active,
   onEnded,
   fullScreen = false,
@@ -69,7 +87,10 @@ export function VoiceCallPanel({
   const [walletPaise, setWalletPaise] = useState(0);
   const [lowBalance, setLowBalance] = useState(false);
   const payingRef = useRef(false);
-  const ratesRef = useRef(readCallRates());
+  const ratesRef = useRef({ freeMinutes: 5, rupeesPerMinute: 10 });
+  const callIdRef = useRef<string | null>(null);
+  const reviewCallRef = useRef<string | null>(null);
+  const [reviewCallId, setReviewCallId] = useState<string | null>(null);
   const hadCallRef = useRef(false);
   const mountedRef = useRef(true);
   const onEndedRef = useRef(onEnded);
@@ -79,6 +100,7 @@ export function VoiceCallPanel({
   const promptReview = useCallback(() => {
     if (!mountedRef.current || !hadCallRef.current) return;
     hadCallRef.current = false;
+    setReviewCallId(reviewCallRef.current);
     setReviewOpen(true);
   }, []);
 
@@ -116,6 +138,14 @@ export function VoiceCallPanel({
   const disconnect = useCallback(async () => {
     attemptRef.current += 1; // cancel any connect() still in flight
     connectingRef.current = false;
+    const callId = callIdRef.current;
+    callIdRef.current = null;
+    if (callId) reviewCallRef.current = callId;
+    if (callId) {
+      void api<CallMeter>(`/calls/${callId}/end`, { method: "POST" })
+        .then((meter) => syncWalletAfterCall(meter.balancePaise))
+        .catch(() => undefined);
+    }
     const room = roomRef.current;
     if (!room) {
       teardownAudio(null);
@@ -150,29 +180,33 @@ export function VoiceCallPanel({
     setErrorMessage(null);
     setTranscripts([]);
 
-    const sessionRes = await fetch("/api/agent/voice", {
+    const sessionRes = await api<{ callId: string; session: VoiceSession; meter: CallMeter }>("/calls/start", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        agentSlug,
-        contactId,
-        contactName: "Web visitor",
-        mode: "voice",
-      }),
+      body: { agentSlug, mode: "voice" },
+    }).catch((error: unknown) => {
+      if (cancelled()) return null;
+      connectingRef.current = false;
+      setErrorMessage(apiErrorMessage(error, "Could not start voice call"));
+      setStatus("error");
+      return null;
     });
 
-    if (cancelled()) return;
-
-    if (!sessionRes.ok) {
+    if (!sessionRes || cancelled()) return;
+    const { callId, session, meter } = sessionRes;
+    if (!session?.url || !session.token) {
       connectingRef.current = false;
-      const data = await sessionRes.json().catch(() => ({}));
-      setErrorMessage(data.error || "Could not start voice call");
+      setErrorMessage("Could not start voice call");
       setStatus("error");
+      void api(`/calls/${callId}/end`, { method: "POST" }).catch(() => undefined);
       return;
     }
-
-    const session = await sessionRes.json();
-    if (cancelled()) return;
+    callIdRef.current = callId;
+    ratesRef.current = { freeMinutes: meter.freeMinutes, rupeesPerMinute: meter.rupeesPerMinute };
+    setElapsedSeconds(meter.elapsedSeconds);
+    setSecondsRemaining(meter.secondsRemaining);
+    setWalletPaise(meter.balancePaise);
+    setLowBalance(meter.warn);
+    syncWalletAfterCall(meter.balancePaise);
     const room = new Room({ adaptiveStream: true, dynacast: true });
 
     room.on(RoomEvent.Connected, () => {
@@ -264,10 +298,13 @@ export function VoiceCallPanel({
       setErrorMessage(userMsg);
       setStatus("error");
       roomRef.current = null;
+      const failedCall = callIdRef.current;
+      callIdRef.current = null;
+      if (failedCall) void api(`/calls/${failedCall}/end`, { method: "POST" }).catch(() => undefined);
     } finally {
       if (!cancelled()) connectingRef.current = false;
     }
-  }, [active, addTranscript, agentSlug, contactId, promptReview, teardownAudio]);
+  }, [active, addTranscript, agentSlug, promptReview, teardownAudio]);
 
   useEffect(() => {
     if (active && status === "idle" && !reviewOpen) {
@@ -285,9 +322,14 @@ export function VoiceCallPanel({
       attemptRef.current += 1;
       connectingRef.current = false;
       const room = roomRef.current;
+      const callId = callIdRef.current;
+      callIdRef.current = null;
       roomRef.current = null;
       teardownAudio(room);
-      room?.disconnect().catch(() => {});
+      room?.disconnect().catch(() => undefined);
+      if (callId) {
+        void api(`/calls/${callId}/end`, { method: "POST" }).catch(() => undefined);
+      }
     };
   }, [teardownAudio]);
 
@@ -305,48 +347,30 @@ export function VoiceCallPanel({
 
   useEffect(() => {
     if (!isActive) return;
-    const startedAt = Date.now();
-    let chargedMinutes = 0;
-    const rates = ratesRef.current;
-    setWalletPaise(readBalancePaise());
-    setElapsedSeconds(0);
-
-    const id = window.setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startedAt) / 1000);
-      const balancePaise = readBalancePaise();
-      const tick = meterTick({
-        elapsedSeconds: elapsed,
-        balancePaise,
-        chargedMinutes,
-        freeMinutes: rates.freeMinutes,
-        rupeesPerMinute: rates.rupeesPerMinute,
-      });
-
-      if (tick.debitPaise > 0) {
-        const next = debitWallet(tick.debitPaise);
-        if (next === null) {
-          window.clearInterval(id);
-          toast.error("Call ended. The wallet could not cover the next minute.");
-          void disconnectRef.current();
-          return;
-        }
-        chargedMinutes = tick.paidMinutesDue;
-      }
-
-      setElapsedSeconds(elapsed);
-      setWalletPaise(readBalancePaise());
-      setSecondsRemaining(tick.secondsRemaining);
-      setLowBalance(tick.warn);
-
-      if (tick.cut && !payingRef.current) {
-        window.clearInterval(id);
-        toast.error("Call ended. Add money to keep talking.");
-        void disconnectRef.current();
-      }
+    const tick = window.setInterval(() => {
+      const callId = callIdRef.current;
+      if (!callId) return;
+      void api<CallMeter>(`/calls/${callId}/tick`, { method: "POST" })
+        .then((meter) => {
+          ratesRef.current = { freeMinutes: meter.freeMinutes, rupeesPerMinute: meter.rupeesPerMinute };
+          setElapsedSeconds(meter.elapsedSeconds);
+          setSecondsRemaining(meter.secondsRemaining);
+          setWalletPaise(meter.balancePaise);
+          setLowBalance(meter.warn);
+          syncWalletAfterCall(meter.balancePaise);
+          if (meter.cut && !payingRef.current) {
+            toast.error("Call ended. Add money to keep talking.");
+            void disconnectRef.current();
+          }
+        })
+        .catch(() => undefined);
+    }, 15_000);
+    const clock = window.setInterval(() => {
+      setElapsedSeconds((value) => value + 1);
     }, 1000);
-
     return () => {
-      window.clearInterval(id);
+      window.clearInterval(tick);
+      window.clearInterval(clock);
     };
   }, [isActive]);
 
@@ -448,7 +472,7 @@ export function VoiceCallPanel({
 
       {reviewOpen ? (
         <CallReviewDialog
-          agentSlug={agentSlug}
+          callId={reviewCallId ?? undefined}
           agentName={agentName}
           onClose={() => setReviewOpen(false)}
         />

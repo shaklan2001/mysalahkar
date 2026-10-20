@@ -1,6 +1,6 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { AgentProfileView } from "@/components/agents/AgentProfileView";
+import { LiveProfessionalProfile } from "@/components/agents/LiveProfessionalProfile";
 import {
   aiSalahkarHref,
   getMarketplaceListing,
@@ -35,7 +35,8 @@ export async function generateMetadata({ params }: AgentProfilePageProps): Promi
 export default async function AgentProfilePage({ params }: AgentProfilePageProps) {
   const { slug } = await params;
   const agent = getMarketplaceListing(slug);
-  if (!agent) notFound();
-  if (!hasHumanProfile(agent)) redirect(aiSalahkarHref(agent));
-  return <AgentProfileView agent={agent} />;
+  if (agent && !hasHumanProfile(agent)) redirect(aiSalahkarHref(agent));
+  return (
+    <LiveProfessionalProfile slug={slug} seed={agent ?? null} />
+  );
 }

@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LegalConsent } from "@/components/legal/LegalConsent";
+import { errorMessage } from "@/lib/api";
+import { createLead } from "@/lib/bookings";
 
 export function ContactForm() {
   const [loading, setLoading] = useState(false);
@@ -28,38 +30,25 @@ export function ContactForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/consultation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          type: "booking",
-          privacyConsent: true,
-        }),
+      await createLead({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.note,
+        source: "contact",
+        preferredTime: formData.preferredTime || undefined,
       });
-
-      const data = await response.json();
-
-      if (data.ok) {
-        toast.success(
-          data.meetUrl
-            ? `Booked. Google Meet: ${data.meetUrl}`
-            : "Request received! We'll contact you within 24 hours.",
-        );
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          preferredTime: "",
-          note: "",
-        });
-        setPrivacyConsent(false);
-      } else {
-        toast.error("Something went wrong. Please try again or call us directly.");
-      }
+      toast.success("Request received. We'll contact you within 24 hours.");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        preferredTime: "",
+        note: "",
+      });
+      setPrivacyConsent(false);
     } catch (error) {
-      console.error("Form submission error:", error);
-      toast.error("Failed to submit. Please try again or call us directly.");
+      toast.error(errorMessage(error, "Failed to submit. Please try again or call us directly."));
     } finally {
       setLoading(false);
     }

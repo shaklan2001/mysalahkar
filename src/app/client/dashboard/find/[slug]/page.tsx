@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { AgentProfileView } from "@/components/agents/AgentProfileView";
+import { LiveProfessionalProfile } from "@/components/agents/LiveProfessionalProfile";
 import {
   getMarketplaceListing,
   listingDisplayName,
@@ -25,11 +24,10 @@ export default async function ClientFindProfilePage({
 }: FindProfilePageProps) {
   const { slug } = await params;
   const agent = getMarketplaceListing(slug);
-  if (!agent) notFound();
-
   return (
-    <AgentProfileView
-      agent={agent}
+    <LiveProfessionalProfile
+      slug={slug}
+      seed={agent ?? null}
       backHref="/client/dashboard/find?kind=human"
       backLabel="Back to Find professionals"
       aiBase="/client/dashboard/find/ai"

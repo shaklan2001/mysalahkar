@@ -4,12 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  WALLET_TOP_UPS_RUPEES,
-  formatRupees,
-  onWalletChange,
-  readBalancePaise,
-} from "@/lib/wallet";
+import { formatRupees, useWalletSnapshot } from "@/lib/wallet";
 import {
   startWalletTopUp,
   WalletPaymentCancelled,
@@ -29,17 +24,12 @@ export function ClientWallet({
 } = {}) {
   const panelId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const wallet = useWalletSnapshot();
+  const balancePaise = wallet.balancePaise;
+  const topUps = wallet.topUpsRupees;
   const [open, setOpen] = useState(false);
-  const [balancePaise, setBalancePaise] = useState(0);
-  const [amountRupees, setAmountRupees] =
-    useState<(typeof WALLET_TOP_UPS_RUPEES)[number]>(500);
+  const [amountRupees, setAmountRupees] = useState(500);
   const [paying, setPaying] = useState(false);
-
-  useEffect(() => {
-    const sync = () => setBalancePaise(readBalancePaise());
-    sync();
-    return onWalletChange(sync);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -60,9 +50,8 @@ export function ClientWallet({
   async function handlePay() {
     setPaying(true);
     try {
-      const before = readBalancePaise();
+      const before = balancePaise;
       const next = await startWalletTopUp(amountRupees);
-      setBalancePaise(next);
       toast.success(`Added ${formatRupees(next - before)} to your wallet`);
       setOpen(false);
     } catch (error) {
@@ -113,11 +102,11 @@ export function ClientWallet({
             {formatRupees(balancePaise)}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Saved in this browser. Razorpay test mode.
+            Stored on your account. Sign in to add money.
           </p>
 
           <div className="mt-4 grid grid-cols-2 gap-2">
-            {WALLET_TOP_UPS_RUPEES.map((rupees) => {
+            {topUps.map((rupees) => {
               const selected = rupees === amountRupees;
               return (
                 <button

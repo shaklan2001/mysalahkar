@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -15,10 +15,10 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AuthField } from "@/components/auth/AuthFrame";
-import { useWalletBalance } from "@/components/client/ClientHome";
+import { useWalletBalance } from "@/lib/wallet";
 import { readClientSession, signOutClient } from "@/lib/client-session";
 import { api, errorMessage } from "@/lib/api";
-import { setSessionUser, signOutEverywhere, type SessionUser } from "@/lib/auth";
+import { setSessionUser, signOutEverywhere, useSession, type SessionUser } from "@/lib/auth";
 import { formatRupees } from "@/lib/wallet";
 import { SettingsSection as Section, SettingsToggle as Toggle } from "@/components/dashboard/SettingsSection";
 
@@ -31,9 +31,26 @@ export default function ClientSettingsPage() {
   const [email] = useState(() => readClientSession()?.email ?? "");
   const [saving, setSaving] = useState(false);
   const [phone] = useState(() => readClientSession()?.phone);
+  const { user } = useSession();
   const [reminders, setReminders] = useState(true);
   const [digestEmail, setDigestEmail] = useState(false);
   const [productNews, setProductNews] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("ms-client-notify");
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { reminders?: boolean; digestEmail?: boolean; productNews?: boolean };
+      if (typeof saved.reminders === "boolean") setReminders(saved.reminders);
+      if (typeof saved.digestEmail === "boolean") setDigestEmail(saved.digestEmail);
+      if (typeof saved.productNews === "boolean") setProductNews(saved.productNews);
+    } catch {
+      // A bad local preference is ignored; the defaults stay.
+    }
+  }, []);
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -54,11 +71,36 @@ export default function ClientSettingsPage() {
   }
 
   function saveNotifications() {
-    toast.success(
-      reminders
-        ? "Preferences saved. Reminders on."
-        : "Preferences saved. Reminders off.",
+    window.localStorage.setItem(
+      "ms-client-notify",
+      JSON.stringify({ reminders, digestEmail, productNews }),
     );
+    toast.success("Saved on this device. Email notifications aren't sent yet.");
+  }
+
+  async function changePassword(event: React.FormEvent) {
+    event.preventDefault();
+    if (newPassword.length < 8) {
+      toast.error("Use at least 8 characters.");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await api("/me/password", {
+        method: "POST",
+        body: {
+          ...(user?.hasPassword ? { currentPassword } : {}),
+          newPassword,
+        },
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      toast.success("Password updated.");
+    } catch (error) {
+      toast.error(errorMessage(error, "Could not change your password."));
+    } finally {
+      setChangingPassword(false);
+    }
   }
 
   return (
@@ -145,11 +187,50 @@ export default function ClientSettingsPage() {
             onChange={setProductNews}
           />
         </div>
+        <p className="mt-4 text-xs text-muted-foreground">
+          These choices stay on this browser. They are not saved to your account.
+        </p>
         <div className="mt-5 flex justify-end">
           <Button type="button" variant="outline" onClick={saveNotifications}>
-            Save preferences
+            Save on this device
           </Button>
         </div>
+      </Section>
+
+      <Section
+        icon={ShieldCheck}
+        title="Password"
+        description={user?.hasPassword ? "Change the password for this account." : "Add a password so you can also sign in with email."}
+      >
+        <form onSubmit={(event) => void changePassword(event)} className="space-y-4">
+          {user?.hasPassword ? (
+            <AuthField
+              id="current-password"
+              label="Current password"
+              type="password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.target.value)}
+              required
+            />
+          ) : null}
+          <AuthField
+            id="new-password"
+            label="New password"
+            type="password"
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+            minLength={8}
+            required
+            hint="At least 8 characters"
+          />
+          <div className="flex justify-end">
+            <Button type="submit" disabled={changingPassword}>
+              {changingPassword ? "Updating…" : "Update password"}
+            </Button>
+          </div>
+        </form>
       </Section>
 
       <Section

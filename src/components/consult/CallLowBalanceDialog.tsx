@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { formatClock } from "@/lib/call-meter";
-import { WALLET_TOP_UPS_RUPEES, formatRupees } from "@/lib/wallet";
+import { formatRupees, useWalletSnapshot } from "@/lib/wallet";
 import { startWalletTopUp, WalletPaymentCancelled } from "@/lib/wallet-checkout";
 
 type CallLowBalanceDialogProps = {
@@ -25,7 +25,8 @@ export function CallLowBalanceDialog({
   onPayingChange,
 }: CallLowBalanceDialogProps) {
   const titleId = useId();
-  const [amountRupees, setAmountRupees] = useState<(typeof WALLET_TOP_UPS_RUPEES)[number]>(100);
+  const topUps = useWalletSnapshot().topUpsRupees;
+  const [amountRupees, setAmountRupees] = useState(100);
   const [paying, setPaying] = useState(false);
 
   async function handlePay() {
@@ -63,7 +64,7 @@ export function CallLowBalanceDialog({
         <p className="mt-3 text-sm font-medium text-slate-800">Wallet {formatRupees(balancePaise)}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          {WALLET_TOP_UPS_RUPEES.map((rupees) => {
+          {topUps.map((rupees) => {
             const selected = rupees === amountRupees;
             return (
               <button

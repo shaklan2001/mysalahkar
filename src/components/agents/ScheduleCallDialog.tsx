@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Copy, ExternalLink, FileLock } from "lucide-react";
+import { Calendar, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { toast } from "sonner";
+import { createBooking } from "@/lib/bookings";
+import { errorMessage } from "@/lib/api";
 import { readClientSession } from "@/lib/client-session";
 
 type ScheduleCallDialogProps = {
@@ -25,7 +27,6 @@ type ScheduleCallDialogProps = {
 type BookingResult = {
   meetUrl: string;
   calendarUrl: string;
-  documentPassword: string | null;
 };
 
 export function ScheduleCallDialog({
@@ -71,32 +72,18 @@ export function ScheduleCallDialog({
     }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/consultation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          agentSlug: professionalSlug,
-          type: "booking",
-          privacyConsent: true,
-          hasDocument: Boolean(documentName),
-          documentName: documentName || undefined,
-          note: [serviceName && `Service: ${serviceName}`, form.note]
-            .filter(Boolean)
-            .join("\n"),
-        }),
+      const booked = await createBooking({
+        proSlug: professionalSlug,
+        startsAt: form.preferredTime,
+        phone: form.phone,
+        email: form.email || undefined,
+        note: [serviceName && `Service: ${serviceName}`, form.note].filter(Boolean).join("\n"),
+        documentName: documentName || undefined,
+        type: "booking",
       });
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Failed");
-      }
-      setBooking({
-        meetUrl: data.meetUrl,
-        calendarUrl: data.calendarUrl,
-        documentPassword: data.documentPassword ?? null,
-      });
-    } catch {
-      toast.error("Could not submit. Please try again.");
+      setBooking(booked);
+    } catch (error) {
+      toast.error(errorMessage(error, "Could not submit. Please try again."));
     } finally {
       setSubmitting(false);
     }
@@ -140,8 +127,7 @@ export function ScheduleCallDialog({
                   Call booked
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Google Meet link is ready. Open Google Calendar to add the invite
-                  for you and the consultant. Email is not sent in this demo.
+                  Google Meet link is ready. A calendar invite is sent to your email.
                 </p>
                 <a
                   href={booking.meetUrl}
@@ -171,15 +157,6 @@ export function ScheduleCallDialog({
                     </a>
                   </Button>
                 </div>
-                {booking.documentPassword ? (
-                  <p className="flex items-start gap-2 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
-                    <FileLock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    Document share password:{" "}
-                    <span className="font-mono font-semibold text-foreground">
-                      {booking.documentPassword}
-                    </span>
-                  </p>
-                ) : null}
                 <Button
                   type="button"
                   variant="outline"

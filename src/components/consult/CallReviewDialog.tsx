@@ -8,24 +8,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { saveCallReview } from "@/lib/call-reviews";
 
 type CallReviewDialogProps = {
-  agentSlug: string;
+  callId?: string;
+  bookingId?: string;
   agentName: string;
   onClose: () => void;
 };
 
-export function CallReviewDialog({ agentSlug, agentName, onClose }: CallReviewDialogProps) {
+export function CallReviewDialog({ callId, bookingId, agentName, onClose }: CallReviewDialogProps) {
   const titleId = useId();
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    setSaving(true);
     try {
-      saveCallReview({ agentSlug, stars, comment });
+      await saveCallReview({ callId, bookingId, stars, comment });
       toast.success("Thanks — your review was saved.");
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save the review.");
+      setSaving(false);
     }
   }
 
@@ -81,8 +85,8 @@ export function CallReviewDialog({ agentSlug, agentName, onClose }: CallReviewDi
           </p>
         ) : null}
 
-        <Button type="button" className="mt-4 w-full" onClick={handleSubmit}>
-          Submit review
+        <Button type="button" className="mt-4 w-full" disabled={saving} onClick={() => void handleSubmit()}>
+          {saving ? "Saving…" : "Submit review"}
         </Button>
         <button
           type="button"
