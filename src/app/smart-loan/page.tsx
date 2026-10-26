@@ -6,7 +6,7 @@ import { SmartLoan } from "@/components/loan/SmartLoan";
 export const metadata: Metadata = {
   title: "Smart Loan",
   description:
-    "Check personal-loan eligibility, compare partner-bank offers from My Mudra, and continue the application with the bank you choose.",
+    "Check personal-loan offers, or open a business or home loan case with My Mudra partner banks, track it, and upload documents.",
 };
 
 const criteria = [
@@ -44,11 +44,11 @@ export default function SmartLoanPage() {
       <PageHero
         align="left"
         size="compact"
-        eyebrow="Personal loan"
+        eyebrow="Personal, business and home loans"
         badge={{ label: "My Mudra partner banks" }}
         title="Smart Loan"
         highlight="shows what you qualify for."
-        description="Tell us the personal loan you need. We check the criteria, list the banks that will lend, and send the offer you pick to that bank."
+        description="Tell us the loan you need. For personal loans we list the banks that will lend; for business and home loans we open a case you can send to a bank and add documents to."
       />
       <section className="pb-8">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -81,7 +81,7 @@ export default function SmartLoanPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <SmartLoan />
           <p className="mt-6 max-w-3xl text-xs leading-relaxed text-muted-foreground">
-            Offers are fetched from My Mudra for salaried personal loans. Interest, fees, and approval are decided by the bank.
+            Offers and cases are handled by My Mudra. Personal-loan offers are for salaried applicants. Interest, fees, and approval are decided by the bank.
             Choosing an offer continues on the bank&apos;s website. My Salahkar does not sanction or disburse the loan.
           </p>
         </div>
