@@ -31,10 +31,9 @@ Copy `.env.example` to `.env.local`:
 
 | Variable | Purpose |
 | --- | --- |
-| `LEAD_WEBHOOK_URL` | Optional webhook for leads / consultations |
-| `LEAD_TO_EMAIL` | Destination email label (logged) |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | WhatsApp deep-link digits (e.g. `9198…`) |
-| `NEXT_PUBLIC_VIBRIUM_*` | Reserved for live Vibrium integration |
+| `API_ORIGIN` | Node API when Next must proxy `/api/v1` (local: `http://localhost:8000`) |
+
+Lead and consultation mail is sent by the API through Amazon SES (`EMAIL_BACKEND=ses`, `SUPPORT_EMAIL` in `backend/.env`).
 
 ## Key routes
 

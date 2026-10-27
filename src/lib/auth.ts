@@ -10,6 +10,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { api, ApiError } from "@/lib/api";
+import { completeSignInAction } from "@/lib/completeSignInAction";
 
 export type Role = "client" | "professional" | "admin";
 
@@ -144,14 +145,13 @@ export function signInUrl({ role, intent = "signin", method = "email", next, con
 
 /** After Auth0: find, link or create the MySalahkar account for this Auth0 identity, with the requested role. */
 export async function completeSignIn(role: Role, consent: boolean): Promise<SessionUser> {
-  const { user } = await api<{ user: SessionUser }>("/auth/session", {
-    method: "POST",
-    body: { role, ...(consent ? { privacyConsent: true } : {}) },
-    retry: false,
-  });
-  setRoleHint(user.role);
-  setSessionUser(user);
-  return user;
+  const result = await completeSignInAction(role, consent);
+  if (!result.ok) {
+    throw new ApiError(result.status, result.message, result.field, result.code ? { code: result.code } : {});
+  }
+  setRoleHint(result.user.role);
+  setSessionUser(result.user);
+  return result.user;
 }
 
 /** Ends the Auth0 session too (full-page redirect), then lands on the home page. */
