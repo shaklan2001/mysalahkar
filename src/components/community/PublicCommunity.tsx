@@ -68,6 +68,13 @@ const dateFmt = new Intl.DateTimeFormat("en-IN", {
   year: "numeric",
 });
 
+/** API dates are full ISO timestamps; seed data is YYYY-MM-DD. Either parses. A bad value must not crash the feed. */
+function formatPostDate(value: string | null | undefined) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : dateFmt.format(date);
+}
+
 function initials(name: string) {
   return name
     .split(" ")
@@ -504,7 +511,7 @@ function PostItem({
             </span>
           </div>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {dateFmt.format(new Date(`${post.date}T00:00:00`))}
+            {formatPostDate(post.date)}
           </p>
         </div>
       </header>

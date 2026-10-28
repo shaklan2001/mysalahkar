@@ -312,26 +312,60 @@ export function parseBanks(body: unknown): PartnerBank[] {
   return banks.sort((a, b) => a.bankName.localeCompare(b.bankName));
 }
 
+const CASE_BANK_LABELS: Record<string, string> = {
+  remark: "Status",
+  createdAt: "Added on",
+  approvedDate: "Approved on",
+  disbursedDate: "Disbursed on",
+  pddDate: "PDD date",
+  otcDate: "OTC date",
+};
+
 function labelFor(key: string): string {
+  const known = CASE_BANK_LABELS[key];
+  if (known) return known;
   const spaced = key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[_-]+/g, " ").trim();
   return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
 }
 
+const shortDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" }).format(date);
+
+/** Readable value, or "" for blanks, flags, unset {year:0} dates and nested objects. */
+function factValue(value: unknown): string {
+  if (typeof value === "number") return Number.isFinite(value) ? value.toLocaleString("en-IN") : "";
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) {
+      const at = new Date(trimmed);
+      return Number.isNaN(at.getTime()) ? "" : shortDate(at);
+    }
+    return trimmed.slice(0, 120);
+  }
+  if (value && typeof value === "object" && "year" in value) {
+    const { year, month, day } = value as { year?: unknown; month?: unknown; day?: unknown };
+    if (typeof year !== "number" || year <= 0 || typeof month !== "number" || typeof day !== "number") return "";
+    return shortDate(new Date(Date.UTC(year, month - 1, day)));
+  }
+  return "";
+}
+
 /**
- * getBankDetailsForBoCase: the response shape is undocumented, so keep the
- * readable scalar fields of each bank row and drop ids, links and blanks.
+ * getBankDetailsForBoCase returns [{ bankName, bankBoCaseDetails: { remark, createdAt, approvedDate, ... } }].
+ * Keep the readable fields of each row and drop ids, links, internal flags and unset dates.
  */
 export function parseCaseBanks(body: unknown): CaseBank[] {
   const root = body && typeof body === "object" ? (body as Record<string, unknown>).data ?? body : body;
   return firstRows(root)
     .slice(0, 20)
     .map((row) => {
+      const nested = row.bankBoCaseDetails;
+      const fields = { ...row, ...(nested && typeof nested === "object" && !Array.isArray(nested) ? nested : {}) };
       const facts: [string, string][] = [];
-      for (const [key, value] of Object.entries(row)) {
+      for (const [key, value] of Object.entries(fields)) {
         if (facts.length >= 10) break;
-        if (/id$|img|image|logo|link|url|token/i.test(key) || /^bank ?name$/i.test(key)) continue;
-        const shown =
-          typeof value === "string" ? value.trim().slice(0, 120) : typeof value === "number" || typeof value === "boolean" ? String(value) : "";
+        if (/id$|img|image|logo|link|url|token|verification/i.test(key) || /^bank ?name$/i.test(key)) continue;
+        const shown = factValue(value);
         if (shown) facts.push([labelFor(key), shown]);
       }
       return { bankName: text(row.bankName ?? row.name, 80) || "Bank", facts };

@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LegalConsent } from "@/components/legal/LegalConsent";
 import { SmartLoanCase } from "@/components/loan/SmartLoanCase";
 import { SmartLoanOffer } from "@/components/loan/SmartLoanOffer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { errorMessage } from "@/lib/api";
 import { assess, CASE_TYPES, LOAN_RULES, normalizePhone, type CaseType, type LoanOffer } from "@/lib/smart-loan";
+import { toast } from "sonner";
 
 type FormState = {
   name: string;
@@ -78,6 +80,7 @@ export function SmartLoan() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<LeadResult | null>(null);
   const [applyingId, setApplyingId] = useState("");
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const rules = LOAN_RULES[caseType];
   const request = useMemo(
@@ -100,6 +103,11 @@ export function SmartLoan() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
+  function fail(message: string) {
+    setError(message);
+    toast.error(message);
+  }
+
   function chooseType(next: CaseType) {
     if (next === caseType) return;
     setCaseType(next);
@@ -112,15 +120,15 @@ export function SmartLoan() {
     event.preventDefault();
     setError("");
     if (caseType === "PL" && !salaried) {
-      setError("This check is for salaried personal loans.");
+      fail("This check is for salaried personal loans.");
       return;
     }
     if (!consent) {
-      setError("Please accept the Terms and DPDP consent to continue.");
+      fail("Please accept the Terms and DPDP consent to continue.");
       return;
     }
     if (issues[0]) {
-      setError(issues[0]);
+      fail(issues[0]);
       return;
     }
     setChecking(true);
@@ -141,7 +149,7 @@ export function SmartLoan() {
       });
     } catch (caught) {
       setResult(null);
-      setError(caught instanceof Error ? caught.message : "Something went wrong. Please try again.");
+      fail(errorMessage(caught));
     } finally {
       setChecking(false);
     }
@@ -149,7 +157,7 @@ export function SmartLoan() {
 
   async function handleChoose(offer: LoanOffer) {
     if (!result?.quote) {
-      setError("Check eligibility again, then choose an offer.");
+      fail("Check eligibility again, then choose an offer.");
       return;
     }
     setError("");
@@ -159,12 +167,17 @@ export function SmartLoan() {
       if (!data.utmLink?.startsWith("https://")) throw new Error("The bank did not return an application link.");
       window.location.assign(data.utmLink);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Something went wrong. Please try again.");
+      fail(errorMessage(caught));
       setApplyingId("");
     }
   }
 
   const offers = result?.offers ?? null;
+
+  useEffect(() => {
+    if (!result) return;
+    resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [result]);
 
   return (
     <div className="space-y-4">
@@ -234,7 +247,7 @@ export function SmartLoan() {
           </Button>
         </form>
 
-        <div className="space-y-4">
+        <div ref={resultRef} className={`scroll-mt-24 space-y-4 ${result ? "max-lg:order-first" : ""}`}>
           {result === null ? (
             <div className="rounded-2xl border border-dashed border-border bg-white/70 p-6 text-sm text-muted-foreground">
               {caseType === "PL"

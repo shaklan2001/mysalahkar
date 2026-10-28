@@ -54,7 +54,7 @@ export function FirstConsultOffer() {
               </div>
               
               <div>
-                <h4 className="mb-4 font-semibold text-slate-900">What's included:</h4>
+                <h4 className="mb-4 font-semibold text-slate-900">What&apos;s included:</h4>
                 <ul className="space-y-3">
                   {benefits.map((benefit, idx) => (
                     <li key={idx} className="flex items-start gap-3">

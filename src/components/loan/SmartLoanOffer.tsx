@@ -53,14 +53,17 @@ export function SmartLoanOffer({
         ))}
       </dl>
       {offer.features.length ? (
-        <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
-          {offer.features.map((feature) => (
-            <li key={feature} className="flex gap-2">
-              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
-              {feature}
-            </li>
-          ))}
-        </ul>
+        <div className="mt-4">
+          <p className="text-xs text-muted-foreground">Use case</p>
+          <ul className="mt-1.5 space-y-1.5 text-sm text-muted-foreground">
+            {offer.features.map((feature) => (
+              <li key={feature} className="flex gap-2">
+                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : null}
       {offer.penalCharges ? (
         <p className="mt-3 text-xs text-muted-foreground">Late charges: {offer.penalCharges}</p>

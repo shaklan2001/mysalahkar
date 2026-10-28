@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Check, FileUp, Landmark, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { errorMessage } from "@/lib/api";
 import { DOCUMENT_LABELS, DOCUMENT_MAX_BYTES, type CaseBank, type PartnerBank } from "@/lib/smart-loan";
+import { toast } from "sonner";
 
 type Reply = { error?: string; banks?: PartnerBank[] | CaseBank[]; uploaded?: string };
 
@@ -45,7 +47,9 @@ export function SmartLoanCase({ quote, showBankStep }: { quote: string; showBank
     try {
       await work();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Something went wrong. Please try again.");
+      const message = errorMessage(caught);
+      setError(message);
+      toast.error(message);
     } finally {
       setBusy("");
     }
