@@ -23,7 +23,6 @@ import { getSessionUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { LegalConsent } from "@/components/legal/LegalConsent";
-import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { readProDraft } from "@/lib/pro-account";
 
 const steps = [
@@ -317,33 +316,6 @@ export function SignupWizard({
       </ol>
 
       <div className="mt-8 rounded-2xl border border-border bg-white p-6 sm:p-8">
-        {step === 0 && (
-          <div className="mb-6 space-y-4">
-            <LegalConsent
-              id="signup-google-dpdp"
-              checked={form.privacyConsent}
-              onChange={(checked) => update("privacyConsent", checked)}
-            />
-            <GoogleAuthButton
-              role="professional"
-              intent="signup"
-              consent={form.privacyConsent}
-            />
-            <div className="relative">
-              <div
-                className="absolute inset-0 flex items-center"
-                aria-hidden="true"
-              >
-                <span className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">
-                  or continue with email
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
         {step === 0 && (
           <div className="space-y-5">
             <div>

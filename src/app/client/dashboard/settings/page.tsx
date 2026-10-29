@@ -18,7 +18,7 @@ import { AuthField } from "@/components/auth/AuthFrame";
 import { useWalletBalance } from "@/lib/wallet";
 import { readClientSession, signOutClient } from "@/lib/client-session";
 import { api, errorMessage } from "@/lib/api";
-import { setSessionUser, signOutEverywhere, useSession, type SessionUser } from "@/lib/auth";
+import { setSessionUser, useSession, type SessionUser } from "@/lib/auth";
 import { formatRupees } from "@/lib/wallet";
 import { SettingsSection as Section, SettingsToggle as Toggle } from "@/components/dashboard/SettingsSection";
 
@@ -35,9 +35,6 @@ export default function ClientSettingsPage() {
   const [reminders, setReminders] = useState(true);
   const [digestEmail, setDigestEmail] = useState(false);
   const [productNews, setProductNews] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     try {
@@ -76,31 +73,6 @@ export default function ClientSettingsPage() {
       JSON.stringify({ reminders, digestEmail, productNews }),
     );
     toast.success("Saved on this device. Email notifications aren't sent yet.");
-  }
-
-  async function changePassword(event: React.FormEvent) {
-    event.preventDefault();
-    if (newPassword.length < 8) {
-      toast.error("Use at least 8 characters.");
-      return;
-    }
-    setChangingPassword(true);
-    try {
-      await api("/me/password", {
-        method: "POST",
-        body: {
-          ...(user?.hasPassword ? { currentPassword } : {}),
-          newPassword,
-        },
-      });
-      setCurrentPassword("");
-      setNewPassword("");
-      toast.success("Password updated.");
-    } catch (error) {
-      toast.error(errorMessage(error, "Could not change your password."));
-    } finally {
-      setChangingPassword(false);
-    }
   }
 
   return (
@@ -199,38 +171,14 @@ export default function ClientSettingsPage() {
 
       <Section
         icon={ShieldCheck}
-        title="Password"
-        description={user?.hasPassword ? "Change the password for this account." : "Add a password so you can also sign in with email."}
+        title="Sign-in"
+        description="Your login is handled securely by Auth0."
       >
-        <form onSubmit={(event) => void changePassword(event)} className="space-y-4">
-          {user?.hasPassword ? (
-            <AuthField
-              id="current-password"
-              label="Current password"
-              type="password"
-              autoComplete="current-password"
-              value={currentPassword}
-              onChange={(event) => setCurrentPassword(event.target.value)}
-              required
-            />
-          ) : null}
-          <AuthField
-            id="new-password"
-            label="New password"
-            type="password"
-            autoComplete="new-password"
-            value={newPassword}
-            onChange={(event) => setNewPassword(event.target.value)}
-            minLength={8}
-            required
-            hint="At least 8 characters"
-          />
-          <div className="flex justify-end">
-            <Button type="submit" disabled={changingPassword}>
-              {changingPassword ? "Updating…" : "Update password"}
-            </Button>
-          </div>
-        </form>
+        <p className="text-sm text-ink-soft">
+          {user?.googleLinked
+            ? "You sign in with your Google account. Manage its password and security in your Google account."
+            : "You sign in with your email and password. To change your password, sign out and choose “Forgot password?” on the sign-in screen."}
+        </p>
       </Section>
 
       <Section
@@ -295,29 +243,6 @@ export default function ClientSettingsPage() {
             }}
           >
             <LogOut className="h-4 w-4" /> Sign out
-          </Button>
-        </div>
-        <div className="mt-4 flex items-center justify-between gap-4 border-t border-border/70 pt-5">
-          <div>
-            <p className="text-sm font-medium text-foreground">Sign out of all devices</p>
-            <p className="text-sm text-muted-foreground">
-              Use this if you signed in on a shared or lost device.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={async () => {
-              try {
-                await signOutEverywhere();
-                toast.success("Signed out on every device");
-                router.push("/");
-              } catch (error) {
-                toast.error(errorMessage(error));
-              }
-            }}
-          >
-            <LogOut className="h-4 w-4" /> Sign out everywhere
           </Button>
         </div>
       </Section>

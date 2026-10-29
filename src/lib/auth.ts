@@ -1,12 +1,15 @@
 "use client";
 
 /**
- * Session for every role (client, professional, admin), backed by the API's httpOnly cookies.
- * One shared store: `useSession()` in components, `getSessionUser()` in event handlers.
+ * Session for every role (client, professional, admin).
+ *
+ * Auth0 signs people in (/auth/login, a full-page redirect); the MySalahkar API then decides who they are and what
+ * role they have (POST /api/v1/auth/session, GET /api/v1/me). One shared store: `useSession()` in components,
+ * `getSessionUser()` in event handlers.
  */
 
 import { useEffect, useSyncExternalStore } from "react";
-import { api, API_URL } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 
 export type Role = "client" | "professional" | "admin";
 
@@ -37,6 +40,25 @@ export const ROLE_HOME: Record<Role, string> = {
   admin: "/admin/applications",
 };
 
+// ---- Role hint cookie ----
+// Readable role name next to the Auth0 session: lets src/proxy.ts redirect dashboards early and lets pages skip
+// /me for signed-out visitors. Never trusted: the API checks the real role on every request.
+
+const ROLE_COOKIE = "ms_role";
+
+function hasRoleHint(): boolean {
+  return typeof document !== "undefined" && new RegExp(`(?:^|;\\s*)${ROLE_COOKIE}=`).test(document.cookie);
+}
+
+function setRoleHint(role: Role | null) {
+  const secure = window.location.protocol === "https:" ? "; secure" : "";
+  document.cookie = role
+    ? `${ROLE_COOKIE}=${role}; path=/; max-age=${30 * 24 * 3600}; samesite=lax${secure}`
+    : `${ROLE_COOKIE}=; path=/; max-age=0; samesite=lax${secure}`;
+}
+
+// ---- Store ----
+
 const SERVER_STATE: SessionState = { ready: false, user: null };
 let state: SessionState = SERVER_STATE;
 let loading: Promise<SessionUser | null> | null = null;
@@ -52,15 +74,10 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-/** The API sets this role hint next to the session; without it there is no session to load. */
-function hasSessionHint(): boolean {
-  return typeof document !== "undefined" && /(?:^|;\s*)ms_role=/.test(document.cookie);
-}
-
 /** Loads the signed-in user once (deduplicated). Resolves null when signed out. */
 export function loadSession(force = false): Promise<SessionUser | null> {
   if (loading && !force) return loading;
-  if (!hasSessionHint()) {
+  if (!hasRoleHint()) {
     emit({ ready: true, user: null });
     loading = Promise.resolve(null);
     return loading;
@@ -70,7 +87,9 @@ export function loadSession(force = false): Promise<SessionUser | null> {
       emit({ ready: true, user });
       return user;
     })
-    .catch(() => {
+    .catch((error: unknown) => {
+      // Auth0 session gone, or the account was disabled: forget the hint so pages stop asking.
+      if (error instanceof ApiError && (error.status === 401 || error.status === 403)) setRoleHint(null);
       emit({ ready: true, user: null });
       return null;
     });
@@ -99,77 +118,60 @@ export function hasRole(user: SessionUser | null, ...roles: Role[]): user is Ses
   return Boolean(user && (user.role === "admin" || roles.includes(user.role)));
 }
 
-// ---- Sign-in methods ----
+// ---- Signing in and out ----
 
-export async function signInWithPassword(input: { email: string; password: string; role: Role }) {
-  const { user } = await api<{ user: SessionUser }>("/auth/login", { method: "POST", body: input, retry: false });
-  setSessionUser(user);
-  return user;
-}
-
-export async function signUpWithPassword(input: {
-  role: Exclude<Role, "admin">;
-  name: string;
-  email: string;
-  password: string;
-}) {
-  const { user } = await api<{ user: SessionUser }>("/auth/signup", {
-    method: "POST",
-    body: { ...input, privacyConsent: true },
-    retry: false,
-  });
-  setSessionUser(user);
-  return user;
-}
-
-export async function sendOtp(input: { channel: "phone" | "email"; target: string; role: Exclude<Role, "admin"> }) {
-  return api<{ ok: true; devCode?: string }>("/auth/otp/send", { method: "POST", body: input, retry: false });
-}
-
-export async function verifyOtp(input: {
-  channel: "phone" | "email";
-  target: string;
-  role: Exclude<Role, "admin">;
-  code: string;
-}) {
-  const { user } = await api<{ user: SessionUser }>("/auth/otp/verify", {
-    method: "POST",
-    body: { ...input, privacyConsent: true },
-    retry: false,
-  });
-  setSessionUser(user);
-  return user;
-}
-
-/** Full-page redirect into Google OAuth (authorization code + PKCE, handled by the API). */
-export function googleSignInUrl(role: Role, next?: string): string {
-  const params = new URLSearchParams({ role, consent: "true" });
-  if (next) params.set("next", next);
-  return `${API_URL}/auth/oauth/google/start?${params.toString()}`;
-}
-
-export async function signOut() {
-  await api("/auth/logout", { method: "POST", retry: false }).catch(() => undefined);
-  setSessionUser(null);
-}
-
-export async function signOutEverywhere() {
-  await api("/auth/logout-all", { method: "POST" });
-  setSessionUser(null);
-}
-
-const OAUTH_ERRORS: Record<string, string> = {
-  google_unavailable: "Google sign-in isn't set up yet. Please use email.",
-  oauth_cancelled: "Google sign-in was cancelled.",
-  consent_required: "Please accept the Terms and DPDP consent, then continue with Google.",
-  email_unverified: "Your Google account's email isn't verified.",
-  wrong_role: "This Google account is registered as a different account type. Use the other login.",
-  not_admin: "This account doesn't have admin access.",
-  disabled: "This account is disabled. Contact support@mysalahkar.com.",
+export type SignInOptions = {
+  role: Role;
+  /** Opens Auth0's sign-up screen instead of sign-in. */
+  intent?: "signin" | "signup";
+  /** Skip Auth0's screen and go straight to Google. */
+  method?: "email" | "google";
+  /** In-app path to land on afterwards. */
+  next: string;
+  /** The person ticked the Terms + DPDP consent (required to create an account). */
+  consent: boolean;
 };
 
-/** Message for the ?error= code the API's OAuth callback redirects back with. */
-export function oauthErrorMessage(code: string | null): string | null {
-  if (!code) return null;
-  return OAUTH_ERRORS[code] ?? "Google sign-in failed. Please try again.";
+/** Full-page URL into Auth0. Auth0 returns to /signin/complete, which finishes with the API. */
+export function signInUrl({ role, intent = "signin", method = "email", next, consent }: SignInOptions): string {
+  const complete = new URLSearchParams({ role, next });
+  if (consent) complete.set("consent", "1");
+  const params = new URLSearchParams({ returnTo: `/signin/complete?${complete.toString()}` });
+  if (intent === "signup") params.set("screen_hint", "signup");
+  if (method === "google") params.set("connection", "google-oauth2");
+  return `/auth/login?${params.toString()}`;
+}
+
+/** After Auth0: find, link or create the MySalahkar account for this Auth0 identity, with the requested role. */
+export async function completeSignIn(role: Role, consent: boolean): Promise<SessionUser> {
+  const { user } = await api<{ user: SessionUser }>("/auth/session", {
+    method: "POST",
+    body: { role, ...(consent ? { privacyConsent: true } : {}) },
+    retry: false,
+  });
+  setRoleHint(user.role);
+  setSessionUser(user);
+  return user;
+}
+
+/** Ends the Auth0 session too (full-page redirect), then lands on the home page. */
+export async function signOut(): Promise<void> {
+  setRoleHint(null);
+  setSessionUser(null);
+  window.location.assign("/auth/logout");
+}
+
+const SIGN_IN_ERRORS: Record<string, string> = {
+  consent_required: "Please accept the Terms and DPDP consent, then continue.",
+  email_unverified: "Please verify your email first (check your inbox for Auth0's email), then sign in again.",
+  other_method: "This email is already registered with a different sign-in method. Sign out and use that one.",
+  wrong_role: "This account is registered as a different account type. Use the other login.",
+  not_admin: "This account doesn't have admin access.",
+  disabled: "This account is disabled. Contact support@mysalahkar.com.",
+  signed_out: "Your sign-in didn't complete. Please try again.",
+};
+
+/** Message for a sign-in failure code from POST /auth/session. */
+export function signInErrorMessage(code: string | undefined, fallback?: string): string {
+  return (code && SIGN_IN_ERRORS[code]) || fallback || "Sign-in failed. Please try again.";
 }

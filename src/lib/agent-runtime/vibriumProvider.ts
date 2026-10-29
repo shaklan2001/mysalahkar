@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/api";
+import { API_URL, authHeaders } from "@/lib/api";
 import { consumeAgentStream } from "@/lib/chat-stream";
 import { isLiveDemoAgent } from "@/lib/data/agents";
 import type { AgentProvider } from "./types";
@@ -9,8 +9,7 @@ async function ensureSession(agentSlug: string) {
   if (started.has(agentSlug)) return;
   const res = await fetch(`${API_URL}/chat/start`, {
     method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: await authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ agentSlug }),
   });
   if (!res.ok) {
@@ -20,7 +19,7 @@ async function ensureSession(agentSlug: string) {
   started.add(agentSlug);
 }
 
-/** Live agents bill and talk through the API. The API derives the contact from the session. */
+/** Live agents bill and talk through the API. The API derives the contact from the signed-in user. */
 export const vibriumAgentProvider: AgentProvider = {
   async streamReply(agentSlug, userMessage, onChunk, signal) {
     if (!isLiveDemoAgent(agentSlug)) {
@@ -31,8 +30,7 @@ export const vibriumAgentProvider: AgentProvider = {
 
     const res = await fetch(`${API_URL}/chat/message`, {
       method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ agentSlug, message: userMessage }),
       signal,
     });

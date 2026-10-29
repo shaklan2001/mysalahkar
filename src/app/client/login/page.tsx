@@ -2,69 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowRight, Lock, Mail } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { LegalConsent } from "@/components/legal/LegalConsent";
-import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import {
-  PhoneOtpForm,
-  SignInMethodSwitch,
-} from "@/components/auth/PhoneOtpForm";
-import {
-  AuthField,
-  AuthFrame,
-  AuthOr,
-  PasswordField,
-} from "@/components/auth/AuthFrame";
+import { AuthButtons } from "@/components/auth/AuthButtons";
+import { AuthFrame } from "@/components/auth/AuthFrame";
+import { useRedirectIfSignedIn } from "@/components/auth/useAuthRedirects";
 import { useAuthNext } from "@/lib/client-session";
-import { errorMessage } from "@/lib/api";
-import { signInWithPassword } from "@/lib/auth";
-import {
-  useOAuthErrorToast,
-  useRedirectIfSignedIn,
-} from "@/components/auth/useAuthRedirects";
 
 export default function ClientLoginPage() {
-  const router = useRouter();
   const { next, href } = useAuthNext();
-  const [loading, setLoading] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
-  const [method, setMethod] = useState<"email" | "phone">("email");
-
   useRedirectIfSignedIn("client", next);
-  useOAuthErrorToast();
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!privacyConsent) {
-      toast.error("Please accept the Terms and DPDP consent to continue.");
-      return;
-    }
-    const data = new FormData(e.currentTarget);
-    setLoading(true);
-    try {
-      await signInWithPassword({
-        email: String(data.get("email") ?? ""),
-        password: String(data.get("password") ?? ""),
-        role: "client",
-      });
-      toast.success("Signed in");
-      router.replace(next);
-    } catch (error) {
-      toast.error(errorMessage(error));
-      setLoading(false);
-    }
-  }
-
-  const consent = (
-    <LegalConsent
-      id="client-login-dpdp"
-      checked={privacyConsent}
-      onChange={setPrivacyConsent}
-    />
-  );
 
   return (
     <AuthFrame
@@ -76,64 +23,15 @@ export default function ClientLoginPage() {
       footer={
         <p>
           New to My Salahkar?{" "}
-          <Link
-            href={href("/client/signup")}
-            className="font-semibold text-accent hover:underline"
-          >
+          <Link href={href("/client/signup")} className="font-semibold text-accent hover:underline">
             Create a free account
           </Link>
         </p>
       }
     >
       <div className="space-y-5">
-        <SignInMethodSwitch value={method} onChange={setMethod} />
-
-        {method === "email" ? (
-          <form onSubmit={onSubmit} className="space-y-4">
-            <AuthField
-              id="email"
-              name="email"
-              label="Email"
-              type="email"
-              icon={Mail}
-              placeholder="you@company.com"
-              autoComplete="email"
-              required
-            />
-            <PasswordField
-              id="password"
-              name="password"
-              label="Password"
-              icon={Lock}
-              placeholder="Your password"
-              autoComplete="current-password"
-              required
-            />
-            {consent}
-            <Button
-              type="submit"
-              variant="accent"
-              className="h-11 w-full"
-              disabled={loading || !privacyConsent}
-            >
-              {loading ? "Signing in…" : "Sign in"}
-              {loading ? null : <ArrowRight className="h-4 w-4" />}
-            </Button>
-          </form>
-        ) : (
-          <PhoneOtpForm
-            role="client"
-            consent={privacyConsent}
-            consentSlot={consent}
-            onVerified={() => {
-              toast.success("Signed in");
-              router.replace(next);
-            }}
-          />
-        )}
-
-        <AuthOr />
-        <GoogleAuthButton role="client" consent={privacyConsent} />
+        <LegalConsent id="client-login-dpdp" checked={privacyConsent} onChange={setPrivacyConsent} />
+        <AuthButtons role="client" consent={privacyConsent} next={next} variant="accent" />
       </div>
     </AuthFrame>
   );
