@@ -11,7 +11,7 @@ type Reply = { error?: string; banks?: PartnerBank[] | CaseBank[]; uploaded?: st
 async function send(body: BodyInit, json: boolean): Promise<Reply> {
   let res: Response;
   try {
-    res = await fetch("/api/smart-loan", {
+    res = await fetch("/api/v1/smart-loan", {
       method: "POST",
       headers: json ? { "Content-Type": "application/json" } : undefined,
       body,

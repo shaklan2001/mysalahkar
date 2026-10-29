@@ -36,7 +36,7 @@ type LeadResult = { caseType: CaseType; applicant: string; offers: LoanOffer[] |
 async function postSmartLoan(body: unknown) {
   let res: Response;
   try {
-    res = await fetch("/api/smart-loan", {
+    res = await fetch("/api/v1/smart-loan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
