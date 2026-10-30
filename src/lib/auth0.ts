@@ -15,7 +15,10 @@ export const auth0 = new Auth0Client({
   },
 });
 
-/** False until the Auth0 variables are in .env.local, so the site still renders while Auth0 is being set up. */
-export const auth0Configured = Boolean(
-  process.env.AUTH0_DOMAIN && process.env.AUTH0_CLIENT_ID && process.env.AUTH0_SECRET && process.env.APP_BASE_URL,
+/** The Auth0 variables still missing from .env.local; empty once Auth0 is set up. */
+export const auth0MissingEnv = (["AUTH0_DOMAIN", "AUTH0_CLIENT_ID", "AUTH0_SECRET", "APP_BASE_URL"] as const).filter(
+  (name) => !process.env[name],
 );
+
+/** False until the Auth0 variables are in .env.local, so the site still renders while Auth0 is being set up. */
+export const auth0Configured = auth0MissingEnv.length === 0;

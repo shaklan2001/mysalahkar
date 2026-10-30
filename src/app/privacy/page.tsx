@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">1. Introduction</h2>
             <p className="text-slate-600">
-              My Salahkar Technologies Private Limited ("My Salahkar", "we", "us", or "our")
+              My Salahkar Technologies Private Limited (&quot;My Salahkar&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;)
               operates the website mysalahkar.com and provides AI-powered professional
               consultancy services. This Privacy Policy explains how we collect, use,
               disclose, and safeguard your information when you use our services.
@@ -255,7 +255,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">
-              9. Children's Privacy
+              9. Children&apos;s Privacy
             </h2>
             <p className="text-slate-600">
               Our services are not directed to individuals under 18 years of age. We do not
@@ -280,7 +280,7 @@ export default function PrivacyPage() {
               11. Changes to This Policy
             </h2>
             <p className="text-slate-600">
-              We may update this Privacy Policy periodically. The "Last updated" date at the
+              We may update this Privacy Policy periodically. The &quot;Last updated&quot; date at the
               top indicates the latest revision. Material changes will be notified via email or
               prominent notice on our website.
             </p>

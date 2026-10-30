@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { auth0, auth0Configured } from "@/lib/auth0";
+import { auth0, auth0Configured, auth0MissingEnv } from "@/lib/auth0";
 
 /**
  * Runs on every page request (Next 16 Proxy, formerly Middleware):
@@ -18,6 +18,7 @@ const RULES = [
 export async function proxy(request: NextRequest) {
   const authResponse = auth0Configured ? await auth0.middleware(request) : NextResponse.next();
   const { pathname, search } = request.nextUrl;
+  if (pathname.startsWith("/auth/") && !auth0Configured) return auth0NotConfigured();
   if (pathname.startsWith("/auth/") || pathname === "/admin/login") return authResponse;
 
   const rule = RULES.find((r) => pathname === r.prefix || pathname.startsWith(`${r.prefix}/`));
@@ -30,6 +31,18 @@ export async function proxy(request: NextRequest) {
   const login = new URL(rule.login, request.url);
   login.searchParams.set("next", `${pathname}${search}`);
   return NextResponse.redirect(login);
+}
+
+/** Without Auth0 the /auth/* routes don't exist; say why instead of a bare 404. Variable names only outside prod. */
+function auth0NotConfigured() {
+  const detail =
+    process.env.NODE_ENV === "production"
+      ? ""
+      : ` Missing: ${auth0MissingEnv.join(", ")}. Add them to frontend/.env.local and restart (see backend-node/README.md, "Auth0 setup").`;
+  return new NextResponse(`Sign-in is unavailable: Auth0 is not configured.${detail}\n`, {
+    status: 503,
+    headers: { "content-type": "text/plain; charset=utf-8" },
+  });
 }
 
 export const config = {

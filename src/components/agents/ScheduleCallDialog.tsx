@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { LegalConsent } from "@/components/legal/LegalConsent";
 import { toast } from "sonner";
 import { createBooking } from "@/lib/bookings";
 import { errorMessage } from "@/lib/api";
-import { readClientSession } from "@/lib/client-session";
+import { readClientSession, useClientSession } from "@/lib/client-session";
 
 type ScheduleCallDialogProps = {
   professionalName: string;
@@ -41,10 +41,14 @@ export function ScheduleCallDialog({
 }: ScheduleCallDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { session } = useClientSession();
 
-  useEffect(() => {
-    if (initialOpen && readClientSession()) setOpen(true);
-  }, [initialOpen]);
+  // Open once on arrival (e.g. back from sign-in with ?book=…), as soon as the session has loaded.
+  const [autoOpened, setAutoOpened] = useState(false);
+  if (initialOpen && session && !autoOpened) {
+    setAutoOpened(true);
+    setOpen(true);
+  }
   const [submitting, setSubmitting] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [documentName, setDocumentName] = useState("");

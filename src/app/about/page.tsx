@@ -42,13 +42,13 @@ export default function AboutPage() {
                 decisions because expert guidance feels out of reach.
               </p>
               <p className="mb-4 text-lg text-slate-600">
-                My Salahkar changes that. We've built AI Salahkars trained on decades of
+                My Salahkar changes that. We&apos;ve built AI Salahkars trained on decades of
                 regulatory knowledge, supervised by licensed professionals. The result?
                 Instant, accurate answers at a fraction of traditional costs.
               </p>
               <p className="text-lg text-slate-600">
                 We believe everyone deserves access to quality professional advice — whether
-                you're filing your first GST return or structuring a ₹100 crore transaction.
+                you&apos;re filing your first GST return or structuring a ₹100 crore transaction.
               </p>
             </div>
 
@@ -135,7 +135,7 @@ export default function AboutPage() {
             </p>
 
             <p className="font-semibold text-slate-900">
-              We're just getting started. The goal is to democratize professional advice
+              We&apos;re just getting started. The goal is to democratize professional advice
               across India — one conversation at a time.
             </p>
           </div>
@@ -184,7 +184,7 @@ export default function AboutPage() {
                 Continuous Improvement
               </h3>
               <p className="text-slate-600">
-                Every AI response is logged and reviewed. Errors trigger model updates. We're
+                Every AI response is logged and reviewed. Errors trigger model updates. We&apos;re
                 constantly learning and improving.
               </p>
             </div>

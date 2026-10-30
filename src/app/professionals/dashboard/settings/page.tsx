@@ -68,10 +68,10 @@ export default function ProSettingsPage() {
   const [canEdit, setCanEdit] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [prefs, setPrefs] = useState<NotifyPrefs>(DEFAULT_PREFS);
+  // RoleGate renders the dashboard only in the browser, so localStorage can be read on first render.
+  const [prefs, setPrefs] = useState<NotifyPrefs>(readPrefs);
 
   useEffect(() => {
-    setPrefs(readPrefs());
     api<{ user: { name: string; email: string }; professional: ProProfile | null }>("/pro/me")
       .then(({ professional }) => {
         if (!professional) {

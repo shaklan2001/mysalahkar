@@ -161,7 +161,7 @@ export default function CompliancePage() {
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
-                  <span>Answer 'how-to' and procedural questions instantly</span>
+                  <span>Answer &apos;how-to&apos; and procedural questions instantly</span>
                 </li>
               </ul>
             </div>

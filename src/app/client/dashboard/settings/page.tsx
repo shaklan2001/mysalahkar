@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -22,6 +22,19 @@ import { setSessionUser, useSession, type SessionUser } from "@/lib/auth";
 import { formatRupees } from "@/lib/wallet";
 import { SettingsSection as Section, SettingsToggle as Toggle } from "@/components/dashboard/SettingsSection";
 
+type NotifyPrefs = { reminders?: boolean; digestEmail?: boolean; productNews?: boolean };
+
+function readNotifyPrefs(): NotifyPrefs {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem("ms-client-notify") ?? "{}") as NotifyPrefs;
+    const bool = (v: unknown) => (typeof v === "boolean" ? v : undefined);
+    return { reminders: bool(saved.reminders), digestEmail: bool(saved.digestEmail), productNews: bool(saved.productNews) };
+  } catch {
+    // A bad local preference is ignored; the defaults stay.
+    return {};
+  }
+}
+
 export default function ClientSettingsPage() {
   const router = useRouter();
   const balance = useWalletBalance();
@@ -32,22 +45,11 @@ export default function ClientSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [phone] = useState(() => readClientSession()?.phone);
   const { user } = useSession();
-  const [reminders, setReminders] = useState(true);
-  const [digestEmail, setDigestEmail] = useState(false);
-  const [productNews, setProductNews] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem("ms-client-notify");
-      if (!raw) return;
-      const saved = JSON.parse(raw) as { reminders?: boolean; digestEmail?: boolean; productNews?: boolean };
-      if (typeof saved.reminders === "boolean") setReminders(saved.reminders);
-      if (typeof saved.digestEmail === "boolean") setDigestEmail(saved.digestEmail);
-      if (typeof saved.productNews === "boolean") setProductNews(saved.productNews);
-    } catch {
-      // A bad local preference is ignored; the defaults stay.
-    }
-  }, []);
+  // Same for the saved notification preferences.
+  const [saved] = useState(readNotifyPrefs);
+  const [reminders, setReminders] = useState(saved.reminders ?? true);
+  const [digestEmail, setDigestEmail] = useState(saved.digestEmail ?? false);
+  const [productNews, setProductNews] = useState(saved.productNews ?? false);
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();

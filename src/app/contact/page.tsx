@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 
@@ -39,7 +40,7 @@ export default function ContactPage() {
                 Book a Human Consultation
               </h2>
               <p className="mb-8 text-slate-600">
-                Fill out the form below and we'll connect you with the right professional within
+                Fill out the form below and we&apos;ll connect you with the right professional within
                 24 hours. For urgent matters, call us directly.
               </p>
               <ContactForm />
@@ -126,15 +127,15 @@ export default function ContactPage() {
               <div className="rounded-xl bg-blue-50 p-6">
                 <h4 className="mb-2 font-bold text-slate-900">Need Immediate Help?</h4>
                 <p className="mb-4 text-slate-600">
-                  For instant answers to most queries, try our AI Salahkars first. They're
+                  For instant answers to most queries, try our AI Salahkars first. They&apos;re
                   available 24/7 and can resolve 90%+ of questions immediately.
                 </p>
-                <a
+                <Link
                   href="/"
                   className="font-semibold text-blue-600 underline decoration-2 underline-offset-4 hover:text-blue-700"
                 >
                   Start AI Consultation →
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -155,17 +156,17 @@ export default function ContactPage() {
               </h3>
               <p className="text-slate-600">
                 AI Salahkars respond instantly (within seconds). For human consultations booked
-                via this form, we'll reach out within 24 hours on business days. Urgent
+                via this form, we&apos;ll reach out within 24 hours on business days. Urgent
                 matters can be escalated by calling us directly.
               </p>
             </div>
 
             <div className="rounded-xl bg-white p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-bold text-slate-900">
-                What's the cost of a human consultation?
+                What&apos;s the cost of a human consultation?
               </h3>
               <p className="text-slate-600">
-                Consultations are ₹1,000 per 30 minutes for all consultants. You'll see
+                Consultations are ₹1,000 per 30 minutes for all consultants. You&apos;ll see
                 pricing upfront before booking.
               </p>
             </div>

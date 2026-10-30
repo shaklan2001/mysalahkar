@@ -24,7 +24,7 @@ export default function CookiesPage() {
             <p className="text-slate-600">
               Similar technologies like local storage, session storage, and web beacons serve
               comparable purposes. This policy covers all such technologies, collectively
-              referred to as "cookies."
+              referred to as &quot;cookies.&quot;
             </p>
           </section>
 
@@ -68,7 +68,7 @@ export default function CookiesPage() {
                 </ul>
                 <p className="mt-2 text-sm text-slate-500">
                   <strong>Duration:</strong> Session-based (deleted when you close the browser)
-                  or up to 30 days for "remember me" functionality
+                  or up to 30 days for &quot;remember me&quot; functionality
                 </p>
               </div>
 
@@ -138,35 +138,35 @@ export default function CookiesPage() {
 
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">
-              4. What We DON'T Use
+              4. What We DON&apos;T Use
             </h2>
             <div className="rounded-xl border-2 border-green-200 bg-green-50 p-6">
               <ul className="space-y-2 text-slate-700">
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
                   <span>
-                    <strong>No Third-Party Advertising Cookies:</strong> We don't use cookies
+                    <strong>No Third-Party Advertising Cookies:</strong> We don&apos;t use cookies
                     from ad networks (Google Ads, Facebook Pixel, etc.)
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
                   <span>
-                    <strong>No Cross-Site Tracking:</strong> We don't track you across other
+                    <strong>No Cross-Site Tracking:</strong> We don&apos;t track you across other
                     websites
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
                   <span>
-                    <strong>No Behavioral Profiling:</strong> We don't build user profiles for
+                    <strong>No Behavioral Profiling:</strong> We don&apos;t build user profiles for
                     advertising purposes
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
                   <span>
-                    <strong>No Data Brokers:</strong> We don't sell cookie data to third
+                    <strong>No Data Brokers:</strong> We don&apos;t sell cookie data to third
                     parties
                   </span>
                 </li>
@@ -219,9 +219,9 @@ export default function CookiesPage() {
               6.1 Via Our Cookie Banner
             </h3>
             <p className="text-slate-600">
-              When you first visit our site, you'll see a cookie banner allowing you to accept
+              When you first visit our site, you&apos;ll see a cookie banner allowing you to accept
               or customize cookie preferences. You can change your preferences anytime via the
-              "Cookie Settings" link in the footer.
+              &quot;Cookie Settings&quot; link in the footer.
             </p>
 
             <h3 className="mb-2 mt-4 text-xl font-semibold text-slate-900">
@@ -254,7 +254,7 @@ export default function CookiesPage() {
               6.3 Do Not Track (DNT)
             </h3>
             <p className="text-slate-600">
-              We respect "Do Not Track" browser signals and will disable analytics cookies if
+              We respect &quot;Do Not Track&quot; browser signals and will disable analytics cookies if
               DNT is enabled.
             </p>
           </section>
@@ -274,7 +274,7 @@ export default function CookiesPage() {
             </h2>
             <p className="text-slate-600">
               We may update this Cookie Policy to reflect changes in technology or regulation.
-              The "Last updated" date indicates the latest revision. Material changes will be
+              The &quot;Last updated&quot; date indicates the latest revision. Material changes will be
               notified via email or website banner.
             </p>
           </section>
@@ -304,8 +304,8 @@ export default function CookiesPage() {
             </h3>
             <p className="text-slate-600">
               We use cookies responsibly. Essential cookies keep the site working; functional
-              cookies improve your experience; analytics help us make the site better. We don't
-              use advertising trackers, cross-site profiling, or sell your data. You're always
+              cookies improve your experience; analytics help us make the site better. We don&apos;t
+              use advertising trackers, cross-site profiling, or sell your data. You&apos;re always
               in control.
             </p>
           </section>

@@ -87,14 +87,16 @@ export function VoiceCallPanel({
   const [walletPaise, setWalletPaise] = useState(0);
   const [lowBalance, setLowBalance] = useState(false);
   const payingRef = useRef(false);
-  const ratesRef = useRef({ freeMinutes: 5, rupeesPerMinute: 10 });
+  const [rates, setRates] = useState({ freeMinutes: 5, rupeesPerMinute: 10 });
   const callIdRef = useRef<string | null>(null);
   const reviewCallRef = useRef<string | null>(null);
   const [reviewCallId, setReviewCallId] = useState<string | null>(null);
   const hadCallRef = useRef(false);
   const mountedRef = useRef(true);
   const onEndedRef = useRef(onEnded);
-  onEndedRef.current = onEnded;
+  useEffect(() => {
+    onEndedRef.current = onEnded;
+  });
   const [reviewOpen, setReviewOpen] = useState(false);
 
   const promptReview = useCallback(() => {
@@ -201,7 +203,7 @@ export function VoiceCallPanel({
       return;
     }
     callIdRef.current = callId;
-    ratesRef.current = { freeMinutes: meter.freeMinutes, rupeesPerMinute: meter.rupeesPerMinute };
+    setRates({ freeMinutes: meter.freeMinutes, rupeesPerMinute: meter.rupeesPerMinute });
     setElapsedSeconds(meter.elapsedSeconds);
     setSecondsRemaining(meter.secondsRemaining);
     setWalletPaise(meter.balancePaise);
@@ -343,7 +345,9 @@ export function VoiceCallPanel({
 
   const isActive = status === "connected" || status === "reconnecting";
   const disconnectRef = useRef(disconnect);
-  disconnectRef.current = disconnect;
+  useEffect(() => {
+    disconnectRef.current = disconnect;
+  });
 
   useEffect(() => {
     if (!isActive) return;
@@ -352,7 +356,7 @@ export function VoiceCallPanel({
       if (!callId) return;
       void api<CallMeter>(`/calls/${callId}/tick`, { method: "POST" })
         .then((meter) => {
-          ratesRef.current = { freeMinutes: meter.freeMinutes, rupeesPerMinute: meter.rupeesPerMinute };
+          setRates({ freeMinutes: meter.freeMinutes, rupeesPerMinute: meter.rupeesPerMinute });
           setElapsedSeconds(meter.elapsedSeconds);
           setSecondsRemaining(meter.secondsRemaining);
           setWalletPaise(meter.balancePaise);
@@ -414,8 +418,8 @@ export function VoiceCallPanel({
           </p>
           {isActive ? (
             <p className="mt-2 text-sm font-medium text-slate-800">
-              {formatClock(elapsedSeconds)} · first {ratesRef.current.freeMinutes} min free, then{" "}
-              {formatRupees(ratesRef.current.rupeesPerMinute * 100)}/min · wallet {formatRupees(walletPaise)}
+              {formatClock(elapsedSeconds)} · first {rates.freeMinutes} min free, then{" "}
+              {formatRupees(rates.rupeesPerMinute * 100)}/min · wallet {formatRupees(walletPaise)}
               {secondsRemaining !== null && Number.isFinite(secondsRemaining)
                 ? ` · ${formatClock(secondsRemaining)} left`
                 : ""}
@@ -482,7 +486,7 @@ export function VoiceCallPanel({
         <CallLowBalanceDialog
           secondsRemaining={secondsRemaining ?? 0}
           balancePaise={walletPaise}
-          rupeesPerMinute={ratesRef.current.rupeesPerMinute}
+          rupeesPerMinute={rates.rupeesPerMinute}
           onPaid={() => setLowBalance(false)}
           onEnd={() => void disconnect()}
           onPayingChange={(paying) => {

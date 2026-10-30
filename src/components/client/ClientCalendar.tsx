@@ -29,27 +29,26 @@ export function ScheduleView({
   rebookHref,
   emptyMessage,
 }: ScheduleViewProps) {
-  const [items, setItems] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
+  // The last load, tagged with its viewer: still loading until it matches the current one.
+  const [result, setResult] = useState<{ viewer: typeof viewer; items: Appointment[]; failed: boolean } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     loadBookings(viewer)
-      .then((next) => {
-        if (!cancelled) setItems(next);
+      .then((items) => {
+        if (!cancelled) setResult({ viewer, items, failed: false });
       })
       .catch(() => {
-        if (!cancelled) setFailed(true);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setResult({ viewer, items: [], failed: true });
       });
     return () => {
       cancelled = true;
     };
   }, [viewer]);
+
+  const loading = result?.viewer !== viewer;
+  const failed = !loading && result.failed;
+  const items = loading ? [] : result.items;
 
   const { upcoming, past } = splitAppointments(items);
 

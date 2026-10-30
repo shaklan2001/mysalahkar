@@ -17,9 +17,9 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">1. Acceptance of Terms</h2>
             <p className="text-slate-600">
-              By accessing or using My Salahkar's services (website, mobile app, WhatsApp,
+              By accessing or using My Salahkar&apos;s services (website, mobile app, WhatsApp,
               phone, or any other channel), you agree to be bound by these Terms of Service
-              ("Terms"). If you do not agree to these Terms, do not use our services.
+              (&quot;Terms&quot;). If you do not agree to these Terms, do not use our services.
             </p>
             <p className="text-slate-600">
               These Terms constitute a legally binding agreement between you and My Salahkar
@@ -97,7 +97,7 @@ export default function TermsPage() {
                 Use our services for any unlawful, fraudulent, or malicious purpose
               </li>
               <li>
-                Attempt to gain unauthorized access to our systems or other users' accounts
+                Attempt to gain unauthorized access to our systems or other users&apos; accounts
               </li>
               <li>
                 Upload malware, viruses, or harmful code
@@ -207,7 +207,7 @@ export default function TermsPage() {
             </h3>
             <p className="text-slate-600">
               Refunds are available within 7 days of purchase if you are unsatisfied with the
-              service, provided you haven't extensively used the service. Human consultation
+              service, provided you haven&apos;t extensively used the service. Human consultation
               fees are generally non-refundable once the consultation has occurred.
             </p>
 
@@ -250,10 +250,10 @@ export default function TermsPage() {
               10. Disclaimers and Limitation of Liability
             </h2>
             <h3 className="mb-2 text-xl font-semibold text-slate-900">
-              10.1 Service "As-Is"
+              10.1 Service &quot;As-Is&quot;
             </h3>
             <p className="text-slate-600">
-              Our services are provided "as-is" and "as available" without warranties of any
+              Our services are provided &quot;as-is&quot; and &quot;as available&quot; without warranties of any
               kind, express or implied. We do not warrant uninterrupted, error-free, or secure
               access.
             </p>

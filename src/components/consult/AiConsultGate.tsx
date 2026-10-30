@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,27 +8,26 @@ import { LegalConsent } from "@/components/legal/LegalConsent";
 
 const ACK_KEY = "salahkar-ai-consult-ack";
 
+const noSubscribe = () => () => {};
+const readAck = () => sessionStorage.getItem(ACK_KEY) === "1";
+
 type AiConsultGateProps = {
   children: React.ReactNode;
 };
 
 export function AiConsultGate({ children }: AiConsultGateProps) {
-  const [ready, setReady] = useState(false);
-  const [allowed, setAllowed] = useState(false);
+  // null on the server and during hydration; sessionStorage is read only in the browser.
+  const acked = useSyncExternalStore(noSubscribe, readAck, () => null);
+  const [accepted, setAccepted] = useState(false);
   const [aiAck, setAiAck] = useState(false);
   const [privacyAck, setPrivacyAck] = useState(false);
 
-  useEffect(() => {
-    setAllowed(sessionStorage.getItem(ACK_KEY) === "1");
-    setReady(true);
-  }, []);
-
-  if (!ready) return null;
-  if (allowed) return children;
+  if (acked === null) return null;
+  if (acked || accepted) return children;
 
   function accept() {
     sessionStorage.setItem(ACK_KEY, "1");
-    setAllowed(true);
+    setAccepted(true);
   }
 
   return (

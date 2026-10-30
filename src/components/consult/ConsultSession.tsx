@@ -42,13 +42,22 @@ import { createBooking, createLead, isBookableSlot } from "@/lib/bookings";
 import { getSessionUser } from "@/lib/auth";
 import { AiConsultGate } from "./AiConsultGate";
 import { LegalConsent } from "@/components/legal/LegalConsent";
-import { readClientSession } from "@/lib/client-session";
+import { readClientSession, useClientSession } from "@/lib/client-session";
 
 function createContactId(agentSlug: string) {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return `salahkar-${agentSlug}-${crypto.randomUUID()}`;
   }
   return `salahkar-${agentSlug}-${Date.now()}`;
+}
+
+function welcomeMessage(agent: Parameters<typeof aiConsultantName>[0]): ChatMessage {
+  return {
+    id: "welcome",
+    role: "agent",
+    content: `Namaste! I'm ${aiConsultantName(agent)}. What's on your mind today?`,
+    createdAt: Date.now(),
+  };
 }
 
 type ConsultSessionProps = {
@@ -62,7 +71,8 @@ export function ConsultSession({
 }: ConsultSessionProps) {
   const router = useRouter();
   const { closeConsult, openConsult } = useConsult();
-  const [allowed, setAllowed] = useState(false);
+  const { ready, session } = useClientSession();
+  const allowed = Boolean(session);
   const agent = useMemo(
     () => getAgent(agentSlug) ?? getLiveDemoAgents()[0],
     [agentSlug],
@@ -88,41 +98,29 @@ export function ConsultSession({
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (readClientSession()) {
-      setAllowed(true);
-      return;
-    }
+    if (!ready || session) return;
     const next = `${window.location.pathname}${window.location.search}`;
     router.replace(`/client/login?next=${encodeURIComponent(next)}`);
-  }, [router]);
+  }, [ready, session, router]);
 
-  useEffect(() => {
-    if (!allowed || !agent) return;
+  // A new conversation (contact id + welcome message) per agent, once signed in.
+  const [startedFor, setStartedFor] = useState<string | null>(null);
+  if (allowed && agent && startedFor !== agent.slug) {
+    setStartedFor(agent.slug);
     setContactId(createContactId(agent.slug));
-    setMessages([
-      {
-        id: "welcome",
-        role: "agent",
-        content: `Namaste! I'm ${aiConsultantName(agent)}. What's on your mind today?`,
-        createdAt: Date.now(),
-      },
-    ]);
-  }, [agent, allowed]);
+    setMessages([welcomeMessage(agent)]);
+  }
 
-  useEffect(() => {
-    if (!allowed) return;
-    setTab(initialMode);
-    setCallActive(initialMode === "call");
-  }, [initialMode, allowed]);
-
-  useEffect(() => {
-    if (!allowed) return;
-    if (tab === "call") {
-      setCallActive(true);
-    } else {
-      setCallActive(false);
-    }
-  }, [tab, allowed]);
+  // Switching tabs starts or stops the call; so does arriving with a different ?mode=.
+  function selectTab(next: ConsultMode) {
+    setTab(next);
+    setCallActive(next === "call");
+  }
+  const [modeShown, setModeShown] = useState(initialMode);
+  if (modeShown !== initialMode) {
+    setModeShown(initialMode);
+    selectTab(initialMode);
+  }
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -308,7 +306,7 @@ export function ConsultSession({
                   type="button"
                   role="tab"
                   aria-selected={tab === value}
-                  onClick={() => setTab(value)}
+                  onClick={() => selectTab(value)}
                   className={
                     tab === value
                       ? "inline-flex h-8 items-center gap-1.5 rounded-md bg-[#001450] px-3 text-xs font-semibold text-white shadow-sm"
