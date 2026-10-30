@@ -38,7 +38,7 @@ function auth0NotConfigured() {
   const detail =
     process.env.NODE_ENV === "production"
       ? ""
-      : ` Missing: ${auth0MissingEnv.join(", ")}. Add them to frontend/.env.local and restart (see backend-node/README.md, "Auth0 setup").`;
+      : ` Missing: ${auth0MissingEnv.join(", ")}. Add them to frontend/.env.local and restart (see backend/README.md, "Auth0 setup").`;
   return new NextResponse(`Sign-in is unavailable: Auth0 is not configured.${detail}\n`, {
     status: 503,
     headers: { "content-type": "text/plain; charset=utf-8" },
