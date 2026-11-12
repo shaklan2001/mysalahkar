@@ -8,6 +8,8 @@ import path from "path";
 const apiOrigin = process.env.API_ORIGIN?.replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
+  // Minimal self-contained server (.next/standalone) for the Docker image.
+  output: "standalone",
   async rewrites() {
     return apiOrigin ? [{ source: "/api/v1/:path*", destination: `${apiOrigin}/api/v1/:path*` }] : [];
   },
