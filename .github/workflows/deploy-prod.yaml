@@ -1,9 +1,10 @@
 name: Deploy MySalahkar website (prod)
+
 on:
   workflow_dispatch:
     inputs:
       git_ref:
-        description: "Commit SHA (or branch/tag) Dev named. Checkout only. Run this workflow from main; that is what the OIDC trust checks."
+        description: "Commit SHA, branch, or tag to build and deploy"
         required: true
         type: string
 
