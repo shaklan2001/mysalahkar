@@ -1,9 +1,4 @@
 name: Deploy MySalahkar website (prod)
-
-# Copy this file only into frontend-main: .github/workflows/deploy-prod.yaml
-# The deploy steps live in this infra repo and are called below.
-# Reusable workflows live in devops-internal. No token: that private repo must allow Actions access from this organization.
-
 on:
   workflow_dispatch:
     inputs:
