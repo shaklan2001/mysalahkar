@@ -1,12 +1,13 @@
-name: Deploy MySalahkar website (prod)
+name: Prod · Deploy Website
 
 on:
   workflow_dispatch:
     inputs:
       git_ref:
-        description: "Commit SHA, branch, or tag to build and deploy"
+        description: "Commit SHA or branch to deploy (must be on main). Default: main."
         required: true
         type: string
+        default: main
 
 permissions:
   id-token: write
@@ -14,6 +15,10 @@ permissions:
 
 jobs:
   deploy:
+    name: Deploy website to prod
+    if: github.ref == 'refs/heads/main'
     uses: mysalahkar-insights/devops-internal/.github/workflows/deploy-frontend-prod.yaml@main
     with:
       git_ref: ${{ inputs.git_ref }}
+    secrets:
+      PROD_AWS_ROLE_ARN: ${{ secrets.PROD_AWS_ROLE_ARN }}
