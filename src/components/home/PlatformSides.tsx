@@ -18,7 +18,7 @@ const sides = [
     key: "platform",
     icon: Sparkles,
     eyebrow: "The platform",
-    title: "My Salahkar connects both sides",
+    title: "MySalahkar connects both sides",
     body: "AI triage, matching, scheduling, metered calls, reviews and payouts in one workspace, so nobody has to chase anybody.",
     points: ["AI to human handoff with context", "Calendar, calls & billing built in", "Daily regulatory digest"],
     href: "/features",

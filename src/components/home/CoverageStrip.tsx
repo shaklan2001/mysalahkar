@@ -7,7 +7,7 @@ const coverage = [
   "FEMA",
   "Trademark",
   "IBC",
-  "UAE setup",
+  "UAE · USA · UK",
 ];
 
 export function CoverageStrip() {

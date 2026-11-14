@@ -20,7 +20,7 @@ export function TestimonialsSection() {
       <div className="mx-auto max-w-6xl px-4 text-center sm:px-6 lg:px-8">
         <p className="eyebrow">Loved by clients</p>
         <h2 className="mx-auto mt-3 max-w-2xl text-balance font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Founders and finance teams trust My Salahkar.
+          Founders and finance teams trust MySalahkar.
         </h2>
       </div>
       <div className="mx-auto mt-12 max-w-7xl">

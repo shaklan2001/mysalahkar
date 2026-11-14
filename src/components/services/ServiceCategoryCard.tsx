@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  ArrowUpRight,
   BadgeCheck,
   Briefcase,
   Building2,
@@ -71,15 +69,6 @@ export function ServiceCategoryCard({
           <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-ink-soft">
             {category.services.length} services
           </span>
-          {agent ? (
-            <Link
-              href={`/agents/${agent.slug}`}
-              className="group inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-accent"
-            >
-              Led by {agent.name}
-              <ArrowUpRight className="h-3 w-3" />
-            </Link>
-          ) : null}
         </div>
       </header>
 
@@ -111,7 +100,7 @@ export function ServiceCategoryCard({
                 professionalName={agent?.name ?? "specialist"}
                 professionalSlug={category.agentSlug}
                 serviceName={service.name}
-                triggerLabel="Book professional"
+                triggerLabel="Book consultation"
                 triggerVariant="outline"
                 triggerSize="sm"
                 triggerClassName="h-8 px-2.5 text-xs"

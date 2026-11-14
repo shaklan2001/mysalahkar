@@ -4,7 +4,7 @@ import { Scale, Users, AlertTriangle, FileCheck, ArrowRight, CheckCircle2 } from
 export const metadata: Metadata = {
   title: "Compliance & Regulatory Oversight",
   description:
-    "How My Salahkar ensures compliance across tax, legal, and financial domains. AI + human oversight for regulatory accuracy.",
+    "How MySalahkar ensures compliance across tax, legal, and financial domains. AI + human oversight for regulatory accuracy.",
 };
 
 export default function CompliancePage() {
@@ -217,18 +217,18 @@ export default function CompliancePage() {
 
             <div className="space-y-4 text-slate-700">
               <p>
-                <strong>Not a Substitute for Licensed Representation:</strong> My Salahkar
+                <strong>Not a Substitute for Licensed Representation:</strong> MySalahkar
                 provides informational guidance and AI-assisted consultancy. For activities
                 requiring professional licensing — such as court appearances, statutory
                 attestations, or regulatory filings with professional sign-off — you must
-                engage a licensed CA, CS, advocate, or RIA. We facilitate these escalations
+                engage a registered CA, CS, advocate, or RIA. We facilitate these escalations
                 when needed.
               </p>
 
               <p>
                 <strong>No Attorney-Client or CA-Client Privilege:</strong> Conversations
                 with our AI Salahkars do not establish a formal attorney-client or CA-client
-                relationship unless you explicitly engage a licensed professional through our
+                relationship unless you explicitly engage a registered professional through our
                 escalation path. AI advice is guidance, not legal or professional opinion
                 binding in court or before regulatory authorities.
               </p>
@@ -237,7 +237,7 @@ export default function CompliancePage() {
                 <strong>Regulatory Changes:</strong> Indian regulations evolve frequently.
                 While we update our AI models regularly, there may be a lag between new
                 notifications and model updates. Always verify critical information with
-                official sources or licensed professionals.
+                official sources or registered professionals.
               </p>
 
               <p>
@@ -254,7 +254,7 @@ export default function CompliancePage() {
       <section className="bg-slate-900 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-12 text-center text-3xl font-bold">
-            Clear Escalation Path to Licensed Professionals
+            Clear Escalation Path to Registered Professionals
           </h2>
 
           <div className="grid gap-8 md:grid-cols-4">
@@ -284,7 +284,7 @@ export default function CompliancePage() {
               </div>
               <h3 className="mb-2 font-bold">Professional Match</h3>
               <p className="text-sm text-slate-300">
-                We connect you with the right licensed professional
+                We connect you with the right registered professional
               </p>
             </div>
 
@@ -311,10 +311,10 @@ export default function CompliancePage() {
             Our compliance team is available to address your concerns.
           </p>
           <a
-            href="mailto:compliance@mysalahkar.com"
+            href="mailto:support@mysalahkar.com"
             className="inline-flex items-center gap-2 text-lg font-semibold text-blue-600 underline decoration-2 underline-offset-4 hover:text-blue-700"
           >
-            compliance@mysalahkar.com
+            support@mysalahkar.com
             <ArrowRight className="h-5 w-5" />
           </a>
         </div>

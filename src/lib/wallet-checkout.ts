@@ -85,7 +85,7 @@ export function startWalletTopUp(amountRupees: number): Promise<number> {
           key: order.keyId,
           amount: order.amountPaise,
           currency: "INR",
-          name: "My Salahkar",
+          name: "MySalahkar",
           description: "Add money to wallet",
           order_id: order.orderId,
           prefill: email ? { email } : undefined,

@@ -21,7 +21,7 @@ export default function ProfessionalLoginPage() {
       description="Open your dashboard: leads, calendar, AI Salahkar and earnings."
       footer={
         <p>
-          New to My Salahkar?{" "}
+          New to MySalahkar?{" "}
           <Link href="/professionals/signup" className="font-semibold text-accent hover:underline">
             Create a professional account
           </Link>

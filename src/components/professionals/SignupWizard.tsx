@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { professionalDomains } from "@/lib/data/professional";
+import { INDUSTRY_EXPERT_DOMAIN, professionalDomains } from "@/lib/data/professional";
 import { type ListingDocument, type ListingKind } from "@/lib/data/marketplace";
 import { api, errorMessage } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth";
@@ -40,6 +40,8 @@ type FormState = {
   phone: string;
   firm: string;
   domain: string;
+  /** Only asked when the domain is Industry Experts. */
+  industry: string;
   credentials: string;
   city: string;
   membershipId: string;
@@ -58,6 +60,7 @@ const initial: FormState = {
   phone: "",
   firm: "",
   domain: professionalDomains[0],
+  industry: "",
   credentials: "",
   city: "",
   membershipId: "",
@@ -72,15 +75,18 @@ const initial: FormState = {
 
 /** The API's professional types, keyed by the labels shown in the domain picker. */
 const DOMAIN_TYPES: Record<string, string> = {
-  "CA — Chartered Accountant": "CA",
-  "CS — Company Secretary": "CS",
-  "Lawyer / Advocate": "Lawyer",
-  "FEMA / Cross-border": "FEMA",
-  "Wealth / RIA": "Wealth Management",
-  Insurance: "Insurance",
-  "Real Estate": "Real Estate",
-  "Insolvency (IRP/RP)": "IRP",
-  "Lending / Credit": "Lending",
+  "Chartered Accountant": "CA",
+  "Company Secretary": "CS",
+  "Cost and Management Accountant": "CMA",
+  Lawyers: "Lawyer",
+  "Finance Consultant": "Finance Consultant",
+  "FEMA/RBI Consultant": "FEMA",
+  "Tax Consultant": "Tax Consultant",
+  "Registered Valuer": "Registered Valuer",
+  "Insolvency Professional": "IRP",
+  "Mutual Fund Distributor (AMFI-registered)": "Mutual Fund Distributor",
+  "Loan Advisor": "Lending",
+  [INDUSTRY_EXPERT_DOMAIN]: "Industry Expert",
 };
 
 const UPLOAD_TYPES: Record<string, "application/pdf" | "image/jpeg" | "image/png"> = {
@@ -192,7 +198,8 @@ export function SignupWizard({
     }
     if (step === 1) {
       const phoneOk = /^[6-9]\d{9}$/.test(form.phone.replace(/\D/g, "").slice(-10));
-      return phoneOk && form.domain && form.credentials && form.city && form.membershipId;
+      const industryOk = form.domain !== INDUSTRY_EXPERT_DOMAIN || form.industry.trim();
+      return phoneOk && form.domain && industryOk && form.credentials && form.city && form.membershipId;
     }
     if (step === 2) {
       return Boolean(form.listingKind);
@@ -230,6 +237,10 @@ export function SignupWizard({
           email: form.email || undefined,
           firm: form.firm,
           domain: DOMAIN_TYPES[form.domain] ?? "CA",
+          specializations:
+            form.domain === INDUSTRY_EXPERT_DOMAIN && form.industry.trim()
+              ? [form.industry.trim()]
+              : undefined,
           credentials: form.credentials,
           membershipId: form.membershipId,
           city: form.city,
@@ -391,7 +402,7 @@ export function SignupWizard({
               </div>
             ) : null}
             <div>
-              <Label htmlFor="domain">Professional domain</Label>
+              <Label htmlFor="domain">Type of professional</Label>
               <select
                 id="domain"
                 className="mt-1.5 flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm"
@@ -405,6 +416,19 @@ export function SignupWizard({
                 ))}
               </select>
             </div>
+            {form.domain === INDUSTRY_EXPERT_DOMAIN ? (
+              <div>
+                <Label htmlFor="industry">Please specify the industry</Label>
+                <Input
+                  id="industry"
+                  className="mt-1.5"
+                  value={form.industry}
+                  onChange={(e) => update("industry", e.target.value)}
+                  placeholder="e.g. Pharmaceuticals, Real estate, Textiles"
+                  maxLength={80}
+                />
+              </div>
+            ) : null}
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <Label htmlFor="credentials">Credentials</Label>
@@ -479,7 +503,7 @@ export function SignupWizard({
           <div className="space-y-5">
             <p className="text-sm text-muted-foreground">
               Upload proof for verification (PDF, JPG or PNG, up to 10 MB each).
-              Only the My Salahkar review team can open these files.
+              Only the MySalahkar review team can open these files.
             </p>
             {(
               [

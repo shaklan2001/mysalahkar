@@ -5,7 +5,7 @@ import { ProDashboardShell } from "@/components/professionals/ProDashboardShell"
 export const metadata: Metadata = {
   title: "Partner dashboard",
   description:
-    "Track your AI Salahkar performance, leads, and earnings on My Salahkar.",
+    "Track your AI Salahkar performance, leads, and earnings on MySalahkar.",
 };
 
 export default function ProDashboardLayout({

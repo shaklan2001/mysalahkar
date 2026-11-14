@@ -273,7 +273,7 @@ export function AgentProfileView({
               </li>
               <li className="flex items-start gap-2.5">
                 <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Credentials verified by My Salahkar
+                Credentials verified by MySalahkar
               </li>
               <li className="flex items-start gap-2.5">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-accent" />

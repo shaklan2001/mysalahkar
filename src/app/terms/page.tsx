@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "My Salahkar Terms of Service — your agreement with us when using our AI consultancy platform.",
+    "MySalahkar Terms of Service — your agreement with us when using our AI consultancy platform.",
 };
 
 export default function TermsPage() {
@@ -17,12 +17,12 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">1. Acceptance of Terms</h2>
             <p className="text-slate-600">
-              By accessing or using My Salahkar&apos;s services (website, mobile app, WhatsApp,
+              By accessing or using MySalahkar&apos;s services (website, mobile app, WhatsApp,
               phone, or any other channel), you agree to be bound by these Terms of Service
               (&quot;Terms&quot;). If you do not agree to these Terms, do not use our services.
             </p>
             <p className="text-slate-600">
-              These Terms constitute a legally binding agreement between you and My Salahkar
+              These Terms constitute a legally binding agreement between you and MySalahkar
               Technologies Private Limited, a company incorporated in India.
             </p>
           </section>
@@ -32,7 +32,7 @@ export default function TermsPage() {
               2. Description of Services
             </h2>
             <p className="text-slate-600">
-              My Salahkar provides AI-powered professional consultancy services across tax,
+              MySalahkar provides AI-powered professional consultancy services across tax,
               legal, compliance, and financial domains. Our services include:
             </p>
             <ul className="ml-6 list-disc space-y-1 text-slate-600">
@@ -52,7 +52,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">3. User Eligibility</h2>
             <p className="text-slate-600">
-              You must be at least 18 years old to use our services. By using My Salahkar, you
+              You must be at least 18 years old to use our services. By using MySalahkar, you
               represent and warrant that you meet this age requirement and have the legal
               capacity to enter into these Terms.
             </p>
@@ -144,7 +144,7 @@ export default function TermsPage() {
             </h3>
             <p className="text-slate-600">
               For critical decisions, regulatory filings, litigation, or matters requiring
-              professional attestation, you must escalate to a licensed professional. We
+              professional attestation, you must escalate to a registered professional. We
               facilitate these escalations but do not guarantee availability or outcomes.
             </p>
           </section>
@@ -158,7 +158,7 @@ export default function TermsPage() {
             </h3>
             <p className="text-slate-600">
               Conversations with AI Salahkars do not establish an attorney-client, CA-client, or
-              any professional-client relationship unless you explicitly engage a licensed
+              any professional-client relationship unless you explicitly engage a registered
               professional through our escalation service and a formal engagement letter is
               signed.
             </p>
@@ -167,7 +167,7 @@ export default function TermsPage() {
               7.2 Independent Professionals
             </h3>
             <p className="text-slate-600">
-              Licensed professionals in our network are independent contractors. We do not
+              Registered professionals in our network are independent contractors. We do not
               control their work product, professional judgment, or compliance with their
               respective licensing regulations.
             </p>
@@ -262,7 +262,7 @@ export default function TermsPage() {
               10.2 Limitation of Liability
             </h3>
             <p className="text-slate-600">
-              To the maximum extent permitted by law, My Salahkar, its directors, employees,
+              To the maximum extent permitted by law, MySalahkar, its directors, employees,
               and partners shall not be liable for any indirect, incidental, consequential, or
               punitive damages arising from your use of our services, including but not
               limited to:
@@ -282,7 +282,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">11. Indemnification</h2>
             <p className="text-slate-600">
-              You agree to indemnify and hold harmless My Salahkar, its officers, employees,
+              You agree to indemnify and hold harmless MySalahkar, its officers, employees,
               and agents from any claims, damages, or expenses (including legal fees) arising
               from:
             </p>
@@ -337,7 +337,7 @@ export default function TermsPage() {
             <ul className="ml-6 list-disc space-y-2 text-slate-600">
               <li>
                 <strong>Entire Agreement:</strong> These Terms constitute the entire agreement
-                between you and My Salahkar regarding the services.
+                between you and MySalahkar regarding the services.
               </li>
               <li>
                 <strong>Severability:</strong> If any provision is found unenforceable, the
@@ -363,8 +363,8 @@ export default function TermsPage() {
               Protection Act, 2023. You must give informed, specific consent before signing
               in and before starting an AI or human consultation. You may withdraw consent
               by writing to{" "}
-              <a href="mailto:privacy@mysalahkar.com" className="text-blue-600 underline">
-                privacy@mysalahkar.com
+              <a href="mailto:support@mysalahkar.com" className="text-blue-600 underline">
+                support@mysalahkar.com
               </a>
               . Withdrawal does not affect processing already completed for a consultation
               you requested.
@@ -400,16 +400,16 @@ export default function TermsPage() {
             </p>
             <div className="mt-4 rounded-lg bg-slate-50 p-6">
               <p className="text-slate-700">
-                <strong>My Salahkar Technologies Private Limited</strong>
+                <strong>MySalahkar Technologies Private Limited</strong>
                 <br />
                 HSR Layout, Bangalore 560102, Karnataka, India
                 <br />
                 Email:{" "}
-                <a href="mailto:legal@mysalahkar.com" className="text-blue-600 underline">
-                  legal@mysalahkar.com
+                <a href="mailto:support@mysalahkar.com" className="text-blue-600 underline">
+                  support@mysalahkar.com
                 </a>
                 <br />
-                Phone: +91 80470 01234
+                Phone: +91-9990411000
               </p>
             </div>
           </section>

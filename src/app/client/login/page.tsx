@@ -22,7 +22,7 @@ export default function ClientLoginPage() {
       switchHrefs={{ client: href("/client/login") }}
       footer={
         <p>
-          New to My Salahkar?{" "}
+          New to MySalahkar?{" "}
           <Link href={href("/client/signup")} className="font-semibold text-accent hover:underline">
             Create a free account
           </Link>

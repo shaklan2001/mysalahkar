@@ -28,8 +28,8 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: {
-    default: "My Salahkar — AI Professional Consultancy",
-    template: "%s | My Salahkar",
+    default: "MySalahkar — AI Professional Consultancy",
+    template: "%s | MySalahkar",
   },
   description:
     "India's AI Salahkars — expert CA, CS, Legal, FEMA, Wealth & more. Consult on WhatsApp, chat or call. 24/7. Human escalation when you need it.",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "My Salahkar — AI Professional Consultancy",
+    title: "MySalahkar — AI Professional Consultancy",
     description:
       "Consult AI Salahkars for tax, legal, FEMA, insolvency, wealth and more — WhatsApp, chat or call.",
     type: "website",

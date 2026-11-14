@@ -44,7 +44,7 @@ async function postSmartLoan(body: unknown) {
       body: JSON.stringify(body),
     });
   } catch {
-    throw new Error("Can't reach My Salahkar right now. Check your connection and try again.");
+    throw new Error("Can't reach MySalahkar right now. Check your connection and try again.");
   }
   const data = (await res.json().catch(() => ({}))) as {
     error?: string;
@@ -253,7 +253,7 @@ export function SmartLoan() {
               {caseType === "PL"
                 ? "Offers appear here after the check. Each card is a bank that can lend on the amount and tenure you asked for. Choosing one opens that bank's application."
                 : "Once your case is created you can pick a partner bank, track it, and upload documents here."}{" "}
-              My Salahkar does not sanction the loan.
+              MySalahkar does not sanction the loan.
             </div>
           ) : (
             <>

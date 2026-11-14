@@ -82,7 +82,7 @@ export default function SmartLoanPage() {
           <SmartLoan />
           <p className="mt-6 max-w-3xl text-xs leading-relaxed text-muted-foreground">
             Offers and cases are handled by My Mudra. Personal-loan offers are for salaried applicants. Interest, fees, and approval are decided by the bank.
-            Choosing an offer continues on the bank&apos;s website. My Salahkar does not sanction or disburse the loan.
+            Choosing an offer continues on the bank&apos;s website. MySalahkar does not sanction or disburse the loan.
           </p>
         </div>
       </section>

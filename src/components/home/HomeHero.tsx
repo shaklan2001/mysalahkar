@@ -71,7 +71,7 @@ export function HomeHero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-balance text-muted-foreground sm:text-lg"
           >
-            My Salahkar pairs always-on AI Salahkars with verified professionals.
+            MySalahkar pairs always-on AI Salahkars with verified professionals.
             Clients get clear answers in minutes, and professionals get a practice
             that brings the work to them.
           </motion.p>

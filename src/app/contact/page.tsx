@@ -6,7 +6,7 @@ import { ContactForm } from "./ContactForm";
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with My Salahkar. Book a human consultation, request a callback, or reach us via email or phone.",
+    "Get in touch with MySalahkar. Book a human consultation, request a callback, or reach us via email or phone.",
 };
 
 export default function ContactPage() {
@@ -79,10 +79,10 @@ export default function ContactPage() {
                     <div>
                       <h4 className="mb-1 font-semibold text-slate-900">Phone</h4>
                       <a
-                        href="tel:+918047001234"
+                        href="tel:+919990411000"
                         className="text-blue-600 hover:text-blue-700"
                       >
-                        +91 80470 01234
+                        +91-9990411000
                       </a>
                       <p className="mt-1 text-sm text-slate-600">
                         Mon-Sat: 9:00 AM - 7:00 PM IST
@@ -97,7 +97,7 @@ export default function ContactPage() {
                     <div>
                       <h4 className="mb-1 font-semibold text-slate-900">Office</h4>
                       <p className="text-slate-600">
-                        My Salahkar Technologies Pvt. Ltd.
+                        MySalahkar Technologies Pvt. Ltd.
                         <br />
                         HSR Layout, Bangalore 560102
                         <br />

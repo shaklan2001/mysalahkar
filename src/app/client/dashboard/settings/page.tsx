@@ -222,10 +222,10 @@ export default function ClientSettingsPage() {
               Access, correct or erase your data
             </span>
             <a
-              href="mailto:privacy@mysalahkar.com"
+              href="mailto:support@mysalahkar.com"
               className="inline-flex items-center gap-1 font-semibold text-accent hover:underline"
             >
-              privacy@mysalahkar.com
+              support@mysalahkar.com
             </a>
           </li>
         </ul>

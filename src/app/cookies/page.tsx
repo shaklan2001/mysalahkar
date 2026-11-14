@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description:
-    "My Salahkar Cookie Policy — how we use cookies and similar technologies on our platform.",
+    "MySalahkar Cookie Policy — how we use cookies and similar technologies on our platform.",
 };
 
 export default function CookiesPage() {
@@ -33,7 +33,7 @@ export default function CookiesPage() {
               2. How We Use Cookies
             </h2>
             <p className="text-slate-600">
-              My Salahkar uses cookies to provide, secure, and improve our services. We follow
+              MySalahkar uses cookies to provide, secure, and improve our services. We follow
               a privacy-first approach and minimize cookie usage.
             </p>
           </section>
@@ -286,14 +286,14 @@ export default function CookiesPage() {
             </p>
             <div className="mt-4 rounded-lg bg-slate-50 p-6">
               <p className="text-slate-700">
-                <strong>My Salahkar Technologies Private Limited</strong>
+                <strong>MySalahkar Technologies Private Limited</strong>
                 <br />
                 Email:{" "}
-                <a href="mailto:privacy@mysalahkar.com" className="text-blue-600 underline">
-                  privacy@mysalahkar.com
+                <a href="mailto:support@mysalahkar.com" className="text-blue-600 underline">
+                  support@mysalahkar.com
                 </a>
                 <br />
-                Phone: +91 80470 01234
+                Phone: +91-9990411000
               </p>
             </div>
           </section>

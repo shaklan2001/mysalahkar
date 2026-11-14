@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "My Salahkar Privacy Policy — how we collect, use, and protect your data.",
+  description: "MySalahkar Privacy Policy — how we collect, use, and protect your data.",
 };
 
 export default function PrivacyPage() {
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="mb-4 text-2xl font-bold text-slate-900">1. Introduction</h2>
             <p className="text-slate-600">
-              My Salahkar Technologies Private Limited (&quot;My Salahkar&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;)
+              MySalahkar Technologies Private Limited (&quot;MySalahkar&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;)
               operates the website mysalahkar.com and provides AI-powered professional
               consultancy services. This Privacy Policy explains how we collect, use,
               disclose, and safeguard your information when you use our services.
@@ -144,7 +144,7 @@ export default function PrivacyPage() {
             </h3>
             <p className="text-slate-600">
               When you request human escalation, we share relevant conversation context with
-              licensed professionals (CAs, CS, advocates, RIAs) in our network to provide
+              registered professionals (CAs, CS, advocates, RIAs) in our network to provide
               expert assistance.
             </p>
 
@@ -216,8 +216,8 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-4 text-slate-600">
               To exercise your rights, contact us at{" "}
-              <a href="mailto:privacy@mysalahkar.com" className="text-blue-600 underline">
-                privacy@mysalahkar.com
+              <a href="mailto:support@mysalahkar.com" className="text-blue-600 underline">
+                support@mysalahkar.com
               </a>
               . We will respond within 30 days.
             </p>
@@ -295,16 +295,16 @@ export default function PrivacyPage() {
               <p className="text-slate-700">
                 <strong>Data Protection Officer</strong>
                 <br />
-                My Salahkar Technologies Private Limited
+                MySalahkar Technologies Private Limited
                 <br />
                 HSR Layout, Bangalore 560102, Karnataka, India
                 <br />
                 Email:{" "}
-                <a href="mailto:privacy@mysalahkar.com" className="text-blue-600 underline">
-                  privacy@mysalahkar.com
+                <a href="mailto:support@mysalahkar.com" className="text-blue-600 underline">
+                  support@mysalahkar.com
                 </a>
                 <br />
-                Phone: +91 80470 01234
+                Phone: +91-9990411000
               </p>
             </div>
           </section>

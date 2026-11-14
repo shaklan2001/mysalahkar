@@ -63,7 +63,7 @@ export function AiConsultGate({ children }: AiConsultGateProps) {
               className="mt-1 h-4 w-4 shrink-0 accent-primary"
             />
             <span>
-              I understand this is AI guidance, not a licensed professional opinion,
+              I understand this is AI guidance, not a registered professional opinion,
               and I will not treat it as formal advice.
             </span>
           </label>

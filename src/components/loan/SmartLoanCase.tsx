@@ -19,7 +19,7 @@ async function send(body: BodyInit, json: boolean): Promise<Reply> {
       body,
     });
   } catch {
-    throw new Error("Can't reach My Salahkar right now. Check your connection and try again.");
+    throw new Error("Can't reach MySalahkar right now. Check your connection and try again.");
   }
   const data = (await res.json().catch(() => ({}))) as Reply;
   if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");

@@ -13,7 +13,7 @@ export type CommunityPost = {
 export const communityPosts: CommunityPost[] = [
   {
     id: "post-1",
-    authorName: "Rajesh Mehta",
+    authorName: "Ankit Gupta",
     authorType: "CA",
     title: "New GST Amnesty Scheme for Late Filers – Key Highlights",
     content:
@@ -25,7 +25,7 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-2",
-    authorName: "Priya Sharma",
+    authorName: "Soniya Gupta",
     authorType: "CS",
     title: "Companies Act Amendment 2026: What Changed for Startups?",
     content:
@@ -37,8 +37,8 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-3",
-    authorName: "Vikram Desai",
-    authorType: "Lawyer",
+    authorName: "Pawan Kumar Agarwal",
+    authorType: "CS",
     title: "Supreme Court Ruling on Non-Compete Clauses: What Employers Must Know",
     content:
       "In a landmark judgment (July 2026), the Supreme Court clarified the enforceability of non-compete clauses in employment contracts. Key takeaways: (1) Post-termination non-compete (restraint of trade) remains largely unenforceable per Section 27, Indian Contract Act—except in sale of goodwill or partnership dissolution, (2) HOWEVER, courts may now enforce limited non-compete (6-12 months, specific geography) if: (a) Employee received specialized training at employer cost, (b) Employee had access to trade secrets/confidential client data, (c) Non-compete is reasonable in scope and duration, (3) Non-solicitation (clients/employees) and confidentiality clauses remain fully enforceable. Practical advice: Employers should focus on airtight NDAs, IP assignment, and garden leave (paid notice) rather than blanket non-compete. Draft with care! #EmploymentLaw #NonCompete #LabourLaw",
@@ -49,7 +49,7 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-4",
-    authorName: "Ananya Iyer",
+    authorName: "Soniya Gupta",
     authorType: "CS",
     title: "SEBI's New LODR Amendments: Impact on Listed Companies (July 2026)",
     content:
@@ -61,8 +61,8 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-5",
-    authorName: "Kabir Singh",
-    authorType: "FEMA",
+    authorName: "Pawan Kumar Agarwal",
+    authorType: "CS",
     title: "RBI Tightens LRS Reporting: New Rules for Overseas Investments",
     content:
       "RBI issued a circular (July 10, 2026) tightening Liberalized Remittance Scheme (LRS) reporting for overseas investments. Key changes: (1) Mandatory PAN-based reporting for ALL LRS remittances (even < $25K), (2) Purpose code 'S0001' (overseas investment in equity/debt) now requires proof of FEMA compliance—investment declaration, foreign broker account proof, (3) AD banks must verify end-use within 180 days—remitter must submit foreign bank statement or investment confirmation, (4) Crypto transactions remain prohibited under LRS. Impact: Stricter scrutiny on foreign stock investments. If you're investing in US stocks via LRS, ensure you maintain detailed records (brokerage statements, tax filings) and submit to your bank when asked. Non-compliance may lead to LRS restriction or FEMA penalty. #FEMA #LRS #RBI #ForeignInvestment",
@@ -73,8 +73,8 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-6",
-    authorName: "Maya Reddy",
-    authorType: "Real Estate",
+    authorName: "JP Goel",
+    authorType: "CA",
     title: "RERA Amendment 2026: Stricter Penalties for Builders, New Buyer Rights",
     content:
       "The Real Estate (Regulation and Development) Amendment Act 2026 introduces game-changing reforms: (1) Penalty for project delay increased to ₹1L/day (was ₹10K/day) for projects > ₹100 Cr, (2) Buyers can now claim compensation up to 18% annual interest on delayed possession (earlier 10-12%), (3) RERA authorities can now freeze developer accounts if escrow funds are misused, (4) Mandatory quarterly project updates on RERA website (with photos/videos), (5) Buyers have right to inspect escrow account statements. Impact: This levels the playing field for homebuyers. If your project is delayed, file RERA complaint immediately—you can now claim significantly higher compensation. Builders face tougher scrutiny and penalties. #RERA #RealEstate #BuyerRights #PropertyLaw",
@@ -85,8 +85,8 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-7",
-    authorName: "Sanjay Kulkarni",
-    authorType: "Wealth",
+    authorName: "JP Goel",
+    authorType: "CA",
     title: "Budget 2026 Tax Changes: New 80C Limit & LTCG Tweaks",
     content:
       "Union Budget 2026 (presented July 23) announced key tax changes: (1) Section 80C limit increased to ₹2L (from ₹1.5L)—more room for ELSS, PPF, life insurance, (2) LTCG exemption on equity raised to ₹1.5L/year (from ₹1.25L), LTCG tax remains 12.5% above exemption, (3) NPS additional deduction under 80CCD(1B) increased to ₹75K (from ₹50K), (4) Standard deduction for salaried increased to ₹75K (from ₹50K), (5) New tax regime: 0% up to ₹4L, 5% (₹4-8L), 10% (₹8-12L), 15% (₹12-16L), 20% (₹16-20L), 25% (₹20-24L), 30% (>₹24L). Old regime unchanged. Impact: New regime is now more attractive for middle-income salaried (₹8-15L). Investors can save more via 80C + NPS. Start tax planning now! #Budget2026 #IncomeTax #WealthManagement #FinancialPlanning",
@@ -97,8 +97,8 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     id: "post-8",
-    authorName: "Neil Patel",
-    authorType: "IRP",
+    authorName: "Ankit Gupta",
+    authorType: "CA",
     title: "IBC Amendment 2026: Pre-Pack Insolvency Extended to All Companies",
     content:
       "The Insolvency and Bankruptcy Code (Amendment) Act 2026 extends Pre-Packaged Insolvency Resolution Process (PPIRP) to ALL companies (earlier only MSMEs with default < ₹1 Cr). Key features: (1) PPIRP now available for companies with default ≥ ₹1 Cr (no upper limit), (2) Swiss Challenge mechanism introduced—if promoter submits base resolution plan, third-party bidders can submit competing plans (10% higher), (3) Timeline remains 90 days (vs. 180 days for regular CIRP), (4) CoC approval threshold: 66% (same as CIRP). Impact: Faster resolution for distressed large companies, reduced litigation, and better recovery for creditors. Promoters now have a structured path to retain control while clearing debt. If your company faces stress, consider pre-pack before creditors file Section 7. #IBC #Insolvency #NCLT #Restructuring",
@@ -126,11 +126,12 @@ export const trendingTopics = [
   "IBC Pre-Pack Reforms",
 ];
 
+/** Featured contributors; their post counts come from the live feed. */
 export const topContributors = [
-  { name: "Rajesh Mehta", type: "CA", posts: 47 },
-  { name: "Priya Sharma", type: "CS", posts: 39 },
-  { name: "Vikram Desai", type: "Lawyer", posts: 52 },
-  { name: "Maya Reddy", type: "Real Estate", posts: 28 },
+  { name: "Ankit Gupta", type: "CA" },
+  { name: "Soniya Gupta", type: "CS" },
+  { name: "JP Goel", type: "CA" },
+  { name: "Pawan Kumar Agarwal", type: "CS" },
 ];
 
 export const communityGuidelines = [

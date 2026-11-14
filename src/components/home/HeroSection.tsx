@@ -13,7 +13,7 @@ export function HeroSection() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:py-28">
         <div>
           <p className="font-display text-sm font-semibold tracking-[0.04em] text-accent">
-            My Salahkar
+            MySalahkar
           </p>
           <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.35rem]">
             Expert professional advice — on WhatsApp, chat, or call.

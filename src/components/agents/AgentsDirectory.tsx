@@ -71,13 +71,16 @@ type Entry = { key: string; mode: "ai" | "human"; listing: MarketplaceListing };
 const AGENT_TYPES: { value: AgentType; label: string }[] = [
   { value: "CA", label: "Chartered Accountant" },
   { value: "CS", label: "Company Secretary" },
-  { value: "Lawyer", label: "Lawyer" },
-  { value: "Wealth Management", label: "Wealth Management" },
-  { value: "Real Estate", label: "Real Estate" },
-  { value: "IRP", label: "Insolvency & Restructuring" },
-  { value: "FEMA", label: "FEMA Consultant" },
-  { value: "Insurance", label: "Insurance Advisor" },
-  { value: "Lending", label: "Lending Advisor" },
+  { value: "CMA", label: "Cost and Management Accountant" },
+  { value: "Lawyer", label: "Lawyers" },
+  { value: "Finance Consultant", label: "Finance Consultant" },
+  { value: "FEMA", label: "FEMA/RBI Consultant" },
+  { value: "Tax Consultant", label: "Tax Consultant" },
+  { value: "Registered Valuer", label: "Registered Valuer" },
+  { value: "IRP", label: "Insolvency Professional" },
+  { value: "Mutual Fund Distributor", label: "Mutual Fund Distributor (AMFI-registered)" },
+  { value: "Lending", label: "Loan Advisor" },
+  { value: "Industry Expert", label: "Industry Experts" },
 ];
 
 function toEntries(listings: MarketplaceListing[]): Entry[] {

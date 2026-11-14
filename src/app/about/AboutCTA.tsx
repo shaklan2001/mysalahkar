@@ -15,7 +15,7 @@ export function AboutCTA() {
             Experience clearer professional advice
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-400 sm:text-base">
-            Join businesses and individuals who use My Salahkar for instant,
+            Join businesses and individuals who use MySalahkar for instant,
             expert guidance.
           </p>
           <Button

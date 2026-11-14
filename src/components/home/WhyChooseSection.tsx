@@ -23,7 +23,7 @@ export function WhyChooseSection() {
       <div className="container mx-auto max-w-7xl px-4">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-extrabold text-slate-900 md:text-4xl">
-            Why Choose My Salahkar?
+            Why Choose MySalahkar?
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-slate-600">
             The future of professional consultancy—combining AI efficiency with human expertise.

@@ -17,7 +17,7 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
 export const metadata: Metadata = {
   title: "Security & Data Privacy",
   description:
-    "Learn how My Salahkar protects your data. Encryption, DPDP compliance, and our commitment to never training on your conversations.",
+    "Learn how MySalahkar protects your data. Encryption, DPDP compliance, and our commitment to never training on your conversations.",
 };
 
 const highlights = [
@@ -290,10 +290,10 @@ export default function SecurityPage() {
               <p className="mt-8 border-t border-white/10 pt-5 text-sm text-slate-400">
                 To exercise your rights, email{" "}
                 <a
-                  href="mailto:privacy@mysalahkar.com"
+                  href="mailto:support@mysalahkar.com"
                   className="font-medium text-white underline-offset-4 hover:underline"
                 >
-                  privacy@mysalahkar.com
+                  support@mysalahkar.com
                 </a>
                 .
               </p>
@@ -360,11 +360,11 @@ export default function SecurityPage() {
                 Questions about our security?
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Our security and privacy teams are here to help.
+                Our support team is here to help.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              {["security@mysalahkar.com", "privacy@mysalahkar.com"].map(
+              {["support@mysalahkar.com"].map(
                 (email) => (
                   <a
                     key={email}

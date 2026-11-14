@@ -6,10 +6,9 @@ import { useEffect, useState } from "react";
 import {
   BookOpen,
   Briefcase,
-  Landmark,
+  Info,
   Menu,
   UserRound,
-  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -39,23 +38,23 @@ type MenuLink = {
 
 const resourceLinks: MenuLink[] = [
   {
-    href: "/community",
-    label: "Community",
-    description: "Discussions from practitioners",
-    icon: Users,
-  },
-  {
-    href: "/smart-loan",
-    label: "Smart Loan",
-    description: "Personal-loan offers you qualify for",
-    icon: Landmark,
-  },
-  {
     href: "/learning",
     label: "Learning",
     description: "Workshops & masterclasses",
     icon: BookOpen,
     soon: true,
+  },
+  {
+    href: "/about",
+    label: "About us",
+    description: "Our founders, mandate and values",
+    icon: Info,
+  },
+  {
+    href: "/careers",
+    label: "Careers",
+    description: "Work with us",
+    icon: Briefcase,
   },
 ];
 
@@ -83,6 +82,8 @@ const directLinks = [
   { href: "/services", label: "Services" },
   { href: "/agents", label: "Find Professionals" },
   { href: "/daily-digest", label: "Daily Digest" },
+  { href: "/community", label: "Community" },
+  { href: "/smart-loan", label: "Smart Loan" },
 ];
 
 const mobileSections = [{ title: "Resources", links: resourceLinks }];
@@ -162,7 +163,7 @@ export function Header() {
           : "border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
           <Link
             href="/"
@@ -170,10 +171,10 @@ export function Header() {
             onClick={() => setMobileOpen(false)}
             aria-label="mysalahkar home"
           >
-            <MySalahkarLogo height={34} />
+            <MySalahkarLogo height={48} withTagline />
           </Link>
 
-          <NavigationMenu className="relative z-20 hidden lg:flex" viewport={false}>
+          <NavigationMenu className="relative z-20 hidden xl:flex" viewport={false}>
             <NavigationMenuList className="gap-0.5">
               {directLinks.map((link) => (
                 <NavigationMenuItem key={link.href}>
@@ -209,7 +210,7 @@ export function Header() {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 xl:flex">
             {user ? (
               <Button asChild size="sm" variant="outline">
                 <Link href={ROLE_HOME[user.role]}>
@@ -251,7 +252,7 @@ export function Header() {
           </div>
 
           <button
-            className="rounded-md p-2 text-foreground lg:hidden"
+            className="rounded-md p-2 text-foreground xl:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
@@ -265,7 +266,7 @@ export function Header() {
         </div>
 
         {mobileOpen && (
-          <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border/70 py-4 lg:hidden">
+          <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border/70 py-4 xl:hidden">
             <nav className="flex flex-col gap-0.5">
               {directLinks.map((link) => (
                 <Link

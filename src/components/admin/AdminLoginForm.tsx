@@ -17,7 +17,7 @@ export function AdminLoginForm() {
           <ShieldCheck className="h-5 w-5" />
         </span>
         <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight text-foreground">Admin sign in</h1>
-        <p className="mt-1 text-sm text-muted-foreground">For My Salahkar staff. Every action is tied to your account.</p>
+        <p className="mt-1 text-sm text-muted-foreground">For MySalahkar staff. Every action is tied to your account.</p>
         <div className="mt-6">
           {/* Existing admins only: the API never creates an admin by signing in. */}
           <AuthButtons role="admin" consent next={next} />

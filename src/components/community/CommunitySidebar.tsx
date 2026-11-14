@@ -87,9 +87,6 @@ export function CommunitySidebar() {
                   </div>
                 </div>
               </div>
-              <Badge variant="outline" className="text-xs">
-                {contributor.posts} posts
-              </Badge>
             </div>
           ))}
         </CardContent>

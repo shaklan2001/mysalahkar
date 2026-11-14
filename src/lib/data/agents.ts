@@ -7,7 +7,13 @@ export type AgentType =
   | "IRP"
   | "FEMA"
   | "Insurance"
-  | "Lending";
+  | "Lending"
+  | "CMA"
+  | "Finance Consultant"
+  | "Tax Consultant"
+  | "Registered Valuer"
+  | "Mutual Fund Distributor"
+  | "Industry Expert";
 
 export type Agent = {
   slug: string;
@@ -284,7 +290,7 @@ export const agents: Agent[] = [
       },
     ],
     escalationNote:
-      "For court/tribunal appearances, signed opinions, or insolvency appointments requiring a licensed IP engagement, I'll connect you with Soniya Gupta's practice team.",
+      "For court/tribunal appearances, signed opinions, or insolvency appointments requiring a registered IP engagement, I'll connect you with Soniya Gupta's practice team.",
     liveTag: "Live on Web Chat · Web Call",
     liveDemo: true,
   },
@@ -1905,9 +1911,440 @@ export const agents: Agent[] = [
     escalationNote: "Signed secretarial audit reports and formal certifications are issued through Urmila's practice.",
     liveTag: "Verified professional",
   },
+  {
+    slug: "mohan-lal-jain-ip",
+    name: "IP Mohan Lal Jain",
+    type: "IRP",
+    typeLabel: "Insolvency Professional · IBBI Registered",
+    specializations: [
+      "Corporate Insolvency Resolution (CIRP)",
+      "Liquidation under the IBC, 2016",
+      "Loan Restructuring (CDR & Bilateral)",
+      "Bank Credit Assessment",
+      "Stressed-Asset Resolution"
+    ],
+    services: [
+      "Interim Resolution Professional (IRP) and Resolution Professional (RP) under CIRP",
+      "Liquidator in liquidation proceedings under the IBC",
+      "Corporate debt restructuring advisory",
+      "IBC presentations and training for banks",
+      "Speaker at seminars, conferences and workshops"
+    ],
+    experience: 36,
+    rating: 5,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "Mohan Lal Jain is a senior Insolvency Professional (IBBI Regd. No. IBBI/IPA-002/IP-N00006/2016-17/10006) and whole-time Director at Sumedha Management Solutions Pvt. Ltd. (SMSPL), an Insolvency Professional Entity registered with IBBI (Recognition No. IBBI/IPE/0020). He retired as General Manager of Bank of Baroda after more than 36 years in banking, and now brings that credit and restructuring background to insolvency assignments. He has 10+ years as an Insolvency Professional (IRP/RP and Liquidator) and has handled 20+ CIRP and liquidation assignments.",
+    image: "/consultants/mohan-lal-jain-ip.jpg",
+    location: "Delhi, India",
+    availability: "By appointment",
+    languages: [
+      "English",
+      "Hindi"
+    ],
+    channels: [
+      "call"
+    ],
+    accent: "#0e7490",
+    tagline: "Insolvency resolution, liquidation and loan restructuring, backed by 36+ years in banking",
+    personality: "Senior IBBI-registered Insolvency Professional and former Bank of Baroda General Manager.",
+    kpis: [
+      {
+        value: "36+",
+        label: "Years in Banking"
+      },
+      {
+        value: "20+",
+        label: "CIRP & Liquidations"
+      },
+      {
+        value: "Delhi",
+        label: "Based"
+      }
+    ],
+    capabilities: [
+      {
+        title: "CIRP & Liquidation",
+        description: "Acts as IRP, RP and Liquidator under the Insolvency and Bankruptcy Code, 2016."
+      },
+      {
+        title: "Debt Restructuring",
+        description: "Loan restructuring proposals under the CDR mechanism and on a bilateral basis."
+      },
+      {
+        title: "Bank Training",
+        description: "IBC presentations and training for banks, seminars and workshops."
+      }
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share the Case",
+        desc: "Tell us the stage of the matter: default, restructuring, CIRP or liquidation."
+      },
+      {
+        num: "2",
+        title: "Assess Options",
+        desc: "Review of the debt, the lenders and the routes available under the IBC."
+      },
+      {
+        num: "3",
+        title: "Act",
+        desc: "Appointment as IRP/RP or Liquidator, or a restructuring proposal to lenders."
+      }
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "Our company has defaulted on a term loan. Should we try restructuring before the bank files under the IBC?"
+      },
+      {
+        role: "agent",
+        text: "Often yes. A restructuring proposal, either bilateral or through the CDR route, can be put to the lenders first. Share the loan details and the default date and we can look at what is workable."
+      }
+    ],
+    faqs: [
+      {
+        q: "Can you act as IRP or Liquidator?",
+        a: "Yes. He is an IBBI-registered Insolvency Professional and has acted as IRP, RP and Liquidator."
+      },
+      {
+        q: "Do you train bank teams on the IBC?",
+        a: "Yes. He gives IBC presentations and training for banks."
+      }
+    ],
+    escalationNote: "Appointments as IRP, RP or Liquidator are made through Sumedha Management Solutions Pvt. Ltd.",
+    liveTag: "Verified professional"
+  },
+  {
+    slug: "nitin-diwan-ca",
+    name: "CA Nitin Diwan",
+    type: "CA",
+    typeLabel: "Chartered Accountant · Business & Property Finance",
+    specializations: [
+      "Business & Property Finance",
+      "Working Capital (OD, CC, DOD)",
+      "Home Loans & Loan Against Property",
+      "CGTMSE & Project Loans",
+      "Funding Structures for Complex Eligibility"
+    ],
+    services: [
+      "Loans and limits including OD, CC and DOD",
+      "Home loans (HL) and loan against property (LAP)",
+      "CGTMSE limits",
+      "Project loans",
+      "Loans against shares and mutual funds",
+      "Promoter funding"
+    ],
+    experience: 22,
+    rating: 5,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "CA Nitin Diwan is a Chartered Accountant with 22 years of experience in business and property finance. He works with private as well as nationalised banks and has access to 100+ lenders. This lets him combine different products into the most suitable funding structure for each client, including cases where eligibility is an issue and properties such as schools, colleges, hospitals and hotels.",
+    image: "/consultants/nitin-diwan-ca.jpg",
+    location: "Delhi, India",
+    availability: "By appointment",
+    languages: [
+      "English",
+      "Hindi"
+    ],
+    channels: [
+      "call"
+    ],
+    accent: "#1d4ed8",
+    tagline: "Business and property finance across 100+ lenders, structured for your case",
+    personality: "Chartered Accountant who structures business and property funding across banks and lenders.",
+    kpis: [
+      {
+        value: "22",
+        label: "Years Experience"
+      },
+      {
+        value: "100+",
+        label: "Lenders"
+      },
+      {
+        value: "Delhi",
+        label: "Based"
+      }
+    ],
+    capabilities: [
+      {
+        title: "Working Capital",
+        description: "OD, CC, DOD and CGTMSE limits for businesses."
+      },
+      {
+        title: "Property & Project Loans",
+        description: "Home loans, LAP and project loans, including schools, colleges, hospitals and hotels."
+      },
+      {
+        title: "Structured Funding",
+        description: "Combines products across 100+ lenders, including where eligibility is an issue."
+      }
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share Your Requirement",
+        desc: "The amount, purpose and the property or business behind the loan."
+      },
+      {
+        num: "2",
+        title: "Structure",
+        desc: "The right mix of products and lenders for your eligibility."
+      },
+      {
+        num: "3",
+        title: "Apply",
+        desc: "Applications with the chosen banks and follow-through to sanction."
+      }
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "We run a school and need a loan against the building, but our income on paper is low. Is it possible?"
+      },
+      {
+        role: "agent",
+        text: "It can be. Some lenders fund institutional properties such as schools, and combining products can help where eligibility is tight. Share the property details and your financials and we can look at the options."
+      }
+    ],
+    faqs: [
+      {
+        q: "Which banks do you work with?",
+        a: "Private and nationalised banks, with access to 100+ lenders."
+      },
+      {
+        q: "Can you help if my loan was rejected?",
+        a: "Yes. Cases where eligibility is an issue are a core part of his work."
+      }
+    ],
+    escalationNote: "Loan applications are handled through Nitin Diwan's practice; sanction and terms are decided by the lender.",
+    liveTag: "Verified professional"
+  },
+  {
+    slug: "deepak-sahni-finance",
+    name: "Deepak Sahni",
+    type: "Finance Consultant",
+    typeLabel: "Finance Consultant · Bookkeeping, GST & ITR",
+    specializations: [
+      "Bookkeeping",
+      "GST Registration & Filings",
+      "ITR Filing",
+      "Company & LLP Incorporation",
+      "Insurance & Loans"
+    ],
+    services: [
+      "Bookkeeping",
+      "GST registration and filings",
+      "ITR filing",
+      "Company and LLP incorporation",
+      "Motor, health and life insurance",
+      "Business loans and home loans"
+    ],
+    experience: 18,
+    rating: 5,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "Deepak Sahni is an MBA (Finance) professional with 18 years of experience, helping individuals and businesses manage their financial and regulatory needs. His core expertise is bookkeeping, GST and ITR filing. He keeps accounts accurate, makes sure returns are filed on time, and helps clients stay compliant with tax regulations.",
+    image: "/consultants/deepak-sahni.jpg",
+    location: "Gurugram, India",
+    availability: "By appointment",
+    languages: [
+      "English",
+      "Hindi"
+    ],
+    channels: [
+      "call"
+    ],
+    accent: "#047857",
+    tagline: "Bookkeeping, GST and ITR filing that keeps you compliant and on time",
+    personality: "MBA (Finance) consultant focused on bookkeeping and tax compliance for individuals and businesses.",
+    kpis: [
+      {
+        value: "18",
+        label: "Years Experience"
+      },
+      {
+        value: "GST & ITR",
+        label: "Core Focus"
+      },
+      {
+        value: "Gurugram",
+        label: "Based"
+      }
+    ],
+    capabilities: [
+      {
+        title: "Bookkeeping",
+        description: "Accurate books kept up to date for individuals and businesses."
+      },
+      {
+        title: "GST & ITR",
+        description: "GST registration, return filings and income tax returns, filed on time."
+      },
+      {
+        title: "Setup & Cover",
+        description: "Company and LLP incorporation, insurance, and business and home loans."
+      }
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share Your Needs",
+        desc: "Books, GST, ITR, incorporation, insurance or a loan."
+      },
+      {
+        num: "2",
+        title: "Get Organised",
+        desc: "Documents collected and accounts brought up to date."
+      },
+      {
+        num: "3",
+        title: "File & Stay Compliant",
+        desc: "Returns filed on time, with reminders for what is due next."
+      }
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "I have a small trading business and my GST returns are a few months behind. Can you help?"
+      },
+      {
+        role: "agent",
+        text: "Yes. We would first bring your books up to date, then file the pending GST returns with any late fee, and set up a monthly routine so you stay on time."
+      }
+    ],
+    faqs: [
+      {
+        q: "Do you handle both GST and income tax?",
+        a: "Yes. GST registration and filings, and ITR filing."
+      },
+      {
+        q: "Can you register a company or LLP?",
+        a: "Yes. Company and LLP incorporation is one of the services."
+      }
+    ],
+    escalationNote: "Filings and incorporations are handled through Deepak Sahni's practice.",
+    liveTag: "Verified professional"
+  },
+  {
+    slug: "ekansh-agrawal-ca",
+    name: "CA Ekansh Agrawal",
+    type: "CA",
+    typeLabel: "Chartered Accountant · UAE Tax & E-Invoicing",
+    specializations: [
+      "UAE E-Invoicing",
+      "Tax Technology & Transformation",
+      "UAE Corporate Tax",
+      "VAT & Indirect Tax",
+      "Transfer Pricing",
+      "OECD Pillar Two"
+    ],
+    services: [
+      "UAE company registration",
+      "OECD Pillar Two readiness assessment",
+      "Corporate tax advisory",
+      "ASP and ERP integration",
+      "VAT and indirect tax",
+      "Tax technology and transformation",
+      "Transfer pricing",
+      "Training and enablement",
+      "Audits",
+      "AML compliance",
+      "Foundations and trusts",
+      "Accounting",
+      "E-invoicing"
+    ],
+    experience: 15,
+    rating: 5,
+    reviewCount: 0,
+    consultationFee: STANDARD_HALF_HOUR_FEE,
+    bio: "Ekansh Agrawal is the Founder & CEO of ScaleX Tax and a Chartered Accountant (ICAI) with 15+ years of experience across the GCC and India. A tax technology specialist widely known as \"Mr. E-Invoicing\", he also works on VAT and corporate tax aligned with digital billing. He authored UAE E-Invoicing Chronicles, the first book on UAE e-invoicing, and hosts the podcast \"Walk the Talk\". He previously led indirect tax and tax technology at KPMG UAE, and advised multinationals and family offices at Lakshmi Kumaran & Sridharan. He has advised 2,000+ businesses and trained 5,000+ professionals.",
+    image: "/consultants/ekansh-agrawal-ca.jpg",
+    location: "Dubai, UAE",
+    availability: "By appointment",
+    languages: [
+      "English",
+      "Hindi"
+    ],
+    channels: [
+      "call"
+    ],
+    accent: "#6366f1",
+    tagline: "UAE e-invoicing, corporate tax and VAT from \"Mr. E-Invoicing\"",
+    personality: "UAE-based Chartered Accountant and tax technology specialist focused on e-invoicing.",
+    kpis: [
+      {
+        value: "15+",
+        label: "Years Experience"
+      },
+      {
+        value: "2,000+",
+        label: "Businesses Advised"
+      },
+      {
+        value: "Dubai",
+        label: "Based"
+      }
+    ],
+    capabilities: [
+      {
+        title: "UAE E-Invoicing",
+        description: "Readiness, ASP and ERP integration, and tax technology transformation."
+      },
+      {
+        title: "Corporate Tax & VAT",
+        description: "UAE corporate tax advisory, VAT, transfer pricing and OECD Pillar Two."
+      },
+      {
+        title: "Setup & Compliance",
+        description: "UAE company registration, audits, accounting, AML compliance, foundations and trusts."
+      }
+    ],
+    workflows: [
+      {
+        num: "1",
+        title: "Share Your Business",
+        desc: "Your UAE entity, systems and the tax or e-invoicing question."
+      },
+      {
+        num: "2",
+        title: "Assess Readiness",
+        desc: "What applies to you and the gaps in your current setup."
+      },
+      {
+        num: "3",
+        title: "Implement",
+        desc: "Registration, filings or e-invoicing integration, with training for your team."
+      }
+    ],
+    sampleChat: [
+      {
+        role: "user",
+        text: "We are a UAE company using an older ERP. What do we need to do for e-invoicing?"
+      },
+      {
+        role: "agent",
+        text: "Start with a readiness assessment of your ERP and invoicing data, then plan the integration with an accredited service provider (ASP). Share your ERP and invoice volumes and we can map the steps."
+      }
+    ],
+    faqs: [
+      {
+        q: "Do you work with Indian businesses entering the UAE?",
+        a: "Yes. He has 15+ years of experience across the GCC and India, including UAE company registration."
+      },
+      {
+        q: "Can you train our finance team?",
+        a: "Yes. Training and enablement is one of the services; he has trained 5,000+ professionals."
+      }
+    ],
+    escalationNote: "UAE engagements are delivered through ScaleX Tax.",
+    liveTag: "Verified professional"
+  },
 ];
 
-export const SPECIALIZATIONS: Record<AgentType, string[]> = {
+export const SPECIALIZATIONS: Partial<Record<AgentType, string[]>> = {
   CA: [
     "Income Tax & Corporate Taxation",
     "GST",

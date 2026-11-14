@@ -159,7 +159,7 @@ export function ClientHome() {
     },
     {
       icon: BadgeCheck,
-      title: "Book a professional",
+      title: "Book a consultation",
       body: "Verified CA, CS & lawyers",
       href: "/client/dashboard/find?kind=human",
       tone: "bg-[#001450] text-white",

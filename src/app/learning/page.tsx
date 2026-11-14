@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Learning · Coming soon",
   description:
-    "Live workshops and recorded masterclasses on tax, corporate law and compliance, taught by practising professionals. Coming soon to My Salahkar.",
+    "Live workshops and recorded masterclasses on tax, corporate law and compliance, taught by practising professionals. Coming soon to MySalahkar.",
 };
 
 const formats: { icon: LucideIcon; title: string; body: string }[] = [

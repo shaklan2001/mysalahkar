@@ -21,7 +21,6 @@ import { toast } from "sonner";
 import { api, errorMessage } from "@/lib/api";
 import {
   communityGuidelines,
-  communityStats,
   topContributors,
   trendingTopics,
   type CommunityPost,
@@ -35,6 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn, formatNumber } from "@/lib/utils";
+import type { ApiProfessionalCard } from "@/lib/data/marketplace";
 
 /*
  * Public community is READ-ONLY. Anyone can browse; posting, liking and
@@ -105,6 +105,8 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
   const [gate, setGate] = useState<string | null>(null);
   const [feed, setFeed] = useState<ApiPost[]>([]);
   const [feedError, setFeedError] = useState<string | null>(null);
+  // Members = human professionals listed on the platform (no made-up counts).
+  const [memberCount, setMemberCount] = useState<number | null>(null);
   const [liked, setLiked] = useState<Set<string>>(() => new Set());
   const [replies, setReplies] = useState<Record<string, Reply[]>>({});
   const [sort, setSort] = useState<Sort>("latest");
@@ -122,10 +124,27 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
       .catch((error) => {
         if (!cancelled) setFeedError(errorMessage(error, "Could not load the community."));
       });
+    api<{ items: ApiProfessionalCard[] }>("/professionals")
+      .then(({ items }) => {
+        if (cancelled) return;
+        setMemberCount(items.filter((p) => p.listingKind !== "ai").length);
+      })
+      .catch(() => {
+        /* Leave the count blank rather than guess. */
+      });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const contributors = useMemo(
+    () =>
+      topContributors.map((person) => ({
+        ...person,
+        posts: feed.filter((post) => post.authorName === person.name).length,
+      })),
+    [feed],
+  );
 
   const tags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -349,12 +368,12 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
         <aside className="space-y-5 lg:sticky lg:top-28">
           <div className="grid grid-cols-2 divide-x divide-border rounded-2xl border border-border bg-white text-center">
             {[
-              ["Members", communityStats.members],
-              ["Posts", communityStats.posts],
+              ["Members", memberCount],
+              ["Posts", feed.length || null],
             ].map(([label, value]) => (
               <div key={label} className="px-2 py-4">
                 <p className="font-display text-lg font-semibold text-foreground">
-                  {formatNumber(Number(value))}
+                  {value === null ? "—" : formatNumber(Number(value))}
                 </p>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
                   {label}
@@ -390,7 +409,7 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
               <Users className="h-4 w-4 text-accent" /> Top contributors
             </h3>
             <ul className="mt-4 space-y-3">
-              {topContributors.map((person) => (
+              {contributors.map((person) => (
                 <li key={person.name} className="flex items-center gap-3">
                   <span
                     className={cn(
@@ -409,7 +428,7 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    {person.posts} posts
+                    {person.posts} {person.posts === 1 ? "post" : "posts"}
                   </span>
                 </li>
               ))}

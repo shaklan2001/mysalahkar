@@ -46,7 +46,7 @@ export function FinalCTA() {
               Are you a professional?
             </h2>
             <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-300">
-              Join My Salahkar as a CA, CS, lawyer or advisor. Launch your AI
+              Join MySalahkar as a CA, CS, lawyer or advisor. Launch your AI
               Salahkar and grow your practice.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

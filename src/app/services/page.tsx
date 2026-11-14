@@ -11,7 +11,7 @@ import { FinalCTA } from "@/components/home/FinalCTA";
 export const metadata: Metadata = {
   title: "Professional Services",
   description:
-    "Official service catalogue — business setup, income tax, GST, trademark, FEMA, ROC secretarial, audit, financial services, and UAE advisory.",
+    "Official service catalogue — business setup, income tax, GST, trademark, FEMA, ROC secretarial, audit, financial services, and UAE, USA and UK advisory.",
 };
 
 export default function ServicesPage() {

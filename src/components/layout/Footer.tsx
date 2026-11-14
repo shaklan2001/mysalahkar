@@ -33,7 +33,7 @@ const columns = [
   {
     title: "Professionals",
     links: [
-      ["/#professionals", "Why My Salahkar"],
+      ["/#professionals", "Why MySalahkar"],
       ["/professionals/signup", "Apply to join"],
       ["/professionals/login", "Professional login"],
       ["/community", "Community"],
@@ -43,6 +43,7 @@ const columns = [
     title: "Company",
     links: [
       ["/about", "About us"],
+      ["/careers", "Careers"],
       ["/contact", "Contact"],
       ["/learning", "Learning · Soon"],
       ["/compliance", "Compliance"],
@@ -114,10 +115,10 @@ export function Footer({ showCta = true }: { showCta?: boolean }) {
               </li>
               <li>
                 <a
-                  href="tel:+918047001234"
+                  href="tel:+919990411000"
                   className="inline-flex items-center gap-2.5 text-slate-300 transition-colors hover:text-white"
                 >
-                  <Phone className="h-4 w-4 text-slate-500" /> +91 80470 01234
+                  <Phone className="h-4 w-4 text-slate-500" /> +91-9990411000
                 </a>
               </li>
               <li className="inline-flex items-center gap-2.5 text-slate-400">
@@ -154,7 +155,7 @@ export function Footer({ showCta = true }: { showCta?: boolean }) {
         <div className="flex flex-col gap-5 border-t border-white/10 py-7 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <p>
-              © {new Date().getFullYear()} My Salahkar. All rights reserved.
+              © {new Date().getFullYear()} MySalahkar. All rights reserved.
             </p>
             <span
               className="hidden h-4 w-px bg-white/10 md:block"

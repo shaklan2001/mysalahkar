@@ -244,14 +244,21 @@ export const shareTiers = [
   },
 ];
 
+/** Labels shown in the "Type of professional" picker at signup. */
 export const professionalDomains = [
-  "CA — Chartered Accountant",
-  "CS — Company Secretary",
-  "Lawyer / Advocate",
-  "FEMA / Cross-border",
-  "Wealth / RIA",
-  "Insurance",
-  "Real Estate",
-  "Insolvency (IRP/RP)",
-  "Lending / Credit",
+  "Chartered Accountant",
+  "Company Secretary",
+  "Cost and Management Accountant",
+  "Lawyers",
+  "Finance Consultant",
+  "FEMA/RBI Consultant",
+  "Tax Consultant",
+  "Registered Valuer",
+  "Insolvency Professional",
+  "Mutual Fund Distributor (AMFI-registered)",
+  "Loan Advisor",
+  "Industry Experts",
 ];
+
+/** The picker option that asks the professional to name their industry. */
+export const INDUSTRY_EXPERT_DOMAIN = "Industry Experts";
