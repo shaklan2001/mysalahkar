@@ -1,5 +1,4 @@
 import { AgentsDirectory } from "@/components/agents/AgentsDirectory";
-import { getMarketplaceListings } from "@/lib/data/marketplace";
 
 /** Client dashboard "Find professionals": the public directory, kept inside the dashboard shell. */
 export function FindBoard({
@@ -21,7 +20,6 @@ export function FindBoard({
         </p>
       </div>
       <AgentsDirectory
-        agents={getMarketplaceListings()}
         searchParams={{ book: bookSlug, kind }}
         profileBase="/client/dashboard/find"
         aiBase="/client/dashboard/find/ai"

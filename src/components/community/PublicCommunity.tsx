@@ -34,7 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn, formatNumber } from "@/lib/utils";
-import type { ApiProfessionalCard } from "@/lib/data/marketplace";
+import { loadProfessionals } from "@/lib/data/professionals";
 
 /*
  * Public community is READ-ONLY. Anyone can browse; posting, liking and
@@ -124,8 +124,8 @@ export function PublicCommunity({ member }: { member?: Member } = {}) {
       .catch((error) => {
         if (!cancelled) setFeedError(errorMessage(error, "Could not load the community."));
       });
-    api<{ items: ApiProfessionalCard[] }>("/professionals")
-      .then(({ items }) => {
+    loadProfessionals()
+      .then((items) => {
         if (cancelled) return;
         setMemberCount(items.filter((p) => p.listingKind !== "ai").length);
       })

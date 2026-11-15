@@ -10,6 +10,7 @@ import {
   CalendarClock,
   Check,
   Languages,
+  Loader2,
   MapPin,
   MessageSquare,
   Phone,
@@ -19,19 +20,13 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import {
-  AgentType,
-  SPECIALIZATIONS,
-  aiConsultantName,
-} from "@/lib/data/agents";
+import { type AgentType, aiConsultantName } from "@/lib/data/agents";
 import {
   aiSalahkarSlug,
   canScheduleHuman,
-  mergeApiCard,
-  type ApiProfessionalCard,
   type MarketplaceListing,
 } from "@/lib/data/marketplace";
-import { api } from "@/lib/api";
+import { useProfessionals } from "@/lib/data/professionals";
 import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
 import { ScheduleCallDialog } from "@/components/agents/ScheduleCallDialog";
 import { useConsult } from "@/components/consult/ConsultProvider";
@@ -46,7 +41,6 @@ import {
 import { cn, formatINR } from "@/lib/utils";
 
 interface AgentsDirectoryProps {
-  agents: MarketplaceListing[];
   searchParams?: {
     type?: string;
     kind?: string;
@@ -116,13 +110,12 @@ function initialView(kind?: string): View {
 }
 
 export function AgentsDirectory({
-  agents,
   searchParams,
   profileBase = "/agents",
   aiBase = "/ai-salahkars",
   stickyTop = "top-[6.25rem]",
 }: AgentsDirectoryProps) {
-  const [liveListings, setLiveListings] = useState<MarketplaceListing[] | null>(null);
+  const directory = useProfessionals();
   const [view, setView] = useState<View>(initialView(searchParams?.kind));
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<AgentType | "all">(
@@ -131,22 +124,6 @@ export function AgentsDirectory({
   const [selectedSpecialization, setSelectedSpecialization] = useState("all");
   const [minRating, setMinRating] = useState("0");
   const [minExperience, setMinExperience] = useState("0");
-
-  // The API is the live directory. Seed agents fill in bios the card does not carry.
-  useEffect(() => {
-    let cancelled = false;
-    const seeds = new Map(agents.map((agent) => [agent.slug, agent]));
-    api<{ items: ApiProfessionalCard[] }>("/professionals")
-      .then(({ items }) => {
-        if (!cancelled) setLiveListings(items.map((card) => mergeApiCard(card, seeds.get(card.slug))));
-      })
-      .catch(() => {
-        if (!cancelled) setLiveListings(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [agents]);
 
   // Keep ?kind= in the URL so the tab survives refresh and can be linked to.
   useEffect(() => {
@@ -157,14 +134,18 @@ export function AgentsDirectory({
   }, [view]);
 
   const entries = useMemo(
-    () => toEntries(liveListings ?? agents),
-    [liveListings, agents],
+    () => toEntries(directory.data ?? []),
+    [directory.data],
   );
 
-  const availableSpecializations = useMemo(
-    () => (selectedType === "all" ? [] : SPECIALIZATIONS[selectedType] || []),
-    [selectedType],
-  );
+  // Specializations offered by professionals of the chosen type.
+  const availableSpecializations = useMemo(() => {
+    if (selectedType === "all") return [];
+    const specs = (directory.data ?? [])
+      .filter((listing) => listing.type === selectedType)
+      .flatMap((listing) => listing.specializations);
+    return [...new Set(specs)].sort((a, b) => a.localeCompare(b));
+  }, [directory.data, selectedType]);
 
   const filtered = useMemo(
     () =>
@@ -406,7 +387,21 @@ export function AgentsDirectory({
         </div>
       </div>
 
-      {nothing ? (
+      {directory.status === "loading" ? (
+        <div className="mt-10 flex justify-center py-16" role="status">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          <span className="sr-only">Loading professionals</span>
+        </div>
+      ) : directory.status === "error" ? (
+        <div className="mt-10 rounded-2xl border border-dashed border-border bg-white px-6 py-16 text-center">
+          <p className="font-display text-lg font-semibold text-foreground">
+            We couldn&apos;t load the professionals
+          </p>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+            Check your connection and refresh the page.
+          </p>
+        </div>
+      ) : nothing ? (
         <div className="mt-10 rounded-2xl border border-dashed border-border bg-white px-6 py-16 text-center">
           <p className="font-display text-lg font-semibold text-foreground">
             No consultants match these filters

@@ -3,19 +3,17 @@
 import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import type { ServiceCategory } from "@/lib/data/services";
-import type { Agent } from "@/lib/data/agents";
+import { useProfessionals } from "@/lib/data/professionals";
 import { ServiceCategoryCard } from "@/components/services/ServiceCategoryCard";
 import { cn } from "@/lib/utils";
-
-type CatalogCategory = ServiceCategory & {
-  agent?: Pick<Agent, "slug" | "name">;
-};
 
 export function ServicesCatalog({
   categories,
 }: {
-  categories: CatalogCategory[];
+  categories: ServiceCategory[];
 }) {
+  const directory = useProfessionals();
+
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<string>("all");
 
@@ -120,7 +118,7 @@ export function ServicesCatalog({
             <div key={category.id} id={category.id} className="scroll-mt-52">
               <ServiceCategoryCard
                 category={category}
-                agent={category.agent}
+                agent={directory.data?.find((p) => p.slug === category.agentSlug)}
                 services={services}
               />
             </div>

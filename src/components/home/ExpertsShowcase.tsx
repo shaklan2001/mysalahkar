@@ -1,14 +1,26 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { agents, aiConsultantName } from "@/lib/data/agents";
-import { aiSalahkarHref } from "@/lib/data/marketplace";
+import { aiConsultantName } from "@/lib/data/agents";
+import { aiSalahkarHref, hasAiSalahkar } from "@/lib/data/marketplace";
+import { useProfessionals } from "@/lib/data/professionals";
 import { ExpertCard } from "@/components/agents/ExpertCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const aiSalahkars = agents.filter((agent) => agent.liveDemo);
-const humanExperts = agents.slice(0, 6);
+function CardSkeletons({ count }: { count: number }) {
+  return Array.from({ length: count }, (_, i) => (
+    <div key={i} className="h-44 animate-pulse rounded-2xl border border-border bg-muted/40" aria-hidden />
+  ));
+}
 
 export function ExpertsShowcase() {
+  const directory = useProfessionals();
+  const listings = directory.data ?? [];
+  const aiSalahkars = listings.filter(hasAiSalahkar);
+  const humanExperts = listings.slice(0, 6);
+  const loading = directory.status === "loading";
+
   return (
     <section className="section-pad">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -33,6 +45,7 @@ export function ExpertsShowcase() {
 
           <TabsContent value="ai" className="mt-10">
             <div className="grid gap-5 sm:grid-cols-2">
+              {loading ? <CardSkeletons count={2} /> : null}
               {aiSalahkars.map((agent) => (
                 <ExpertCard
                   key={agent.slug}
@@ -49,6 +62,7 @@ export function ExpertsShowcase() {
 
           <TabsContent value="human" className="mt-10">
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {loading ? <CardSkeletons count={6} /> : null}
               {humanExperts.map((agent) => (
                 <ExpertCard
                   key={agent.slug}

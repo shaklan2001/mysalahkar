@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { serviceCategories, totalServices } from "@/lib/data/services";
-import { getAgent } from "@/lib/data/agents";
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/layout/PageHero";
 import { ConsultButton } from "@/components/consult/ConsultButton";
@@ -15,15 +14,6 @@ export const metadata: Metadata = {
 };
 
 export default function ServicesPage() {
-  // Only what the client cards need — not the full agent profile.
-  const categories = serviceCategories.map((category) => {
-    const agent = getAgent(category.agentSlug);
-    return {
-      ...category,
-      agent: agent ? { slug: agent.slug, name: agent.name } : undefined,
-    };
-  });
-
   const stats = [
     { value: String(serviceCategories.length), label: "Categories" },
     { value: String(totalServices), label: "Services" },
@@ -67,7 +57,7 @@ export default function ServicesPage() {
           ))}
         </dl>
 
-        <ServicesCatalog categories={categories} />
+        <ServicesCatalog categories={serviceCategories} />
       </div>
 
       <div className="pt-24">

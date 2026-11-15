@@ -10,11 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import { MessageSquare, Phone, Sparkles } from "lucide-react";
-import {
-  aiConsultantName,
-  getLiveDemoAgents,
-  resolveLiveDemoSlug,
-} from "@/lib/data/agents";
+import { aiConsultantName } from "@/lib/data/agents";
+import { loadProfessionals, useProfessionals } from "@/lib/data/professionals";
 import { readClientSession } from "@/lib/client-session";
 import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
 import {
@@ -39,8 +36,13 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   const [picker, setPicker] = useState<{ mode: ConsultMode } | null>(null);
 
   const go = useCallback(
-    (slug: string, mode: ConsultMode) => {
-      const dest = `/consult/${resolveLiveDemoSlug(slug)}?mode=${mode}`;
+    async (slug: string, mode: ConsultMode) => {
+      // A professional without a live AI Salahkar hands over to the first one that is live.
+      const live = await loadProfessionals()
+        .then((items) => items.filter((p) => p.liveDemo))
+        .catch(() => []);
+      const target = live.some((p) => p.slug === slug) ? slug : (live[0]?.slug ?? slug);
+      const dest = `/consult/${target}?mode=${mode}`;
       if (!readClientSession()) {
         router.push(`/client/login?next=${encodeURIComponent(dest)}`);
         return;
@@ -53,7 +55,7 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   const openConsult = useCallback(
     (slug?: string, mode: ConsultMode = "chat") => {
       if (slug) {
-        go(slug, mode);
+        void go(slug, mode);
         return;
       }
       setPicker({ mode });
@@ -82,7 +84,7 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
         onOpenChange={(open) => (open ? null : setPicker(null))}
         onPick={(slug, mode) => {
           setPicker(null);
-          go(slug, mode);
+          void go(slug, mode);
         }}
       />
     </ConsultContext.Provider>
@@ -98,7 +100,8 @@ function SalahkarPicker({
   onOpenChange: (open: boolean) => void;
   onPick: (slug: string, mode: ConsultMode) => void;
 }) {
-  const agents = getLiveDemoAgents();
+  const directory = useProfessionals(open);
+  const agents = (directory.data ?? []).filter((agent) => agent.liveDemo);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
@@ -109,8 +112,9 @@ function SalahkarPicker({
           Who would you like to talk to?
         </DialogTitle>
         <DialogDescription>
-          Both are AI assistants, online 24/7. Pick the one that fits your
-          question.
+          {directory.status === "error"
+            ? "We couldn't load the AI Salahkars. Check your connection and try again."
+            : "They're AI assistants, online 24/7. Pick the one that fits your question."}
         </DialogDescription>
 
         <ul className="mt-6 space-y-3">

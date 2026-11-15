@@ -1,11 +1,7 @@
-import { isLiveDemoAgent } from "@/lib/data/agents";
-import { mockAgentProvider } from "./mockProvider";
 import { vibriumAgentProvider } from "./vibriumProvider";
 import type { AgentProvider } from "./types";
 
-export function getAgentProvider(agentSlug: string): AgentProvider {
-  if (isLiveDemoAgent(agentSlug)) {
-    return vibriumAgentProvider;
-  }
-  return mockAgentProvider;
+/** Every AI Salahkar talks through the API, which decides whether that professional's agent is live. */
+export function getAgentProvider(): AgentProvider {
+  return vibriumAgentProvider;
 }

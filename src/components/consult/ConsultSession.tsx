@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -26,14 +26,11 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  getLiveDemoAgents,
-  getAgent,
-  isLiveDemoAgent,
-  aiConsultantName,
-} from "@/lib/data/agents";
+import { aiConsultantName } from "@/lib/data/agents";
+import { useProfessional } from "@/lib/data/professionals";
+import { ProfileLoadState } from "@/components/agents/ProfileLoadState";
 import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
-import { aiSalahkarHref } from "@/lib/data/marketplace";
+import { aiSalahkarHref, type MarketplaceListing } from "@/lib/data/marketplace";
 import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
@@ -65,18 +62,41 @@ type ConsultSessionProps = {
   initialMode?: ConsultMode;
 };
 
+/** Loads the professional; only those with a live AI Salahkar can be consulted here. */
 export function ConsultSession({
   agentSlug,
   initialMode = "chat",
 }: ConsultSessionProps) {
+  const profile = useProfessional(agentSlug);
+  if (profile.status !== "ready") return <ProfileLoadState state={profile.status} />;
+  if (!profile.data) return <ProfileLoadState state="missing" what="AI Salahkar" />;
+  if (!profile.data.liveDemo) {
+    return (
+      <ProfileLoadState
+        state="missing"
+        message={{
+          title: `${profile.data.name} doesn't have an AI Salahkar yet`,
+          body: "You can book a consultation with them directly instead.",
+          href: `/agents/${profile.data.slug}`,
+          linkLabel: `View ${profile.data.name}'s profile`,
+        }}
+      />
+    );
+  }
+  return <ConsultSessionView agent={profile.data} initialMode={initialMode} />;
+}
+
+function ConsultSessionView({
+  agent,
+  initialMode,
+}: {
+  agent: MarketplaceListing;
+  initialMode: ConsultMode;
+}) {
   const router = useRouter();
   const { closeConsult, openConsult } = useConsult();
   const { ready, session } = useClientSession();
   const allowed = Boolean(session);
-  const agent = useMemo(
-    () => getAgent(agentSlug) ?? getLiveDemoAgents()[0],
-    [agentSlug],
-  );
 
   const [tab, setTab] = useState<ConsultMode>(initialMode);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -105,7 +125,7 @@ export function ConsultSession({
 
   // A new conversation (contact id + welcome message) per agent, once signed in.
   const [startedFor, setStartedFor] = useState<string | null>(null);
-  if (allowed && agent && startedFor !== agent.slug) {
+  if (allowed && startedFor !== agent.slug) {
     setStartedFor(agent.slug);
     setContactId(createContactId(agent.slug));
     setMessages([welcomeMessage(agent)]);
@@ -126,7 +146,7 @@ export function ConsultSession({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streaming]);
 
-  if (!allowed || !agent) return null;
+  if (!allowed) return null;
 
   async function sendMessage() {
     if (!input.trim() || streaming) return;
@@ -151,7 +171,7 @@ export function ConsultSession({
     abortRef.current = new AbortController();
 
     try {
-      const provider = getAgentProvider(agent.slug);
+      const provider = getAgentProvider();
       await provider.streamReply(
         agent.slug,
         userMsg.content,
@@ -233,7 +253,7 @@ export function ConsultSession({
     }
   }
 
-  const liveConfigured = isLiveDemoAgent(agent.slug);
+  const liveConfigured = Boolean(agent.liveDemo);
   const displayName = aiConsultantName(agent);
   const firstName = displayName.split(" ")[0];
   const suggestions = agent.faqs.map((faq) => faq.q).slice(0, 3);

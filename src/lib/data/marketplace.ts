@@ -1,5 +1,5 @@
 import type { Agent } from "./agents";
-import { agents, aiConsultantName, STANDARD_HALF_HOUR_FEE } from "./agents";
+import { aiConsultantName, STANDARD_HALF_HOUR_FEE } from "./agents";
 
 export type ListingKind = "ai" | "human" | "both";
 
@@ -10,12 +10,18 @@ export type ListingDocument = {
   fileName: string;
 };
 
-/** A live professional from GET /professionals (the API's public card). */
-export type ApiProfessionalCard = Pick<
+/** A professional as the API returns it: the listing card, plus the long profile fields on GET /professionals/:slug. */
+export type ApiProfessional = Pick<
   Agent,
   "slug" | "name" | "type" | "typeLabel" | "specializations" | "experience" | "consultationFee" | "location"
   | "availability" | "languages" | "channels" | "accent" | "tagline" | "rating" | "reviewCount"
-> & { image?: string; aiName?: string; liveDemo?: boolean; listingKind: ListingKind };
+> & { image?: string; aiName?: string; liveDemo?: boolean; listingKind: ListingKind } & Partial<
+    Pick<
+      Agent,
+      | "bio" | "services" | "personality" | "kpis" | "capabilities" | "workflows" | "sampleChat" | "faqs"
+      | "escalationNote" | "liveTag"
+    >
+  >;
 
 export type MarketplaceListing = Agent & {
   listingKind: ListingKind;
@@ -23,85 +29,30 @@ export type MarketplaceListing = Agent & {
   isHumanProfessional?: boolean;
 };
 
-function listingKindFor(agent: Agent): ListingKind {
-  // Connected bots (Ankit, Soniya) are also real people you can book.
-  return agent.liveDemo ? "both" : "human";
-}
+const PLACEHOLDER_PHOTO =
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces&auto=format&q=80";
 
-export function getSeedHumanProfessionals(): MarketplaceListing[] {
-  return agents
-    .filter((a) => !a.liveDemo)
-    .map((a) => ({
-      ...a,
-      listingKind: "human" as const,
-      isHumanProfessional: true,
-    }));
-}
-
-/** Live card from the API, filled in with seed copy (bio, sample chat) when the slug matches. */
-export function mergeApiCard(
-  card: ApiProfessionalCard & { bio?: string },
-  seed?: MarketplaceListing,
-): MarketplaceListing {
-  const base = seed ?? cardToListing(card);
-  const kind = card.listingKind || base.listingKind;
+/** An API professional as a listing. Long profile fields the response leaves out are empty. */
+export function toListing(p: ApiProfessional): MarketplaceListing {
+  const kind: ListingKind = p.listingKind || (p.liveDemo ? "both" : "human");
   return {
-    ...base,
-    name: card.name || base.name,
-    type: card.type || base.type,
-    typeLabel: card.typeLabel || base.typeLabel,
-    specializations: card.specializations?.length ? card.specializations : base.specializations,
-    experience: card.experience || base.experience,
-    consultationFee: card.consultationFee || base.consultationFee,
-    location: card.location || base.location,
-    availability: card.availability || base.availability,
-    languages: card.languages?.length ? card.languages : base.languages,
-    tagline: card.tagline || base.tagline,
-    rating: typeof card.rating === "number" ? card.rating : base.rating,
-    reviewCount: typeof card.reviewCount === "number" ? card.reviewCount : base.reviewCount,
-    bio: card.bio || base.bio,
-    image: card.image || base.image,
+    ...p,
+    image: p.image || PLACEHOLDER_PHOTO,
+    consultationFee: p.consultationFee || STANDARD_HALF_HOUR_FEE,
+    bio: p.bio || p.tagline,
+    services: p.services ?? [],
+    personality: p.personality ?? "",
+    kpis: p.kpis ?? [],
+    capabilities: p.capabilities ?? [],
+    workflows: p.workflows ?? [],
+    sampleChat: p.sampleChat ?? [],
+    faqs: p.faqs ?? [],
+    escalationNote: p.escalationNote ?? "",
+    liveTag: p.liveTag || "Verified professional",
+    liveDemo: Boolean(p.liveDemo),
     listingKind: kind,
     isHumanProfessional: kind !== "ai",
-    liveDemo: seed?.liveDemo ?? Boolean(card.liveDemo),
   };
-}
-export function cardToListing(card: ApiProfessionalCard): MarketplaceListing {
-  return {
-    ...card,
-    services: [],
-    bio: card.tagline,
-    image:
-      card.image ||
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces&auto=format&q=80",
-    consultationFee: card.consultationFee || STANDARD_HALF_HOUR_FEE,
-    personality: "",
-    kpis: [],
-    capabilities: [],
-    workflows: [],
-    sampleChat: [],
-    faqs: [],
-    escalationNote: "",
-    liveTag: "Verified professional",
-    listingKind: card.listingKind,
-    isHumanProfessional: card.listingKind !== "ai",
-    liveDemo: false,
-  };
-}
-
-/** Marketplace listings from the real professional roster */
-export function getMarketplaceListings(): MarketplaceListing[] {
-  return agents.map((a) => ({
-    ...a,
-    listingKind: listingKindFor(a),
-    isHumanProfessional: true,
-  }));
-}
-
-export function getMarketplaceListing(
-  slug: string,
-): MarketplaceListing | undefined {
-  return getMarketplaceListings().find((l) => l.slug === slug);
 }
 
 /** AI Salahkars do not show a city or a human response time. */
@@ -167,12 +118,12 @@ export function humanProfileHref(listing: Pick<MarketplaceListing, "slug">): str
   return `/agents/${listing.slug}`;
 }
 
-export function getAiSalahkars(): MarketplaceListing[] {
-  return getMarketplaceListings().filter(hasAiSalahkar);
-}
-
-export function getAiSalahkar(aiSlug: string): MarketplaceListing | undefined {
-  return getAiSalahkars().find((listing) => aiSalahkarSlug(listing) === aiSlug);
+/** The listing whose AI Salahkar has this URL slug. */
+export function findAiSalahkar(
+  listings: MarketplaceListing[],
+  aiSlug: string,
+): MarketplaceListing | undefined {
+  return listings.filter(hasAiSalahkar).find((listing) => aiSalahkarSlug(listing) === aiSlug);
 }
 
 /**
