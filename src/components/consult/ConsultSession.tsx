@@ -27,10 +27,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { aiConsultantName } from "@/lib/data/agents";
-import { useProfessional } from "@/lib/data/professionals";
-import { ProfileLoadState } from "@/components/agents/ProfileLoadState";
+import { getAiSalahkarAgent, resolveAiSalahkarSlug } from "@/lib/data/ai-salahkars";
 import { ConsultantPhoto } from "@/components/agents/ConsultantPhoto";
-import { aiSalahkarHref, type MarketplaceListing } from "@/lib/data/marketplace";
+import type { Agent } from "@/lib/data/agents";
+import { aiSalahkarHref } from "@/lib/data/marketplace";
 import { getAgentProvider } from "@/lib/agent-runtime/provider";
 import type { ChatMessage } from "@/lib/agent-runtime/types";
 import { toast } from "sonner";
@@ -62,35 +62,21 @@ type ConsultSessionProps = {
   initialMode?: ConsultMode;
 };
 
-/** Loads the professional; only those with a live AI Salahkar can be consulted here. */
+/** AI Salahkars are defined on the website (lib/data/ai-salahkars.ts); the page 404s for anyone else. */
 export function ConsultSession({
   agentSlug,
   initialMode = "chat",
 }: ConsultSessionProps) {
-  const profile = useProfessional(agentSlug);
-  if (profile.status !== "ready") return <ProfileLoadState state={profile.status} />;
-  if (!profile.data) return <ProfileLoadState state="missing" what="AI Salahkar" />;
-  if (!profile.data.liveDemo) {
-    return (
-      <ProfileLoadState
-        state="missing"
-        message={{
-          title: `${profile.data.name} doesn't have an AI Salahkar yet`,
-          body: "You can book a consultation with them directly instead.",
-          href: `/agents/${profile.data.slug}`,
-          linkLabel: `View ${profile.data.name}'s profile`,
-        }}
-      />
-    );
-  }
-  return <ConsultSessionView agent={profile.data} initialMode={initialMode} />;
+  const agent = getAiSalahkarAgent(resolveAiSalahkarSlug(agentSlug));
+  if (!agent) return null;
+  return <ConsultSessionView key={agent.slug} agent={agent} initialMode={initialMode} />;
 }
 
 function ConsultSessionView({
   agent,
   initialMode,
 }: {
-  agent: MarketplaceListing;
+  agent: Agent;
   initialMode: ConsultMode;
 }) {
   const router = useRouter();
@@ -253,7 +239,7 @@ function ConsultSessionView({
     }
   }
 
-  const liveConfigured = Boolean(agent.liveDemo);
+  const liveConfigured = true;
   const displayName = aiConsultantName(agent);
   const firstName = displayName.split(" ")[0];
   const suggestions = agent.faqs.map((faq) => faq.q).slice(0, 3);

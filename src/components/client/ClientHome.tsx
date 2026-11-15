@@ -20,8 +20,7 @@ import { toast } from "sonner";
 import { splitAppointments, type Appointment } from "@/lib/data/appointments";
 import { getDigestForDate, upcomingDeadlines } from "@/lib/data/digest";
 import { aiConsultantName } from "@/lib/data/agents";
-import { hasAiSalahkar } from "@/lib/data/marketplace";
-import { useProfessionals } from "@/lib/data/professionals";
+import { getAiSalahkars } from "@/lib/data/marketplace";
 import { loadBookings } from "@/lib/bookings";
 import { formatRupees, readBalancePaise, useWalletBalance } from "@/lib/wallet";
 import {
@@ -122,8 +121,7 @@ export function ClientHome() {
   const deadlines = [...upcomingDeadlines]
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 4);
-  const directory = useProfessionals();
-  const aiSalahkars = (directory.data ?? []).filter(hasAiSalahkar);
+  const aiSalahkars = getAiSalahkars();
 
   async function topUp() {
     setTopping(true);

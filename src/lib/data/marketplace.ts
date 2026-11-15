@@ -1,5 +1,6 @@
 import type { Agent } from "./agents";
 import { aiConsultantName, STANDARD_HALF_HOUR_FEE } from "./agents";
+import { aiSalahkars, isAiSalahkarSlug } from "./ai-salahkars";
 
 export type ListingKind = "ai" | "human" | "both";
 
@@ -32,9 +33,13 @@ export type MarketplaceListing = Agent & {
 const PLACEHOLDER_PHOTO =
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces&auto=format&q=80";
 
-/** An API professional as a listing. Long profile fields the response leaves out are empty. */
+/**
+ * An API professional as a listing. Long profile fields the response leaves out are empty. Whether they also have an
+ * AI Salahkar on the site is decided by the website's own list (ai-salahkars.ts), not the API.
+ */
 export function toListing(p: ApiProfessional): MarketplaceListing {
-  const kind: ListingKind = p.listingKind || (p.liveDemo ? "both" : "human");
+  const withAi = isAiSalahkarSlug(p.slug);
+  const kind: ListingKind = withAi ? "both" : "human";
   return {
     ...p,
     image: p.image || PLACEHOLDER_PHOTO,
@@ -49,9 +54,9 @@ export function toListing(p: ApiProfessional): MarketplaceListing {
     faqs: p.faqs ?? [],
     escalationNote: p.escalationNote ?? "",
     liveTag: p.liveTag || "Verified professional",
-    liveDemo: Boolean(p.liveDemo),
+    liveDemo: withAi,
     listingKind: kind,
-    isHumanProfessional: kind !== "ai",
+    isHumanProfessional: true,
   };
 }
 
@@ -118,12 +123,14 @@ export function humanProfileHref(listing: Pick<MarketplaceListing, "slug">): str
   return `/agents/${listing.slug}`;
 }
 
-/** The listing whose AI Salahkar has this URL slug. */
-export function findAiSalahkar(
-  listings: MarketplaceListing[],
-  aiSlug: string,
-): MarketplaceListing | undefined {
-  return listings.filter(hasAiSalahkar).find((listing) => aiSalahkarSlug(listing) === aiSlug);
+/** The AI Salahkars the site shows, as listings. */
+export function getAiSalahkars(): MarketplaceListing[] {
+  return aiSalahkars.map((agent) => ({ ...agent, listingKind: "both", isHumanProfessional: true, liveDemo: true }));
+}
+
+/** The AI Salahkar with this URL slug, e.g. "ankit-ai". */
+export function getAiSalahkar(aiSlug: string): MarketplaceListing | undefined {
+  return getAiSalahkars().find((listing) => aiSalahkarSlug(listing) === aiSlug);
 }
 
 /**

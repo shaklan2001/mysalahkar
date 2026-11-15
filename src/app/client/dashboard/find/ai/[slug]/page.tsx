@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { LiveAiSalahkar } from "@/components/agents/LiveAiSalahkar";
+import { notFound } from "next/navigation";
+import { AiSalahkarView } from "@/components/agents/AiSalahkarView";
 import { aiConsultantName } from "@/lib/data/agents";
-import { findAiSalahkar } from "@/lib/data/marketplace";
-import { fetchProfessionals } from "@/lib/data/professionals-server";
+import { getAiSalahkar } from "@/lib/data/marketplace";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const listing = findAiSalahkar(await fetchProfessionals(), slug);
+  const listing = getAiSalahkar(slug);
   return {
     title: listing
       ? `${aiConsultantName(listing)} · AI Salahkar`
@@ -18,9 +18,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ClientAiSalahkarPage({ params }: Props) {
   const { slug } = await params;
+  const listing = getAiSalahkar(slug);
+  if (!listing) notFound();
   return (
-    <LiveAiSalahkar
-      aiSlug={slug}
+    <AiSalahkarView
+      listing={listing}
       embedded
       backHref="/client/dashboard/find?kind=ai"
       backLabel="Back to Find professionals"

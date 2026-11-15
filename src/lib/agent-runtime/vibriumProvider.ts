@@ -1,5 +1,6 @@
 import { API_URL, authHeaders } from "@/lib/api";
 import { consumeAgentStream } from "@/lib/chat-stream";
+import { isAiSalahkarSlug } from "@/lib/data/ai-salahkars";
 import type { AgentProvider } from "./types";
 
 const started = new Set<string>();
@@ -21,6 +22,10 @@ async function ensureSession(agentSlug: string) {
 /** Live agents bill and talk through the API. The API derives the contact from the signed-in user. */
 export const vibriumAgentProvider: AgentProvider = {
   async streamReply(agentSlug, userMessage, onChunk, signal) {
+    if (!isAiSalahkarSlug(agentSlug)) {
+      throw new Error("Agent is not available for live demo");
+    }
+
     await ensureSession(agentSlug);
 
     const res = await fetch(`${API_URL}/chat/message`, {

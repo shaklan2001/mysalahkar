@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
-import { LiveAiSalahkar } from "@/components/agents/LiveAiSalahkar";
+import { notFound } from "next/navigation";
+import { AiSalahkarView } from "@/components/agents/AiSalahkarView";
 import { aiConsultantName } from "@/lib/data/agents";
-import { findAiSalahkar } from "@/lib/data/marketplace";
-import { fetchProfessionals } from "@/lib/data/professionals-server";
+import { aiSalahkarSlug, getAiSalahkar, getAiSalahkars } from "@/lib/data/marketplace";
 
 interface AiSalahkarPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export function generateStaticParams() {
+  return getAiSalahkars().map((listing) => ({ slug: aiSalahkarSlug(listing) }));
+}
+
 export async function generateMetadata({ params }: AiSalahkarPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const listing = findAiSalahkar(await fetchProfessionals(), slug);
-  if (!listing) return { title: "AI Salahkar" };
+  const listing = getAiSalahkar(slug);
+  if (!listing) return { title: "AI Salahkar not found" };
   const name = aiConsultantName(listing);
   return {
     title: `${name} · AI Salahkar`,
@@ -21,5 +25,7 @@ export async function generateMetadata({ params }: AiSalahkarPageProps): Promise
 
 export default async function AiSalahkarPage({ params }: AiSalahkarPageProps) {
   const { slug } = await params;
-  return <LiveAiSalahkar aiSlug={slug} />;
+  const listing = getAiSalahkar(slug);
+  if (!listing) notFound();
+  return <AiSalahkarView listing={listing} />;
 }

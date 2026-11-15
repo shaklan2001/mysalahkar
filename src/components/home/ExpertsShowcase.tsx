@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { aiConsultantName } from "@/lib/data/agents";
-import { aiSalahkarHref, hasAiSalahkar } from "@/lib/data/marketplace";
+import { aiSalahkarHref, getAiSalahkars } from "@/lib/data/marketplace";
 import { useProfessionals } from "@/lib/data/professionals";
 import { ExpertCard } from "@/components/agents/ExpertCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,7 +17,7 @@ function CardSkeletons({ count }: { count: number }) {
 export function ExpertsShowcase() {
   const directory = useProfessionals();
   const listings = directory.data ?? [];
-  const aiSalahkars = listings.filter(hasAiSalahkar);
+  const aiSalahkars = getAiSalahkars();
   const humanExperts = listings.slice(0, 6);
   const loading = directory.status === "loading";
 
@@ -45,7 +45,6 @@ export function ExpertsShowcase() {
 
           <TabsContent value="ai" className="mt-10">
             <div className="grid gap-5 sm:grid-cols-2">
-              {loading ? <CardSkeletons count={2} /> : null}
               {aiSalahkars.map((agent) => (
                 <ExpertCard
                   key={agent.slug}

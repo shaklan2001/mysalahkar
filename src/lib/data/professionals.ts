@@ -68,9 +68,8 @@ function useLoaded<T>(key: string | null, load: () => Promise<T>): Loaded<T> {
   return state.key === key ? state.value : { status: "loading", data: null };
 }
 
-/** Pass false to hold off (for example until a dialog opens). */
-export function useProfessionals(enabled = true): Loaded<MarketplaceListing[]> {
-  return useLoaded(enabled ? "directory" : null, loadProfessionals);
+export function useProfessionals(): Loaded<MarketplaceListing[]> {
+  return useLoaded("directory", loadProfessionals);
 }
 
 /** Pass null to wait (for example until the slug is known). */

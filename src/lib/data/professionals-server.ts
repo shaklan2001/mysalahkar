@@ -33,8 +33,3 @@ export async function fetchProfessional(slug: string): Promise<MarketplaceListin
   const data = await get<{ professional: ApiProfessional }>(`/professionals/${encodeURIComponent(slug)}`);
   return data ? toListing(data.professional) : null;
 }
-
-export async function fetchProfessionals(): Promise<MarketplaceListing[]> {
-  const data = await get<{ items: ApiProfessional[] }>("/professionals");
-  return data ? data.items.map(toListing) : [];
-}
